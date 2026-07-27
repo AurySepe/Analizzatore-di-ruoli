@@ -1,0 +1,447 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/job-offers": {
+      "post": {
+        "operationId": "JobOffersController_create",
+        "summary": "Crea o aggiorna un annuncio di lavoro nel database",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateJobOfferDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobOfferDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "job-offers"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/job-offers/paginated": {
+      "get": {
+        "operationId": "JobOffersController_findAllPaginated",
+        "summary": "Recupera la lista paginata degli annunci di lavoro",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/JobOfferDto"
+                          }
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/PaginatedMetaDto"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "job-offers"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/job-offers/{id}": {
+      "get": {
+        "operationId": "JobOffersController_findOne",
+        "summary": "Recupera un singolo annuncio di lavoro tramite ID",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobOfferDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "job-offers"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "API",
+    "description": "",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "CompanyDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "websiteUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "linkedinUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "industry": {
+            "type": "string",
+            "nullable": true
+          },
+          "fundingStage": {
+            "type": "string",
+            "nullable": true
+          },
+          "companySizeRange": {
+            "type": "string",
+            "nullable": true
+          },
+          "employeeCount": {
+            "type": "integer",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "CreateJobOfferDto": {
+        "type": "object",
+        "properties": {
+          "externalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "source": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string",
+            "nullable": true
+          },
+          "remoteType": {
+            "enum": [
+              "REMOTE",
+              "HYBRID",
+              "ON_SITE",
+              "UNSPECIFIED"
+            ],
+            "type": "string",
+            "default": "UNSPECIFIED"
+          },
+          "rawDescription": {
+            "type": "string"
+          },
+          "datePosted": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "company": {
+            "$ref": "#/components/schemas/CompanyDto"
+          },
+          "salaryMin": {
+            "type": "number",
+            "nullable": true
+          },
+          "salaryMax": {
+            "type": "number",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true,
+            "default": "EUR"
+          },
+          "contractType": {
+            "type": "string",
+            "nullable": true
+          },
+          "roleCategory": {
+            "type": "string",
+            "nullable": true
+          },
+          "experienceLevel": {
+            "enum": [
+              "ENTRY_LEVEL",
+              "JUNIOR",
+              "MID",
+              "SENIOR",
+              "LEAD",
+              "EXECUTIVE",
+              "UNSPECIFIED"
+            ],
+            "type": "string",
+            "default": "UNSPECIFIED"
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "enum": [
+              "NEW",
+              "SAVED",
+              "APPLIED",
+              "INTERVIEWING",
+              "REJECTED",
+              "ARCHIVED"
+            ],
+            "type": "string",
+            "default": "NEW"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "source",
+          "url",
+          "title",
+          "remoteType",
+          "rawDescription",
+          "company",
+          "experienceLevel",
+          "status"
+        ]
+      },
+      "JobOfferDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "externalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "source": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string",
+            "nullable": true
+          },
+          "remoteType": {
+            "enum": [
+              "REMOTE",
+              "HYBRID",
+              "ON_SITE",
+              "UNSPECIFIED"
+            ],
+            "type": "string",
+            "default": "UNSPECIFIED"
+          },
+          "rawDescription": {
+            "type": "string"
+          },
+          "datePosted": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "company": {
+            "$ref": "#/components/schemas/CompanyDto"
+          },
+          "salaryMin": {
+            "type": "number",
+            "nullable": true
+          },
+          "salaryMax": {
+            "type": "number",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true,
+            "default": "EUR"
+          },
+          "contractType": {
+            "type": "string",
+            "nullable": true
+          },
+          "roleCategory": {
+            "type": "string",
+            "nullable": true
+          },
+          "experienceLevel": {
+            "enum": [
+              "ENTRY_LEVEL",
+              "JUNIOR",
+              "MID",
+              "SENIOR",
+              "LEAD",
+              "EXECUTIVE",
+              "UNSPECIFIED"
+            ],
+            "type": "string",
+            "default": "UNSPECIFIED"
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "enum": [
+              "NEW",
+              "SAVED",
+              "APPLIED",
+              "INTERVIEWING",
+              "REJECTED",
+              "ARCHIVED"
+            ],
+            "type": "string",
+            "default": "NEW"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "source",
+          "url",
+          "title",
+          "remoteType",
+          "rawDescription",
+          "company",
+          "experienceLevel",
+          "status",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "PaginatedMetaDto": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "totalPages": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total",
+          "page",
+          "limit",
+          "totalPages"
+        ]
+      }
+    }
+  }
+}

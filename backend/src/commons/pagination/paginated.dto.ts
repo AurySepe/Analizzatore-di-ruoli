@@ -1,5 +1,5 @@
 import { applyDecorators, Type } from '@nestjs/common';
-import { ApiOkResponse, ApiProperty, getSchemaPath } from '@nestjs/swagger';
+import { ApiExtraModels, ApiOkResponse, ApiProperty, getSchemaPath } from '@nestjs/swagger';
 
 export class PaginatedMetaDto {
   @ApiProperty({ type: 'integer' })
@@ -24,6 +24,7 @@ export class PaginatedDto<T> {
 
 export const ApiPaginatedResponse = <TModel extends Type<any>>(model: TModel) => {
   return applyDecorators(
+    ApiExtraModels(PaginatedMetaDto, model),
     ApiOkResponse({
       schema: {
         allOf: [

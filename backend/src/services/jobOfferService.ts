@@ -1,21 +1,16 @@
 import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
-import { PrismaLibSql } from '@prisma/adapter-libsql';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
 import { CreateJobOfferInput } from '../types/jobOffer';
-import path from 'path';
-import { pathToFileURL } from 'url';
 
-// Genera un URL file assoluto valido per Prisma 7 e LibSQL
-const dbFilePath = path.resolve(process.cwd(), 'dev.db');
-const formattedFileUrl = pathToFileURL(dbFilePath).toString();
-process.env.DATABASE_URL = formattedFileUrl;
-
-// Passa l'oggetto di configurazione direttamente a PrismaLibSql
-const adapter = new PrismaLibSql({ url: formattedFileUrl });
+const connectionString = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/analizzatore_ruoli?schema=public';
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
 export const prisma = new PrismaClient({ adapter });
 
 /**
- * Salva o aggiorna un'offerta di lavoro e l'azienda associata nel DB SQLite.
+ * Salva o aggiorna un'offerta di lavoro e l'azienda associata nel DB PostgreSQL.
  * Gestisce la deduplicazione automatica via externalId + source o via URL.
  */
 export async function saveOrUpdateJobOffer(input: CreateJobOfferInput) {
