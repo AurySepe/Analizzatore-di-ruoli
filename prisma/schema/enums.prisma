@@ -1,0 +1,25 @@
+enum RemoteType {
+  REMOTE
+  HYBRID
+  ON_SITE
+  UNSPECIFIED
+}
+
+enum ExperienceLevel {
+  ENTRY_LEVEL
+  JUNIOR
+  MID
+  SENIOR
+  LEAD
+  EXECUTIVE
+  UNSPECIFIED
+}
+
+enum ApplicationStatus {
+  NEW
+  SAVED
+  APPLIED
+  INTERVIEWING
+  REJECTED
+  ARCHIVED
+}

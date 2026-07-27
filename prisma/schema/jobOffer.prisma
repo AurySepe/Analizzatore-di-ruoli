@@ -1,0 +1,39 @@
+model JobOffer {
+  id              String            @id @default(uuid())
+  externalId      String?
+  source          String            // Es: "LinkedIn", "Indeed"
+  url             String            @unique
+  
+  // Offer details
+  title           String
+  location        String?
+  remoteType      RemoteType        @default(UNSPECIFIED)
+  rawDescription  String
+  datePosted      DateTime?
+  
+  // Company relation
+  companyId       String
+  company         Company           @relation(fields: [companyId], references: [id])
+  
+  // Compensation & Contract
+  salaryMin       Float?
+  salaryMax       Float?
+  currency        String?           @default("EUR")
+  contractType    String?
+  
+  // Profile & Requirements
+  roleCategory    String?
+  experienceLevel ExperienceLevel   @default(UNSPECIFIED)
+  skills          String?           // JSON string array (e.g. '["TypeScript","Node.js"]')
+
+  // Tracking
+  status          ApplicationStatus @default(NEW)
+  notes           String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@unique([source, externalId])
+  @@index([companyId])
+  @@index([source])
+  @@index([status])
+}
