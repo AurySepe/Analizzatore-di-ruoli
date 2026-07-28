@@ -23,3 +23,24 @@ enum ApplicationStatus {
   REJECTED
   ARCHIVED
 }
+
+enum EvaluationStatus {
+  SUCCESS
+  UNANALYZABLE
+}
+
+enum EvaluatorModel {
+  GEMINI_3_1_FLASH_LITE
+  GEMMA_4_12B
+  GEMMA_4_31B
+  UNKNOWN
+}
+
+
+enum JobSource {
+  ARBEITNOW
+  REMOTIVE
+}
+
+
+

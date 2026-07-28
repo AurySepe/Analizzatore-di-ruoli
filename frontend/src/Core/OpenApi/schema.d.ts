@@ -13,7 +13,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Crea o aggiorna un annuncio di lavoro nel database */
+        /** Crea o aggiorna un annuncio di lavoro */
         post: operations["JobOffersController_create"];
         delete?: never;
         options?: never;
@@ -28,7 +28,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Recupera la lista paginata degli annunci di lavoro */
+        /** Recupera la lista paginata e filtrata degli annunci di lavoro (con punteggi AI) */
         get: operations["JobOffersController_findAllPaginated"];
         put?: never;
         post?: never;
@@ -55,41 +55,91 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/evaluations/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Restituisce le metriche in tempo reale sullo stato di categorizzazione degli annunci */
+        get: operations["EvaluationsController_getStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/evaluations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recupera tutte le valutazioni salvate, filtrate per priorità o punteggio minimo */
+        get: operations["EvaluationsController_findAll"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/evaluations/{jobOfferId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recupera la valutazione salvata per una specifica offerta */
+        get: operations["EvaluationsController_findOne"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        CompanyDto: {
-            id: string;
+        CreateCompanyDto: {
             name: string;
-            websiteUrl?: string | null;
-            linkedinUrl?: string | null;
-            industry?: string | null;
-            fundingStage?: string | null;
-            companySizeRange?: string | null;
+            websiteUrl?: Record<string, never> | null;
+            linkedinUrl?: Record<string, never> | null;
+            industry?: Record<string, never> | null;
+            fundingStage?: Record<string, never> | null;
+            companySizeRange?: Record<string, never> | null;
             employeeCount?: number | null;
         };
         CreateJobOfferDto: {
-            externalId?: string | null;
-            source: string;
+            externalId?: Record<string, never> | null;
+            /** @enum {string} */
+            source: "ARBEITNOW" | "REMOTIVE";
             url: string;
             title: string;
-            location?: string | null;
+            location?: Record<string, never> | null;
             /**
              * @default UNSPECIFIED
              * @enum {string}
              */
             remoteType: "REMOTE" | "HYBRID" | "ON_SITE" | "UNSPECIFIED";
             rawDescription: string;
-            /** Format: date-time */
-            datePosted?: string | null;
-            company: components["schemas"]["CompanyDto"];
-            salaryMin?: number | null;
-            salaryMax?: number | null;
+            descriptionMarkdown?: Record<string, never> | null;
+            datePosted?: Record<string, never> | null;
+            salaryMin?: Record<string, never> | null;
+            salaryMax?: Record<string, never> | null;
             /** @default EUR */
-            currency: string | null;
-            contractType?: string | null;
-            roleCategory?: string | null;
+            currency: Record<string, never> | null;
+            contractType?: Record<string, never> | null;
+            roleCategory?: Record<string, never> | null;
             /**
              * @default UNSPECIFIED
              * @enum {string}
@@ -101,30 +151,70 @@ export interface components {
              * @enum {string}
              */
             status: "NEW" | "SAVED" | "APPLIED" | "INTERVIEWING" | "REJECTED" | "ARCHIVED";
-            notes?: string | null;
+            notes?: Record<string, never> | null;
+            company: components["schemas"]["CreateCompanyDto"];
+        };
+        CompanyDto: {
+            id: string;
+            name: string;
+            websiteUrl?: Record<string, never> | null;
+            linkedinUrl?: Record<string, never> | null;
+            industry?: Record<string, never> | null;
+            fundingStage?: Record<string, never> | null;
+            companySizeRange?: Record<string, never> | null;
+            employeeCount?: number | null;
+        };
+        JobEvaluationDto: {
+            id: string;
+            jobOfferId: string;
+            /** @description Punteggio di aderenza ai desiderata dell utente (0-100) */
+            desireMatchScore: number;
+            /** @description Punteggio di competenza tecnica (0-100) */
+            competenceScore: number;
+            /** @description Punteggio globale bilanciato (0-100) */
+            overallScore: number;
+            /** @description Livello di priorità: HIGH, MEDIUM, LOW, DISQUALIFIED */
+            priority: string;
+            /** @description Stato dell analisi: SUCCESS | UNANALYZABLE */
+            status: string;
+            /** @description Modello AI che ha analizzato l annuncio: GEMINI_3_1_FLASH_LITE | GEMMA_4_12B | UNKNOWN */
+            evaluatorModel: string;
+            /** @description Spiegazione sintetico aderenza desiderata */
+            desireMatchReasoning?: Record<string, never> | null;
+            /** @description Valutazione delle competenze dell utente rispetto al ruolo */
+            competenceMatch: string;
+            /** @description Spiegazione dettagliata dell AI in Markdown */
+            detailedReasoning: string;
+            pros?: string[] | null;
+            cons?: string[] | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
         };
         JobOfferDto: {
             id: string;
-            externalId?: string | null;
-            source: string;
+            externalId?: Record<string, never> | null;
+            /** @enum {string} */
+            source: "ARBEITNOW" | "REMOTIVE";
             url: string;
             title: string;
-            location?: string | null;
+            location?: Record<string, never> | null;
             /**
              * @default UNSPECIFIED
              * @enum {string}
              */
             remoteType: "REMOTE" | "HYBRID" | "ON_SITE" | "UNSPECIFIED";
             rawDescription: string;
-            /** Format: date-time */
-            datePosted?: string | null;
+            descriptionMarkdown?: Record<string, never> | null;
+            datePosted?: Record<string, never> | null;
             company: components["schemas"]["CompanyDto"];
-            salaryMin?: number | null;
-            salaryMax?: number | null;
+            salaryMin?: Record<string, never> | null;
+            salaryMax?: Record<string, never> | null;
             /** @default EUR */
-            currency: string | null;
-            contractType?: string | null;
-            roleCategory?: string | null;
+            currency: Record<string, never> | null;
+            contractType?: Record<string, never> | null;
+            roleCategory?: Record<string, never> | null;
             /**
              * @default UNSPECIFIED
              * @enum {string}
@@ -136,7 +226,8 @@ export interface components {
              * @enum {string}
              */
             status: "NEW" | "SAVED" | "APPLIED" | "INTERVIEWING" | "REJECTED" | "ARCHIVED";
-            notes?: string | null;
+            notes?: Record<string, never> | null;
+            evaluation?: components["schemas"]["JobEvaluationDto"] | null;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
@@ -185,6 +276,24 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
+                /** @description Filtra per priorità AI: HIGH, MEDIUM, LOW, DISQUALIFIED */
+                priority?: string;
+                /** @description Filtra per punteggio minimo aderenza ai desiderata (0-100) */
+                minDesireScore?: number;
+                /** @description Filtra per punteggio minimo competenza tecnica (0-100) */
+                minCompetenceScore?: number;
+                /** @description Filtra per punteggio globale minimo (0-100) */
+                minScore?: number;
+                /** @description Filtra per modalità di lavoro (REMOTE, HYBRID, ON_SITE) */
+                remoteType?: "REMOTE" | "HYBRID" | "ON_SITE" | "UNSPECIFIED";
+                /** @description Cerca per testo nel titolo o nel nome azienda */
+                search?: string;
+                /** @description Filtra per fonte dell annuncio (ARBEITNOW, REMOTIVE) */
+                source?: "ARBEITNOW" | "REMOTIVE";
+                /** @description Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B) */
+                evaluatorModel?: string;
+                /** @description Includi anche gli annunci non ancora valutati dall AI (default: false) */
+                includePending?: boolean;
             };
             header?: never;
             path?: never;
@@ -220,9 +329,60 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["JobOfferDto"];
+                content?: never;
+            };
+        };
+    };
+    EvaluationsController_getStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
                 };
+                content?: never;
+            };
+        };
+    };
+    EvaluationsController_findAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EvaluationsController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                jobOfferId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

@@ -1,14 +1,16 @@
 model JobOffer {
   id              String            @id @default(uuid())
   externalId      String?
-  source          String            // Es: "LinkedIn", "Indeed"
+  source          JobSource
   url             String            @unique
+
   
   // Offer details
   title           String
   location        String?
   remoteType      RemoteType        @default(UNSPECIFIED)
   rawDescription  String
+  descriptionMarkdown String?
   datePosted      DateTime?
   
   // Company relation
@@ -31,6 +33,7 @@ model JobOffer {
   notes           String?
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
+  evaluation      JobEvaluation?
 
   @@unique([source, externalId])
   @@index([companyId])

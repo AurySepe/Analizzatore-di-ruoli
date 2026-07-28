@@ -17,14 +17,25 @@ services:
       timeout: 5s
       retries: 5
 
-  backend:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: analizzatore_ollama
+    restart: always
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+
+  backend-api:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: analizzatore_backend
+    container_name: analizzatore_backend_api
     restart: always
+    command: npm run startAndMigrate
     environment:
       DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/analizzatore_ruoli?schema=public"
+      LOCAL_AI_BASE_URL: "http://ollama:11434"
       PORT: 3000
     ports:
       - "3000:3000"
@@ -32,5 +43,35 @@ services:
       postgres:
         condition: service_healthy
 
+  backend-extractor:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: analizzatore_backend_extractor
+    restart: always
+    command: npm run start:extractor
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/analizzatore_ruoli?schema=public"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  backend-evaluator:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: analizzatore_backend_evaluator
+    restart: always
+    command: npm run start:evaluator
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/analizzatore_ruoli?schema=public"
+      LOCAL_AI_BASE_URL: "http://ollama:11434"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+
 volumes:
   postgres_data:
+  ollama_data:

@@ -1,3 +1,5 @@
+import { JobSource } from '@prisma/client';
+
 export type RemoteType = 'REMOTE' | 'HYBRID' | 'ON_SITE' | 'UNSPECIFIED';
 export type ExperienceLevel = 'ENTRY_LEVEL' | 'JUNIOR' | 'MID' | 'SENIOR' | 'LEAD' | 'EXECUTIVE' | 'UNSPECIFIED';
 export type ApplicationStatus = 'NEW' | 'SAVED' | 'APPLIED' | 'INTERVIEWING' | 'REJECTED' | 'ARCHIVED';
@@ -14,7 +16,8 @@ export interface CompanyInput {
 
 export interface CreateJobOfferInput {
   externalId?: string;
-  source: string;
+  source: JobSource;
+
   url: string;
   title: string;
   location?: string;
