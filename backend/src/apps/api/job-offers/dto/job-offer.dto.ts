@@ -27,10 +27,52 @@ export enum ApplicationStatusEnum {
   NEW = 'NEW',
   SAVED = 'SAVED',
   APPLIED = 'APPLIED',
+  SCREENING = 'SCREENING',
   INTERVIEWING = 'INTERVIEWING',
+  OFFER = 'OFFER',
+  ACCEPTED = 'ACCEPTED',
   REJECTED = 'REJECTED',
   ARCHIVED = 'ARCHIVED',
 }
+
+export class JobStatusHistoryDto {
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty({ enum: ApplicationStatusEnum, nullable: true })
+  fromStatus: ApplicationStatusEnum | null;
+
+  @ApiProperty({ enum: ApplicationStatusEnum })
+  toStatus: ApplicationStatusEnum;
+
+  @ApiProperty()
+  createdAt: Date;
+}
+
+export enum JobOfferFreshnessEnum {
+  HOT = 'HOT',
+  RECENT = 'RECENT',
+  AGING = 'AGING',
+  OLD = 'OLD',
+}
+
+export function calculateFreshness(datePosted: Date | null | undefined, createdAt: Date): JobOfferFreshnessEnum {
+  const refDate = datePosted ? new Date(datePosted) : new Date(createdAt);
+  const now = new Date();
+  const diffInDays = (now.getTime() - refDate.getTime()) / (1000 * 60 * 60 * 24);
+
+  if (diffInDays < 7) {
+    return JobOfferFreshnessEnum.HOT;
+  }
+  if (diffInDays < 30) {
+    return JobOfferFreshnessEnum.RECENT;
+  }
+  if (diffInDays < 90) {
+    return JobOfferFreshnessEnum.AGING;
+  }
+  return JobOfferFreshnessEnum.OLD;
+}
+
 
 export class JobOfferDto {
   @ApiProperty()
@@ -138,6 +180,14 @@ export class JobOfferDto {
   @IsOptional()
   evaluation: JobEvaluationDto | null;
 
+  @ApiProperty({ enum: JobOfferFreshnessEnum, example: JobOfferFreshnessEnum.HOT })
+  @IsEnum(JobOfferFreshnessEnum)
+  freshness: JobOfferFreshnessEnum;
+
+  @ApiProperty({ type: () => [JobStatusHistoryDto], required: false })
+  @IsOptional()
+  statusHistory?: JobStatusHistoryDto[];
+
   @ApiProperty()
   createdAt: Date;
 
@@ -149,7 +199,7 @@ export class JobOfferDto {
   }
 }
 
-export class CreateJobOfferDto extends OmitType(JobOfferDto, ['id', 'createdAt', 'updatedAt', 'company', 'evaluation'] as const) {
+export class CreateJobOfferDto extends OmitType(JobOfferDto, ['id', 'freshness', 'createdAt', 'updatedAt', 'company', 'evaluation'] as const) {
   @ApiProperty({ type: () => CreateCompanyDto })
   company: CreateCompanyDto;
 }

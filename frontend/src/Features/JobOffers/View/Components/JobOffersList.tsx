@@ -1,5 +1,7 @@
 import type { LoadableState } from '@/Commons/loadable-state';
+import type { JobOfferStatus } from '../../State/jobOffersAtoms';
 import type { JobOfferListItemViewModelDTO } from '../../ViewModel/jobOffersViewModel';
+import { getJobOfferStatusActionClassName, getJobOfferStatusActions } from '../Utils/jobOfferStatusActions';
 
 // ── Skeleton ──────────────────────────────────────────────────────────────────
 export const JobOffersListSkeleton: React.FC = () => (
@@ -33,7 +35,8 @@ export const JobOffersListView: React.FC<{
   data: readonly JobOfferListItemViewModelDTO[];
   isFetching?: boolean;
   onSelectJobOffer: (id: string) => void;
-}> = ({ data, isFetching, onSelectJobOffer }) => (
+  onUpdateJobOfferStatus: (id: string, status: JobOfferStatus) => Promise<void>;
+}> = ({ data, isFetching, onSelectJobOffer, onUpdateJobOfferStatus }) => (
   <section className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
     {isFetching ? <div className="absolute inset-x-0 top-0 h-1 animate-pulse bg-sky-500" /> : null}
     <div className="border-b border-slate-200 p-5">
@@ -49,14 +52,13 @@ export const JobOffersListView: React.FC<{
     ) : (
       <div className="max-h-[720px] space-y-3 overflow-y-auto p-4">
         {data.map((offer) => (
-          <button
+          <article
             key={offer.id}
-            type="button"
-            className={`w-full rounded-2xl border p-4 text-left transition hover:border-sky-300 hover:bg-sky-50 ${
+            className={`rounded-2xl border p-4 transition hover:border-sky-300 hover:bg-sky-50 ${
               offer.isSelected ? 'border-sky-500 bg-sky-50 shadow-sm' : 'border-slate-200 bg-white'
             }`}
-            onClick={() => onSelectJobOffer(offer.id)}
           >
+            <button type="button" className="w-full text-left" onClick={() => onSelectJobOffer(offer.id)}>
             <div className="flex items-start justify-between gap-3">
               <div>
                 <h3 className="line-clamp-2 text-base font-semibold text-slate-950">{offer.title}</h3>
@@ -67,6 +69,9 @@ export const JobOffersListView: React.FC<{
                   </span>
                   <span className="rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-700 ring-1 ring-violet-100">
                     Modello: {offer.evaluatorModel}
+                  </span>
+                  <span className="rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-700 ring-1 ring-orange-100">
+                    Freschezza: {offer.freshness}
                   </span>
                 </div>
               </div>
@@ -103,7 +108,20 @@ export const JobOffersListView: React.FC<{
                 ))}
               </div>
             ) : null}
-          </button>
+            </button>
+            <div className="mt-4 flex flex-wrap gap-2 border-t border-slate-100 pt-3">
+              {getJobOfferStatusActions(offer.statusValue).map((action) => (
+                <button
+                  key={action.status}
+                  type="button"
+                  className={`rounded-xl border px-3 py-2 text-xs font-semibold transition ${getJobOfferStatusActionClassName(action.tone)}`}
+                  onClick={() => { void onUpdateJobOfferStatus(offer.id, action.status); }}
+                >
+                  {action.label}
+                </button>
+              ))}
+            </div>
+          </article>
         ))}
       </div>
     )}
@@ -131,13 +149,21 @@ const getPriorityBadgeClassName = (
 export const JobOffersList: React.FC<{
   state: LoadableState<readonly JobOfferListItemViewModelDTO[]>;
   onSelectJobOffer: (id: string) => void;
-}> = ({ state, onSelectJobOffer }) => {
+  onUpdateJobOfferStatus: (id: string, status: JobOfferStatus) => Promise<void>;
+}> = ({ state, onSelectJobOffer, onUpdateJobOfferStatus }) => {
   switch (state.status) {
     case 'loading':
       return <JobOffersListSkeleton />;
     case 'error':
       return <JobOffersListError error={state.error} />;
     case 'success':
-      return <JobOffersListView data={state.data} isFetching={state.isFetching} onSelectJobOffer={onSelectJobOffer} />;
+      return (
+        <JobOffersListView
+          data={state.data}
+          isFetching={state.isFetching}
+          onSelectJobOffer={onSelectJobOffer}
+          onUpdateJobOfferStatus={onUpdateJobOfferStatus}
+        />
+      );
   }
 };

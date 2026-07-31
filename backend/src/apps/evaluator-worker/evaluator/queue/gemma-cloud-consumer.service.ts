@@ -5,11 +5,15 @@ import { userProfileConfig } from '../../../../config/user-profile.config';
 import { EvaluatorQueueService } from './evaluator-queue.service';
 import { GemmaCloudProviderService } from '../providers/gemma-cloud-provider.service';
 import { LlmEvaluationResult } from '../providers/ai-provider.interface';
+import { EvaluatorErrorHandler } from './evaluator-error-handler';
+
+import { SlidingWindowRateLimiter } from '../utils/rate-limiter';
 
 @Injectable()
 export class GemmaCloudConsumerService {
   private readonly logger = new Logger(GemmaCloudConsumerService.name);
   private isRunning = false;
+  private readonly rateLimiter = new SlidingWindowRateLimiter(28, 60000); // Max 28 req/min
 
   constructor(
     private readonly prisma: PrismaService,
@@ -20,20 +24,24 @@ export class GemmaCloudConsumerService {
   start() {
     if (this.isRunning) return;
     this.isRunning = true;
-    this.consumerLoop().catch(err => {
-      this.logger.error(`❌ Errore critico nel Consumer ${this.gemmaCloudProvider.name}:`, err);
-    });
+
+    const concurrency = 3; // 3 worker paralleli per Gemma Cloud
+    const isAvail = this.gemmaCloudProvider.isAvailable();
+    this.logger.log(`💎 Consumer ${this.gemmaCloudProvider.name} avviato con ${concurrency} worker paralleli (limite: max 28 req/min - Disponibile: ${isAvail}, Strategy: ${aiConfig.strategy})`);
+
+    for (let i = 1; i <= concurrency; i++) {
+      this.runWorker(i).catch(err => {
+        this.logger.error(`❌ Errore critico nel Worker #${i} di ${this.gemmaCloudProvider.name}:`, err);
+      });
+    }
   }
 
-  private async consumerLoop() {
-    const isAvail = this.gemmaCloudProvider.isAvailable();
-    this.logger.log(`💎 Consumer ${this.gemmaCloudProvider.name} avviato (limite: max 30 req/min, pacing: 2s - Disponibile: ${isAvail}, Strategy: ${aiConfig.strategy})`);
-
+  private async runWorker(workerId: number) {
     let notAvailableLogged = false;
 
     while (true) {
       if (!this.gemmaCloudProvider.isAvailable() || aiConfig.strategy === 'ollama_only') {
-        if (!notAvailableLogged) {
+        if (!notAvailableLogged && workerId === 1) {
           this.logger.warn(`⚠️ Consumer ${this.gemmaCloudProvider.name} NON ATTIVO! Reason: isAvailable=${this.gemmaCloudProvider.isAvailable()}, Strategy=${aiConfig.strategy}`);
           notAvailableLogged = true;
         }
@@ -42,47 +50,39 @@ export class GemmaCloudConsumerService {
       }
       notAvailableLogged = false;
 
-      // Pesca l'annuncio dalla coda condivisa Denque
+      // Verifica se il provider e in cooldown a causa di rate limit 429 recenti
+      const cooldownMs = EvaluatorErrorHandler.getRemainingCooldownMs(this.gemmaCloudProvider.name);
+      if (cooldownMs > 0) {
+        await new Promise(res => setTimeout(res, Math.min(cooldownMs, 5000)));
+        continue;
+      }
+
+      // Pesca l annuncio dalla coda condivisa Denque
       const job = this.queueService.dequeue();
       if (!job) {
         await new Promise(res => setTimeout(res, 1000));
         continue;
       }
 
-      const startTime = Date.now();
+      // Attendi token dal rate limiter prima dell invio
+      await this.rateLimiter.waitForToken();
 
       try {
-        this.logger.log(`💎 [${this.gemmaCloudProvider.name} Consumer] Pescato annuncio "${job.title}" da Denque (Rimanenti in coda: ${this.queueService.size})`);
+        this.logger.log(`💎 [${this.gemmaCloudProvider.name} Worker #${workerId}] Pescato annuncio "${job.title}" da Denque (Rimanenti in coda: ${this.queueService.size})`);
         await this.evaluateJobOffer(job.id);
+        EvaluatorErrorHandler.recordSuccess(this.gemmaCloudProvider.name);
         this.queueService.markCompleted(job.id);
       } catch (err: any) {
-        const errMsg = err?.message || String(err);
-        const isQuotaExhausted = errMsg.includes('QuotaExhausted') || errMsg.includes('quota') || errMsg.includes('Per-Day') || errMsg.includes('DAILY');
-        const isRateLimit = err?.status === 429 || errMsg.includes('429') || errMsg.includes('RESOURCE_EXHAUSTED');
+        const action = EvaluatorErrorHandler.handleError(this.gemmaCloudProvider.name, err);
 
-        if (isQuotaExhausted) {
-          this.logger.warn(`🛑 [${this.gemmaCloudProvider.name} Consumer] Quota giornaliera esaurita per ${this.gemmaCloudProvider.name}! Rimesso annuncio in coda per gli altri Consumer. Pausa di raffreddamento di 15 minuti...`);
+        if (action.type === 'TEMPORARY_RETRY' || action.type === 'DAILY_PAUSE') {
           this.queueService.requeueToFront(job);
-          await new Promise(res => setTimeout(res, 15 * 60 * 1000));
-          continue;
-        } else if (isRateLimit) {
-          this.logger.warn(`⚠️ [${this.gemmaCloudProvider.name} Consumer] Hit 429 Rate Limit (RPM/Pacing) per "${job.title}". Pausa di raffreddamento (20s) e requeue in Denque...`);
-          this.queueService.requeueToFront(job);
-          await new Promise(res => setTimeout(res, 20000));
+          await new Promise((res) => setTimeout(res, action.waitMs));
           continue;
         } else {
-          this.logger.error(`❌ [${this.gemmaCloudProvider.name} Consumer] Errore irrecuperabile per "${job.title}": ${errMsg}. Registrazione come UNANALYZABLE.`);
           await this.saveUnanalyzableEvaluation(job.id, job.title, err);
           this.queueService.markCompleted(job.id);
         }
-      }
-
-
-      // Pacing di sicurezza: max 30 req/min (almeno 2000ms tra ogni richiesta: 60000ms / 30 = 2000ms)
-      const elapsedTime = Date.now() - startTime;
-      const minInterval = 2000;
-      if (elapsedTime < minInterval) {
-        await new Promise(res => setTimeout(res, minInterval - elapsedTime));
       }
     }
   }

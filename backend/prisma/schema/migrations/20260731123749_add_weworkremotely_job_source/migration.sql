@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "JobSource" ADD VALUE 'WE_WORK_REMOTELY';

@@ -21,7 +21,7 @@ export class EvaluatorService implements OnModuleInit {
     // Avvia il Producer (riempie la coda condivisa)
     this.producerService.start();
 
-    // Avvia i due Consumer Cloud veloci (pescano autonomamente dalla stessa coda condivisa)
+    // Avvia i Consumer Cloud veloci (pescano autonomamente dalla stessa coda condivisa)
     this.geminiConsumer.start();
     this.gemmaCloudConsumer.start();
   }

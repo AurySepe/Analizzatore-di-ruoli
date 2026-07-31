@@ -31,12 +31,10 @@
         "tags": [
           "job-offers"
         ]
-      }
-    },
-    "/job-offers/paginated": {
+      },
       "get": {
-        "operationId": "JobOffersController_findAllPaginated",
-        "summary": "Recupera la lista paginata e filtrata degli annunci di lavoro (con punteggi AI)",
+        "operationId": "JobOffersController_findAllNew",
+        "summary": "Recupera la lista dei nuovi annunci di lavoro non ancora catalogati (stato NEW, esclusi i DISQUALIFIED dall AI)",
         "parameters": [
           {
             "name": "page",
@@ -54,6 +52,21 @@
             "schema": {
               "default": 10,
               "type": "integer"
+            }
+          },
+          {
+            "name": "freshness",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per freschezza dell annuncio (HOT, RECENT, AGING, OLD)",
+            "schema": {
+              "enum": [
+                "HOT",
+                "RECENT",
+                "AGING",
+                "OLD"
+              ],
+              "type": "string"
             }
           },
           {
@@ -124,7 +137,9 @@
             "schema": {
               "enum": [
                 "ARBEITNOW",
-                "REMOTIVE"
+                "REMOTIVE",
+                "JOBICY",
+                "WE_WORK_REMOTELY"
               ],
               "type": "string"
             }
@@ -135,6 +150,26 @@
             "in": "query",
             "description": "Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B)",
             "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED)",
+            "schema": {
+              "enum": [
+                "NEW",
+                "SAVED",
+                "APPLIED",
+                "SCREENING",
+                "INTERVIEWING",
+                "OFFER",
+                "ACCEPTED",
+                "REJECTED",
+                "ARCHIVED"
+              ],
               "type": "string"
             }
           },
@@ -179,6 +214,742 @@
         ]
       }
     },
+    "/job-offers/active": {
+      "get": {
+        "operationId": "JobOffersController_findActive",
+        "summary": "Recupera TUTTI gli annunci attivi in gestione senza paginazione (SAVED, APPLIED, SCREENING, INTERVIEWING, OFFER)",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 10,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "freshness",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per freschezza dell annuncio (HOT, RECENT, AGING, OLD)",
+            "schema": {
+              "enum": [
+                "HOT",
+                "RECENT",
+                "AGING",
+                "OLD"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "priority",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per priorità AI: HIGH, MEDIUM, LOW, DISQUALIFIED",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "minDesireScore",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per punteggio minimo aderenza ai desiderata (0-100)",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "minCompetenceScore",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per punteggio minimo competenza tecnica (0-100)",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "minScore",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per punteggio globale minimo (0-100)",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "remoteType",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per modalità di lavoro (REMOTE, HYBRID, ON_SITE)",
+            "schema": {
+              "enum": [
+                "REMOTE",
+                "HYBRID",
+                "ON_SITE",
+                "UNSPECIFIED"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Cerca per testo nel titolo o nel nome azienda",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "source",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per fonte dell annuncio (ARBEITNOW, REMOTIVE)",
+            "schema": {
+              "enum": [
+                "ARBEITNOW",
+                "REMOTIVE",
+                "JOBICY",
+                "WE_WORK_REMOTELY"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "evaluatorModel",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED)",
+            "schema": {
+              "enum": [
+                "NEW",
+                "SAVED",
+                "APPLIED",
+                "SCREENING",
+                "INTERVIEWING",
+                "OFFER",
+                "ACCEPTED",
+                "REJECTED",
+                "ARCHIVED"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "includePending",
+            "required": false,
+            "in": "query",
+            "description": "Includi anche gli annunci non ancora valutati dall AI (default: false)",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/JobOfferDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "job-offers"
+        ]
+      }
+    },
+    "/job-offers/closed": {
+      "get": {
+        "operationId": "JobOffersController_findClosed",
+        "summary": "Recupera la lista degli annunci conclusi o scartati dall utente (REJECTED, ARCHIVED)",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 10,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "freshness",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per freschezza dell annuncio (HOT, RECENT, AGING, OLD)",
+            "schema": {
+              "enum": [
+                "HOT",
+                "RECENT",
+                "AGING",
+                "OLD"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "priority",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per priorità AI: HIGH, MEDIUM, LOW, DISQUALIFIED",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "minDesireScore",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per punteggio minimo aderenza ai desiderata (0-100)",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "minCompetenceScore",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per punteggio minimo competenza tecnica (0-100)",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "minScore",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per punteggio globale minimo (0-100)",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "remoteType",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per modalità di lavoro (REMOTE, HYBRID, ON_SITE)",
+            "schema": {
+              "enum": [
+                "REMOTE",
+                "HYBRID",
+                "ON_SITE",
+                "UNSPECIFIED"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Cerca per testo nel titolo o nel nome azienda",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "source",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per fonte dell annuncio (ARBEITNOW, REMOTIVE)",
+            "schema": {
+              "enum": [
+                "ARBEITNOW",
+                "REMOTIVE",
+                "JOBICY",
+                "WE_WORK_REMOTELY"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "evaluatorModel",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED)",
+            "schema": {
+              "enum": [
+                "NEW",
+                "SAVED",
+                "APPLIED",
+                "SCREENING",
+                "INTERVIEWING",
+                "OFFER",
+                "ACCEPTED",
+                "REJECTED",
+                "ARCHIVED"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "includePending",
+            "required": false,
+            "in": "query",
+            "description": "Includi anche gli annunci non ancora valutati dall AI (default: false)",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/JobOfferDto"
+                          }
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/PaginatedMetaDto"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "job-offers"
+        ]
+      }
+    },
+    "/job-offers/disqualified": {
+      "get": {
+        "operationId": "JobOffersController_findDisqualified",
+        "summary": "Recupera la lista degli annunci scartati dall AI (priorità DISQUALIFIED)",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 10,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "freshness",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per freschezza dell annuncio (HOT, RECENT, AGING, OLD)",
+            "schema": {
+              "enum": [
+                "HOT",
+                "RECENT",
+                "AGING",
+                "OLD"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "priority",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per priorità AI: HIGH, MEDIUM, LOW, DISQUALIFIED",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "minDesireScore",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per punteggio minimo aderenza ai desiderata (0-100)",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "minCompetenceScore",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per punteggio minimo competenza tecnica (0-100)",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "minScore",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per punteggio globale minimo (0-100)",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "remoteType",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per modalità di lavoro (REMOTE, HYBRID, ON_SITE)",
+            "schema": {
+              "enum": [
+                "REMOTE",
+                "HYBRID",
+                "ON_SITE",
+                "UNSPECIFIED"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Cerca per testo nel titolo o nel nome azienda",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "source",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per fonte dell annuncio (ARBEITNOW, REMOTIVE)",
+            "schema": {
+              "enum": [
+                "ARBEITNOW",
+                "REMOTIVE",
+                "JOBICY",
+                "WE_WORK_REMOTELY"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "evaluatorModel",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED)",
+            "schema": {
+              "enum": [
+                "NEW",
+                "SAVED",
+                "APPLIED",
+                "SCREENING",
+                "INTERVIEWING",
+                "OFFER",
+                "ACCEPTED",
+                "REJECTED",
+                "ARCHIVED"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "includePending",
+            "required": false,
+            "in": "query",
+            "description": "Includi anche gli annunci non ancora valutati dall AI (default: false)",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/JobOfferDto"
+                          }
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/PaginatedMetaDto"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "job-offers"
+        ]
+      }
+    },
+    "/job-offers/paginated": {
+      "get": {
+        "operationId": "JobOffersController_findAllPaginated",
+        "summary": "Alias per il recupero dei nuovi annunci non catalogati",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 10,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "freshness",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per freschezza dell annuncio (HOT, RECENT, AGING, OLD)",
+            "schema": {
+              "enum": [
+                "HOT",
+                "RECENT",
+                "AGING",
+                "OLD"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "priority",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per priorità AI: HIGH, MEDIUM, LOW, DISQUALIFIED",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "minDesireScore",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per punteggio minimo aderenza ai desiderata (0-100)",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "minCompetenceScore",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per punteggio minimo competenza tecnica (0-100)",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "minScore",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per punteggio globale minimo (0-100)",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "remoteType",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per modalità di lavoro (REMOTE, HYBRID, ON_SITE)",
+            "schema": {
+              "enum": [
+                "REMOTE",
+                "HYBRID",
+                "ON_SITE",
+                "UNSPECIFIED"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Cerca per testo nel titolo o nel nome azienda",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "source",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per fonte dell annuncio (ARBEITNOW, REMOTIVE)",
+            "schema": {
+              "enum": [
+                "ARBEITNOW",
+                "REMOTIVE",
+                "JOBICY",
+                "WE_WORK_REMOTELY"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "evaluatorModel",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED)",
+            "schema": {
+              "enum": [
+                "NEW",
+                "SAVED",
+                "APPLIED",
+                "SCREENING",
+                "INTERVIEWING",
+                "OFFER",
+                "ACCEPTED",
+                "REJECTED",
+                "ARCHIVED"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "includePending",
+            "required": false,
+            "in": "query",
+            "description": "Includi anche gli annunci non ancora valutati dall AI (default: false)",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/JobOfferDto"
+                          }
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/PaginatedMetaDto"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "job-offers"
+        ]
+      }
+    },
+    "/job-offers/analytics/funnel": {
+      "get": {
+        "operationId": "JobOffersController_getFunnelAnalytics",
+        "summary": "Recupera le statistiche ed il funnel di avanzamento/scarto delle candidature",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "job-offers"
+        ]
+      }
+    },
     "/job-offers/{id}": {
       "get": {
         "operationId": "JobOffersController_findOne",
@@ -196,6 +967,47 @@
         "responses": {
           "200": {
             "description": ""
+          }
+        },
+        "tags": [
+          "job-offers"
+        ]
+      }
+    },
+    "/job-offers/{id}/status": {
+      "patch": {
+        "operationId": "JobOffersController_updateStatus",
+        "summary": "Aggiorna lo stato di un annuncio di lavoro (es. APPLIED, INTERVIEWING, REJECTED, ARCHIVED) e registra la cronologia",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateJobOfferStatusDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobOfferDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -284,6 +1096,53 @@
       }
     },
     "schemas": {
+      "JobStatusHistoryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "fromStatus": {
+            "type": "string",
+            "enum": [
+              "NEW",
+              "SAVED",
+              "APPLIED",
+              "SCREENING",
+              "INTERVIEWING",
+              "OFFER",
+              "ACCEPTED",
+              "REJECTED",
+              "ARCHIVED"
+            ],
+            "nullable": true
+          },
+          "toStatus": {
+            "type": "string",
+            "enum": [
+              "NEW",
+              "SAVED",
+              "APPLIED",
+              "SCREENING",
+              "INTERVIEWING",
+              "OFFER",
+              "ACCEPTED",
+              "REJECTED",
+              "ARCHIVED"
+            ]
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "fromStatus",
+          "toStatus",
+          "createdAt"
+        ]
+      },
       "CreateCompanyDto": {
         "type": "object",
         "properties": {
@@ -330,7 +1189,9 @@
             "type": "string",
             "enum": [
               "ARBEITNOW",
-              "REMOTIVE"
+              "REMOTIVE",
+              "JOBICY",
+              "WE_WORK_REMOTELY"
             ]
           },
           "url": {
@@ -410,7 +1271,10 @@
               "NEW",
               "SAVED",
               "APPLIED",
+              "SCREENING",
               "INTERVIEWING",
+              "OFFER",
+              "ACCEPTED",
               "REJECTED",
               "ARCHIVED"
             ],
@@ -419,6 +1283,12 @@
           "notes": {
             "type": "object",
             "nullable": true
+          },
+          "statusHistory": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JobStatusHistoryDto"
+            }
           },
           "company": {
             "$ref": "#/components/schemas/CreateCompanyDto"
@@ -572,7 +1442,9 @@
             "type": "string",
             "enum": [
               "ARBEITNOW",
-              "REMOTIVE"
+              "REMOTIVE",
+              "JOBICY",
+              "WE_WORK_REMOTELY"
             ]
           },
           "url": {
@@ -655,7 +1527,10 @@
               "NEW",
               "SAVED",
               "APPLIED",
+              "SCREENING",
               "INTERVIEWING",
+              "OFFER",
+              "ACCEPTED",
               "REJECTED",
               "ARCHIVED"
             ],
@@ -672,6 +1547,22 @@
                 "$ref": "#/components/schemas/JobEvaluationDto"
               }
             ]
+          },
+          "freshness": {
+            "type": "string",
+            "enum": [
+              "HOT",
+              "RECENT",
+              "AGING",
+              "OLD"
+            ],
+            "example": "HOT"
+          },
+          "statusHistory": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JobStatusHistoryDto"
+            }
           },
           "createdAt": {
             "format": "date-time",
@@ -692,6 +1583,7 @@
           "company",
           "experienceLevel",
           "status",
+          "freshness",
           "createdAt",
           "updatedAt"
         ]
@@ -717,6 +1609,29 @@
           "page",
           "limit",
           "totalPages"
+        ]
+      },
+      "UpdateJobOfferStatusDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "NEW",
+              "SAVED",
+              "APPLIED",
+              "SCREENING",
+              "INTERVIEWING",
+              "OFFER",
+              "ACCEPTED",
+              "REJECTED",
+              "ARCHIVED"
+            ],
+            "description": "Nuovo stato dell annuncio"
+          }
+        },
+        "required": [
+          "status"
         ]
       }
     }

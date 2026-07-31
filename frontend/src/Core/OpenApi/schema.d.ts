@@ -11,10 +11,62 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Recupera la lista dei nuovi annunci di lavoro non ancora catalogati (stato NEW, esclusi i DISQUALIFIED dall AI) */
+        get: operations["JobOffersController_findAllNew"];
         put?: never;
         /** Crea o aggiorna un annuncio di lavoro */
         post: operations["JobOffersController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/job-offers/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recupera TUTTI gli annunci attivi in gestione senza paginazione (SAVED, APPLIED, SCREENING, INTERVIEWING, OFFER) */
+        get: operations["JobOffersController_findActive"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/job-offers/closed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recupera la lista degli annunci conclusi o scartati dall utente (REJECTED, ARCHIVED) */
+        get: operations["JobOffersController_findClosed"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/job-offers/disqualified": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recupera la lista degli annunci scartati dall AI (priorità DISQUALIFIED) */
+        get: operations["JobOffersController_findDisqualified"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -28,8 +80,25 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Recupera la lista paginata e filtrata degli annunci di lavoro (con punteggi AI) */
+        /** Alias per il recupero dei nuovi annunci non catalogati */
         get: operations["JobOffersController_findAllPaginated"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/job-offers/analytics/funnel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recupera le statistiche ed il funnel di avanzamento/scarto delle candidature */
+        get: operations["JobOffersController_getFunnelAnalytics"];
         put?: never;
         post?: never;
         delete?: never;
@@ -53,6 +122,23 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/job-offers/{id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Aggiorna lo stato di un annuncio di lavoro (es. APPLIED, INTERVIEWING, REJECTED, ARCHIVED) e registra la cronologia */
+        patch: operations["JobOffersController_updateStatus"];
         trace?: never;
     };
     "/evaluations/status": {
@@ -110,6 +196,15 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        JobStatusHistoryDto: {
+            id: string;
+            /** @enum {string|null} */
+            fromStatus: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED" | null;
+            /** @enum {string} */
+            toStatus: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
+            /** Format: date-time */
+            createdAt: string;
+        };
         CreateCompanyDto: {
             name: string;
             websiteUrl?: Record<string, never> | null;
@@ -122,7 +217,7 @@ export interface components {
         CreateJobOfferDto: {
             externalId?: Record<string, never> | null;
             /** @enum {string} */
-            source: "ARBEITNOW" | "REMOTIVE";
+            source: "ARBEITNOW" | "REMOTIVE" | "JOBICY";
             url: string;
             title: string;
             location?: Record<string, never> | null;
@@ -150,8 +245,9 @@ export interface components {
              * @default NEW
              * @enum {string}
              */
-            status: "NEW" | "SAVED" | "APPLIED" | "INTERVIEWING" | "REJECTED" | "ARCHIVED";
+            status: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
             notes?: Record<string, never> | null;
+            statusHistory?: components["schemas"]["JobStatusHistoryDto"][];
             company: components["schemas"]["CreateCompanyDto"];
         };
         CompanyDto: {
@@ -196,7 +292,7 @@ export interface components {
             id: string;
             externalId?: Record<string, never> | null;
             /** @enum {string} */
-            source: "ARBEITNOW" | "REMOTIVE";
+            source: "ARBEITNOW" | "REMOTIVE" | "JOBICY";
             url: string;
             title: string;
             location?: Record<string, never> | null;
@@ -225,9 +321,15 @@ export interface components {
              * @default NEW
              * @enum {string}
              */
-            status: "NEW" | "SAVED" | "APPLIED" | "INTERVIEWING" | "REJECTED" | "ARCHIVED";
+            status: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
             notes?: Record<string, never> | null;
             evaluation?: components["schemas"]["JobEvaluationDto"] | null;
+            /**
+             * @example HOT
+             * @enum {string}
+             */
+            freshness: "HOT" | "RECENT" | "AGING" | "OLD";
+            statusHistory?: components["schemas"]["JobStatusHistoryDto"][];
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
@@ -239,6 +341,13 @@ export interface components {
             limit: number;
             totalPages: number;
         };
+        UpdateJobOfferStatusDto: {
+            /**
+             * @description Nuovo stato dell annuncio
+             * @enum {string}
+             */
+            status: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
+        };
     };
     responses: never;
     parameters: never;
@@ -248,6 +357,53 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    JobOffersController_findAllNew: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                /** @description Filtra per freschezza dell annuncio (HOT, RECENT, AGING, OLD) */
+                freshness?: "HOT" | "RECENT" | "AGING" | "OLD";
+                /** @description Filtra per priorità AI: HIGH, MEDIUM, LOW, DISQUALIFIED */
+                priority?: string;
+                /** @description Filtra per punteggio minimo aderenza ai desiderata (0-100) */
+                minDesireScore?: number;
+                /** @description Filtra per punteggio minimo competenza tecnica (0-100) */
+                minCompetenceScore?: number;
+                /** @description Filtra per punteggio globale minimo (0-100) */
+                minScore?: number;
+                /** @description Filtra per modalità di lavoro (REMOTE, HYBRID, ON_SITE) */
+                remoteType?: "REMOTE" | "HYBRID" | "ON_SITE" | "UNSPECIFIED";
+                /** @description Cerca per testo nel titolo o nel nome azienda */
+                search?: string;
+                /** @description Filtra per fonte dell annuncio (ARBEITNOW, REMOTIVE) */
+                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY";
+                /** @description Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B) */
+                evaluatorModel?: string;
+                /** @description Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED) */
+                status?: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
+                /** @description Includi anche gli annunci non ancora valutati dall AI (default: false) */
+                includePending?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["JobOfferDto"][];
+                        meta?: components["schemas"]["PaginatedMetaDto"];
+                    };
+                };
+            };
+        };
+    };
     JobOffersController_create: {
         parameters: {
             query?: never;
@@ -271,11 +427,13 @@ export interface operations {
             };
         };
     };
-    JobOffersController_findAllPaginated: {
+    JobOffersController_findActive: {
         parameters: {
             query?: {
                 page?: number;
                 limit?: number;
+                /** @description Filtra per freschezza dell annuncio (HOT, RECENT, AGING, OLD) */
+                freshness?: "HOT" | "RECENT" | "AGING" | "OLD";
                 /** @description Filtra per priorità AI: HIGH, MEDIUM, LOW, DISQUALIFIED */
                 priority?: string;
                 /** @description Filtra per punteggio minimo aderenza ai desiderata (0-100) */
@@ -289,9 +447,55 @@ export interface operations {
                 /** @description Cerca per testo nel titolo o nel nome azienda */
                 search?: string;
                 /** @description Filtra per fonte dell annuncio (ARBEITNOW, REMOTIVE) */
-                source?: "ARBEITNOW" | "REMOTIVE";
+                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY";
                 /** @description Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B) */
                 evaluatorModel?: string;
+                /** @description Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED) */
+                status?: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
+                /** @description Includi anche gli annunci non ancora valutati dall AI (default: false) */
+                includePending?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobOfferDto"][];
+                };
+            };
+        };
+    };
+    JobOffersController_findClosed: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                /** @description Filtra per freschezza dell annuncio (HOT, RECENT, AGING, OLD) */
+                freshness?: "HOT" | "RECENT" | "AGING" | "OLD";
+                /** @description Filtra per priorità AI: HIGH, MEDIUM, LOW, DISQUALIFIED */
+                priority?: string;
+                /** @description Filtra per punteggio minimo aderenza ai desiderata (0-100) */
+                minDesireScore?: number;
+                /** @description Filtra per punteggio minimo competenza tecnica (0-100) */
+                minCompetenceScore?: number;
+                /** @description Filtra per punteggio globale minimo (0-100) */
+                minScore?: number;
+                /** @description Filtra per modalità di lavoro (REMOTE, HYBRID, ON_SITE) */
+                remoteType?: "REMOTE" | "HYBRID" | "ON_SITE" | "UNSPECIFIED";
+                /** @description Cerca per testo nel titolo o nel nome azienda */
+                search?: string;
+                /** @description Filtra per fonte dell annuncio (ARBEITNOW, REMOTIVE) */
+                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY";
+                /** @description Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B) */
+                evaluatorModel?: string;
+                /** @description Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED) */
+                status?: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
                 /** @description Includi anche gli annunci non ancora valutati dall AI (default: false) */
                 includePending?: boolean;
             };
@@ -314,6 +518,117 @@ export interface operations {
             };
         };
     };
+    JobOffersController_findDisqualified: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                /** @description Filtra per freschezza dell annuncio (HOT, RECENT, AGING, OLD) */
+                freshness?: "HOT" | "RECENT" | "AGING" | "OLD";
+                /** @description Filtra per priorità AI: HIGH, MEDIUM, LOW, DISQUALIFIED */
+                priority?: string;
+                /** @description Filtra per punteggio minimo aderenza ai desiderata (0-100) */
+                minDesireScore?: number;
+                /** @description Filtra per punteggio minimo competenza tecnica (0-100) */
+                minCompetenceScore?: number;
+                /** @description Filtra per punteggio globale minimo (0-100) */
+                minScore?: number;
+                /** @description Filtra per modalità di lavoro (REMOTE, HYBRID, ON_SITE) */
+                remoteType?: "REMOTE" | "HYBRID" | "ON_SITE" | "UNSPECIFIED";
+                /** @description Cerca per testo nel titolo o nel nome azienda */
+                search?: string;
+                /** @description Filtra per fonte dell annuncio (ARBEITNOW, REMOTIVE) */
+                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY";
+                /** @description Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B) */
+                evaluatorModel?: string;
+                /** @description Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED) */
+                status?: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
+                /** @description Includi anche gli annunci non ancora valutati dall AI (default: false) */
+                includePending?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["JobOfferDto"][];
+                        meta?: components["schemas"]["PaginatedMetaDto"];
+                    };
+                };
+            };
+        };
+    };
+    JobOffersController_findAllPaginated: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                /** @description Filtra per freschezza dell annuncio (HOT, RECENT, AGING, OLD) */
+                freshness?: "HOT" | "RECENT" | "AGING" | "OLD";
+                /** @description Filtra per priorità AI: HIGH, MEDIUM, LOW, DISQUALIFIED */
+                priority?: string;
+                /** @description Filtra per punteggio minimo aderenza ai desiderata (0-100) */
+                minDesireScore?: number;
+                /** @description Filtra per punteggio minimo competenza tecnica (0-100) */
+                minCompetenceScore?: number;
+                /** @description Filtra per punteggio globale minimo (0-100) */
+                minScore?: number;
+                /** @description Filtra per modalità di lavoro (REMOTE, HYBRID, ON_SITE) */
+                remoteType?: "REMOTE" | "HYBRID" | "ON_SITE" | "UNSPECIFIED";
+                /** @description Cerca per testo nel titolo o nel nome azienda */
+                search?: string;
+                /** @description Filtra per fonte dell annuncio (ARBEITNOW, REMOTIVE) */
+                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY";
+                /** @description Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B) */
+                evaluatorModel?: string;
+                /** @description Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED) */
+                status?: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
+                /** @description Includi anche gli annunci non ancora valutati dall AI (default: false) */
+                includePending?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["JobOfferDto"][];
+                        meta?: components["schemas"]["PaginatedMetaDto"];
+                    };
+                };
+            };
+        };
+    };
+    JobOffersController_getFunnelAnalytics: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     JobOffersController_findOne: {
         parameters: {
             query?: never;
@@ -330,6 +645,31 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    JobOffersController_updateStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateJobOfferStatusDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobOfferDto"];
+                };
             };
         };
     };

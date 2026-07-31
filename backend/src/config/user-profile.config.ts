@@ -35,7 +35,7 @@ I worked as a Research Associate and Scholar at the University of Salerno, and c
 * **Programs:** I participated in multiple Erasmus+ youth exchanges in countries including Romania, Poland, Lithuania, and Austria, serving as a National Group Leader for the Italian team during these projects.
 `,
 
-  searchCriteriaText: `I am looking for a Product Engineer role in Europe within a solid, fast-growing startup, ideally at the Series A or Series B stage. I am fully open to relocating across Europe for the right opportunity. I am not looking to join a large corporation where I would simply be executing tickets; instead, I want to be part of a company with a well-defined product and a lean structure that offers a high degree of autonomy and decision-making power.
+  searchCriteriaText: `I am looking for a Product Engineer role in Europe at a PRODUCT COMPANY (SaaS, B2B/B2C tech product, etc.). Company size is flexible—I am open to both fast-growing startups and larger, more established product companies. The key requirement is company culture: I want an environment driven by strong product ownership, high autonomy, and a lean, fast-moving mindset (operating with the agility of a small company regardless of size). I am fully open to relocating across Europe for the right opportunity. I am not looking for a rigid corporate setup or a consulting firm where I would simply be executing isolated tickets or client projects without decision-making power or product impact.
 
 Drawing from my direct experience as a co-founder and full-stack developer—building complex software ecosystems and robust backend infrastructures—I want an environment where I can apply my entrepreneurial mindset end-to-end. It is crucial for me that the company is deeply customer-centric. I am seeking a role where engineering is not isolated in a silo, but is actively involved in understanding user needs and directly translating them into effective solutions.
 
@@ -47,12 +47,13 @@ Leveraging my background in cross-functional development and my experience colla
 
 --- KEY CONSTRAINTS & DEAL-BREAKERS FOR AI SCORING ---
 - Target Roles: Product Engineer, Mid-level / Junior Fullstack Engineer, Product-focused Engineer in lean product teams.
-- Ideal Company Stage: Fast-growing startups (Series A / Series B), product-centric companies.
+- Ideal Company Environment: Product companies (B2B/B2C SaaS, Tech Products) of any size (from fast-growing startups to larger tech companies) that foster strong product ownership, high autonomy, and operate with a lean, fast-moving startup mindset.
 - Geography / Work Setup: Open to Relocation across Europe, Remote, or Hybrid in Europe.
-- Strict Exclusions (DEAL-BREAKERS / DISQUALIFIERS):
+- Strict Exclusions (DEAL-BREAKERS / DISQUALIFIERS - IMMEDIATE DISQUALIFICATION):
+  * IT Consulting companies, outsourcing agencies, software houses, body rental, staff augmentation, or agency consulting services (IMMEDIATE DISQUALIFICATION: I ONLY want Product Companies building their own product).
   * Senior, Staff, Lead, Principal, or Executive roles (I am a 25-year-old developer seeking Junior / Mid-level positions, NOT Senior level roles).
   * Unpaid roles, pure equity-only compensation (no base salary).
-  * Large corporations with siloed ticket-executing roles (no product ownership).
+  * Rigid corporate environments with siloed ticket-executing roles lacking product ownership and autonomy.
   * Non-technical / non-engineering roles (Sales, HR, Marketing, Admin).
   * Obsolete legacy technology stacks or pure IT support / helpdesk roles.
 `,

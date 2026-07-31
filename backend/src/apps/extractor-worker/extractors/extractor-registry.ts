@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { BaseExtractor, RawExtractedJob } from './base-extractor';
+import { BaseExtractor, RawExtractedJob, ExtractionResult } from './base-extractor';
 
 @Injectable()
 export class ExtractorRegistry {
@@ -22,17 +22,17 @@ export class ExtractorRegistry {
     return Array.from(this.extractors.values());
   }
 
-  async extractAll(lastSyncTimestamps?: Map<string, Date>): Promise<Map<string, RawExtractedJob[]>> {
-    const results = new Map<string, RawExtractedJob[]>();
+  async extractAll(lastSyncTimestamps?: Map<string, Date>): Promise<Map<string, ExtractionResult>> {
+    const results = new Map<string, ExtractionResult>();
 
     for (const [sourceName, extractor] of this.extractors.entries()) {
       const watermark = lastSyncTimestamps?.get(sourceName);
       try {
-        const jobs = await extractor.extract(watermark);
-        results.set(sourceName, jobs);
+        const res = await extractor.extract(watermark);
+        results.set(sourceName, res);
       } catch (err) {
         this.logger.error(`❌ Errore durante l estrazione dalla fonte "${sourceName}":`, err);
-        results.set(sourceName, []);
+        results.set(sourceName, { jobs: [], hasErrors: true });
       }
     }
 

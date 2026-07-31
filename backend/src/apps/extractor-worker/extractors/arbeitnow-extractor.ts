@@ -1,12 +1,13 @@
 import { JobSource } from '@prisma/client';
 import { convertToMarkdown } from '../../../commons/utils/html-to-markdown';
-import { BaseExtractor, RawExtractedJob } from './base-extractor';
+import { BaseExtractor, RawExtractedJob, ExtractionResult } from './base-extractor';
 
 export interface ArbeitnowExtractorOptions {
   keywords?: string[];
   onlyRemote?: boolean;
   onlyTechAndProduct?: boolean;
   onlyEnglish?: boolean;
+  onlyEurope?: boolean;
 }
 
 export class ArbeitnowExtractor extends BaseExtractor {
@@ -18,6 +19,7 @@ export class ArbeitnowExtractor extends BaseExtractor {
   private readonly onlyRemote: boolean;
   private readonly onlyTechAndProduct: boolean;
   private readonly onlyEnglish: boolean;
+  private readonly onlyEurope: boolean;
 
   // Keyword positive per Ruoli Software & Prodotto
   private readonly techAndProductKeywords = [
@@ -53,16 +55,18 @@ export class ArbeitnowExtractor extends BaseExtractor {
     this.onlyRemote = options.onlyRemote ?? false;
     this.onlyTechAndProduct = options.onlyTechAndProduct ?? true;
     this.onlyEnglish = options.onlyEnglish ?? true;
+    this.onlyEurope = options.onlyEurope ?? true;
   }
 
-  async extract(lastSyncTimestamp?: Date): Promise<RawExtractedJob[]> {
+  async extract(lastSyncTimestamp?: Date): Promise<ExtractionResult> {
     const extractedJobs: RawExtractedJob[] = [];
     let currentPage = 1;
     let hasMorePages = true;
     let stopPagination = false;
+    let hasErrors = false;
 
     this.logger.log(
-      `🔍 [${this.sourceName}] Inizio estrazione (Tech/Product: ${this.onlyTechAndProduct}, Solo Inglese: ${this.onlyEnglish}, Watermark: ${lastSyncTimestamp ? lastSyncTimestamp.toISOString() : 'Nessuno'})...`,
+      `🔍 [${this.sourceName}] Inizio estrazione (Tech/Product: ${this.onlyTechAndProduct}, Solo Inglese: ${this.onlyEnglish}, Solo Europa: ${this.onlyEurope}, Watermark: ${lastSyncTimestamp ? lastSyncTimestamp.toISOString() : 'Nessuno'})...`,
     );
 
     while (hasMorePages && !stopPagination) {
@@ -73,6 +77,7 @@ export class ArbeitnowExtractor extends BaseExtractor {
 
         if (!response.ok) {
           this.logger.error(`❌ HTTP ${response.status} durante il fetch da ${this.sourceName}`);
+          hasErrors = true;
           break;
         }
 
@@ -94,6 +99,10 @@ export class ArbeitnowExtractor extends BaseExtractor {
           }
 
           if (this.onlyRemote && !item.remote) {
+            continue;
+          }
+
+          if (this.onlyEurope && !this.isEuropeanLocation(item.location)) {
             continue;
           }
 
@@ -150,12 +159,13 @@ export class ArbeitnowExtractor extends BaseExtractor {
         }
       } catch (err) {
         this.logger.error(`❌ Errore durante l estrazione da ${this.sourceName} pagina ${currentPage}:`, err);
+        hasErrors = true;
         break;
       }
     }
 
-    this.logger.log(`✅ [${this.sourceName}] Estrazione completata. Totale offerte valide filtrate: ${extractedJobs.length}`);
-    return extractedJobs;
+    this.logger.log(`✅ [${this.sourceName}] Estrazione completata. Totale offerte valide filtrate: ${extractedJobs.length} (hasErrors: ${hasErrors})`);
+    return { jobs: extractedJobs, hasErrors };
   }
 
   private isEnglishContent(text: string): boolean {

@@ -34,9 +34,21 @@ model JobOffer {
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   evaluation      JobEvaluation?
+  statusHistory   JobStatusHistory[]
 
   @@unique([source, externalId])
   @@index([companyId])
   @@index([source])
   @@index([status])
+}
+
+model JobStatusHistory {
+  id          String            @id @default(uuid())
+  jobOfferId  String
+  jobOffer    JobOffer          @relation(fields: [jobOfferId], references: [id], onDelete: Cascade)
+  fromStatus  ApplicationStatus?
+  toStatus    ApplicationStatus
+  createdAt   DateTime          @default(now())
+
+  @@index([jobOfferId])
 }

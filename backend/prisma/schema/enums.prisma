@@ -19,7 +19,10 @@ enum ApplicationStatus {
   NEW
   SAVED
   APPLIED
+  SCREENING
   INTERVIEWING
+  OFFER
+  ACCEPTED
   REJECTED
   ARCHIVED
 }
@@ -31,15 +34,25 @@ enum EvaluationStatus {
 
 enum EvaluatorModel {
   GEMINI_3_1_FLASH_LITE
+  GEMINI_3_5_FLASH_LITE
   GEMMA_4_12B
   GEMMA_4_31B
   UNKNOWN
 }
 
 
+enum EvaluationPriority {
+  HIGH
+  MEDIUM
+  LOW
+  DISQUALIFIED
+}
+
 enum JobSource {
   ARBEITNOW
   REMOTIVE
+  JOBICY
+  WE_WORK_REMOTELY
 }
 
 

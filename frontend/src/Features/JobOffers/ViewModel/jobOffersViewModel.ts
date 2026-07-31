@@ -3,8 +3,11 @@ import type {
   EvaluationProcessingStatusDto,
   JobOfferDto,
   JobOfferPriority,
+  JobOfferFreshness,
   JobOfferSource,
+  JobOfferStatus,
   JobOffersFiltersData,
+  JobOffersSection,
   PaginatedJobOffersResponse,
 } from '../State/jobOffersAtoms';
 
@@ -21,11 +24,14 @@ export interface JobOfferListItemViewModelDTO {
   readonly title: string;
   readonly companyName: string;
   readonly source: string;
+  readonly freshness: string;
   readonly evaluatorModel: string;
   readonly location: string;
   readonly remoteType: string;
   readonly experienceLevel: string;
   readonly status: string;
+  readonly statusValue: JobOfferStatus;
+  readonly isArchived: boolean;
   readonly salaryRange: string;
   readonly datePosted: string;
   readonly skillsPreview: readonly string[];
@@ -54,6 +60,7 @@ export interface JobOfferDetailViewModelDTO {
   readonly id: string;
   readonly title: string;
   readonly source: string;
+  readonly freshness: string;
   readonly url: string;
   readonly externalId: string;
   readonly location: string;
@@ -65,6 +72,8 @@ export interface JobOfferDetailViewModelDTO {
   readonly roleCategory: string;
   readonly experienceLevel: string;
   readonly status: string;
+  readonly statusValue: JobOfferStatus;
+  readonly isArchived: boolean;
   readonly notes: string;
   readonly createdAt: string;
   readonly updatedAt: string;
@@ -104,9 +113,11 @@ export interface JobOffersFiltersViewModelDTO {
   readonly title: string;
   readonly source: JobOfferSource | null;
   readonly priority: JobOfferPriority | null;
+  readonly freshness: JobOfferFreshness | null;
   readonly activeFiltersCount: number;
   readonly sourceOptions: readonly { readonly value: JobOfferSource; readonly label: string }[];
   readonly priorityOptions: readonly { readonly value: JobOfferPriority; readonly label: string }[];
+  readonly freshnessOptions: readonly { readonly value: JobOfferFreshness; readonly label: string }[];
 }
 
 export interface JobOffersPaginationViewModelDTO {
@@ -118,7 +129,16 @@ export interface JobOffersPaginationViewModelDTO {
   readonly canGoNext: boolean;
 }
 
+export interface JobOffersHeaderViewModelDTO {
+  readonly eyebrow: string;
+  readonly title: string;
+  readonly description: string;
+}
+
 export interface JobOffersViewModelDTO {
+  readonly header: JobOffersHeaderViewModelDTO;
+  readonly section: JobOffersSection;
+  readonly isDetailModalOpen: boolean;
   readonly jobOffersState: LoadableState<readonly JobOfferListItemViewModelDTO[]>;
   readonly selectedJobOfferState: LoadableState<JobOfferDetailViewModelDTO | null>;
   readonly statsState: LoadableState<JobOffersStatsViewModelDTO>;
@@ -128,6 +148,29 @@ export interface JobOffersViewModelDTO {
 }
 
 const missingValue = 'Non specificato';
+
+const sectionHeaders: Record<JobOffersSection, JobOffersHeaderViewModelDTO> = {
+  new: {
+    eyebrow: 'Da valutare',
+    title: 'Nuovi annunci',
+    description: 'Consulta gli annunci in stato NEW, valuta quelli interessanti e spostali tra da candidare, candidature o scartati.'
+  },
+  active: {
+    eyebrow: 'In gestione',
+    title: 'Lavori attivi',
+    description: 'Segui gli annunci da candidare, le candidature inviate e i colloqui in corso.'
+  },
+  closed: {
+    eyebrow: 'Conclusi',
+    title: 'Lavori chiusi',
+    description: 'Rivedi gli annunci per cui ti hanno rifiutato o che hai scartato e ripristina quelli da riaprire.'
+  },
+  disqualified: {
+    eyebrow: 'Scarti AI',
+    title: 'Annunci scartati automaticamente',
+    description: 'Rivedi gli annunci che l’AI ha classificato come DISQUALIFIED e recupera quelli da valutare comunque.',
+  },
+};
 
 const remoteTypeLabels: Record<JobOfferDto['remoteType'], string> = {
   REMOTE: 'Da remoto',
@@ -146,23 +189,44 @@ const experienceLevelLabels: Record<JobOfferDto['experienceLevel'], string> = {
   UNSPECIFIED: missingValue,
 };
 
-const statusLabels: Record<JobOfferDto['status'], string> = {
+const statusLabels: Record<JobOfferStatus, string> = {
   NEW: 'Nuovo',
-  SAVED: 'Salvato',
+  SAVED: 'Da candidare',
   APPLIED: 'Candidatura inviata',
+  SCREENING: 'Screening',
   INTERVIEWING: 'Colloqui',
-  REJECTED: 'Rifiutato',
-  ARCHIVED: 'Archiviato',
+  OFFER: 'Offerta ricevuta',
+  ACCEPTED: 'Accettata',
+  REJECTED: 'Mi hanno rifiutato',
+  ARCHIVED: 'Scartato da me',
 };
+
+const freshnessLabels: Record<JobOfferFreshness, string> = {
+  HOT: 'Appena pubblicato',
+  RECENT: 'Recente',
+  AGING: 'In scadenza',
+  OLD: 'Datato',
+};
+
+const freshnessOptions: readonly { readonly value: JobOfferFreshness; readonly label: string }[] = [
+  { value: 'HOT', label: freshnessLabels.HOT },
+  { value: 'RECENT', label: freshnessLabels.RECENT },
+  { value: 'AGING', label: freshnessLabels.AGING },
+  { value: 'OLD', label: freshnessLabels.OLD },
+];
 
 const sourceLabels: Record<JobOfferSource, string> = {
   ARBEITNOW: 'Arbeitnow',
   REMOTIVE: 'Remotive',
+  JOBICY: 'Jobicy',
+  WE_WORK_REMOTELY: 'We Work Remotely',
 };
 
 const sourceOptions: readonly { readonly value: JobOfferSource; readonly label: string }[] = [
   { value: 'ARBEITNOW', label: sourceLabels.ARBEITNOW },
   { value: 'REMOTIVE', label: sourceLabels.REMOTIVE },
+  { value: 'JOBICY', label: sourceLabels.JOBICY },
+  { value: 'WE_WORK_REMOTELY', label: sourceLabels.WE_WORK_REMOTELY },
 ];
 
 const priorityLabels: Record<JobOfferPriority, string> = {
@@ -264,17 +328,29 @@ const getPriorityTone = (
 
 const formatScore = (value: number): string => `${Math.round(value)}%`;
 
-type KnownEvaluatorModel = 'GEMINI_3_1_FLASH_LITE' | 'GEMMA_4_12B' | 'GEMMA_4_31B' | 'UNKNOWN';
+type KnownEvaluatorModel =
+  | 'GEMINI_3_1_FLASH_LITE'
+  | 'GEMINI_3_5_FLASH_LITE'
+  | 'GEMMA_4_12B'
+  | 'GEMMA_4_31B'
+  | 'UNKNOWN';
 
 const evaluatorModelLabels: Record<KnownEvaluatorModel, string> = {
   GEMINI_3_1_FLASH_LITE: 'Gemini 3.1 Flash Lite',
+  GEMINI_3_5_FLASH_LITE: 'Gemini 3.5 Flash Lite',
   GEMMA_4_12B: 'Gemma 4 12B',
   GEMMA_4_31B: 'Gemma 4 31B',
   UNKNOWN: 'Modello sconosciuto',
 };
 
 const isKnownEvaluatorModel = (value: string): value is KnownEvaluatorModel => {
-  return value === 'GEMINI_3_1_FLASH_LITE' || value === 'GEMMA_4_12B' || value === 'GEMMA_4_31B' || value === 'UNKNOWN';
+  return (
+    value === 'GEMINI_3_1_FLASH_LITE' ||
+    value === 'GEMINI_3_5_FLASH_LITE' ||
+    value === 'GEMMA_4_12B' ||
+    value === 'GEMMA_4_31B' ||
+    value === 'UNKNOWN'
+  );
 };
 
 const formatEvaluatorModel = (value: string | null | undefined): string => {
@@ -303,6 +379,7 @@ const mapFilters = (filters: JobOffersFiltersData): JobOffersFiltersViewModelDTO
     filters.title.trim() ? filters.title : null,
     filters.source,
     filters.priority,
+    filters.freshness,
   ].filter((value) => value !== null).length;
 
   return {
@@ -310,6 +387,7 @@ const mapFilters = (filters: JobOffersFiltersData): JobOffersFiltersViewModelDTO
     activeFiltersCount,
     sourceOptions,
     priorityOptions,
+    freshnessOptions,
   };
 };
 
@@ -434,11 +512,14 @@ const mapListItem = (
   title: offer.title,
   companyName: offer.company.name,
   source: sourceLabels[offer.source],
+  freshness: freshnessLabels[offer.freshness],
   evaluatorModel: formatEvaluatorModel(offer.evaluation?.evaluatorModel),
   location: formatOptional(offer.location),
   remoteType: remoteTypeLabels[offer.remoteType],
   experienceLevel: experienceLevelLabels[offer.experienceLevel],
   status: statusLabels[offer.status],
+  statusValue: offer.status,
+  isArchived: offer.status === 'ARCHIVED',
   salaryRange: formatSalary(offer),
   datePosted: formatDate(offer.datePosted),
   skillsPreview: offer.skills?.slice(0, 4) ?? [],
@@ -450,6 +531,7 @@ const mapDetail = (offer: JobOfferDto): JobOfferDetailViewModelDTO => ({
   id: offer.id,
   title: offer.title,
   source: sourceLabels[offer.source],
+  freshness: freshnessLabels[offer.freshness],
   url: offer.url,
   externalId: formatOptional(offer.externalId),
   location: formatOptional(offer.location),
@@ -461,6 +543,8 @@ const mapDetail = (offer: JobOfferDto): JobOfferDetailViewModelDTO => ({
   roleCategory: formatOptional(offer.roleCategory),
   experienceLevel: experienceLevelLabels[offer.experienceLevel],
   status: statusLabels[offer.status],
+  statusValue: offer.status,
+  isArchived: offer.status === 'ARCHIVED',
   notes: formatOptional(offer.notes),
   createdAt: formatDateTime(offer.createdAt),
   updatedAt: formatDateTime(offer.updatedAt),
@@ -479,14 +563,28 @@ const mapDetail = (offer: JobOfferDto): JobOfferDetailViewModelDTO => ({
 });
 
 export class JobOffersViewModel {
+  public static createProcessingStatus(
+    processingStatusQuery: QueryResultLike<EvaluationProcessingStatusDto>,
+  ): LoadableState<EvaluationProcessingStatusViewModelDTO> {
+    return mapQueryToLoadableState(
+      processingStatusQuery,
+      mapProcessingStatus,
+      'Errore durante il caricamento dello stato di elaborazione.',
+    );
+  }
+
   public static create(
     jobOffersQuery: QueryResultLike<PaginatedJobOffersResponse>,
     selectedJobOfferQuery: QueryResultLike<JobOfferDto | null>,
     processingStatusQuery: QueryResultLike<EvaluationProcessingStatusDto>,
     filters: JobOffersFiltersData,
     selectedJobOfferId: string | null,
+    section: JobOffersSection,
   ): JobOffersViewModelDTO {
     return {
+      header: sectionHeaders[section],
+      section,
+      isDetailModalOpen: selectedJobOfferId !== null,
       jobOffersState: mapQueryToLoadableState(
         jobOffersQuery,
         (response) => response.data.map((offer) => mapListItem(offer, selectedJobOfferId)),

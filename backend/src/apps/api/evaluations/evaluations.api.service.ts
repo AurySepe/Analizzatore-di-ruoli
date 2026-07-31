@@ -47,7 +47,12 @@ export class EvaluationsApiService {
 
     const evaluations = await this.prisma.jobEvaluation.findMany({
       where,
-      orderBy: { desireMatchScore: 'desc' },
+      orderBy: [
+        { priority: 'asc' },
+        { overallScore: 'desc' },
+        { desireMatchScore: 'desc' },
+        { createdAt: 'desc' },
+      ],
     });
 
     return evaluations.map(e => ({

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { JobSource } from '@prisma/client';
 import { convertToMarkdown } from '../../../commons/utils/html-to-markdown';
-import { BaseExtractor, RawExtractedJob } from './base-extractor';
+import { BaseExtractor, RawExtractedJob, ExtractionResult } from './base-extractor';
 
 // Schema Zod per validare la risposta dell API Remotive
 export const remotiveJobItemSchema = z.object({
@@ -24,9 +24,12 @@ export const remotiveApiResponseSchema = z.object({
 
 export type RemotiveJobItem = z.infer<typeof remotiveJobItemSchema>;
 
+export type RemotiveCategory = 'software-dev' | 'devops' | 'data' | 'product';
+
 export interface RemotiveExtractorOptions {
   onlyTechAndProduct?: boolean;
   onlyEnglish?: boolean;
+  onlyEurope?: boolean;
 }
 
 export class RemotiveExtractor extends BaseExtractor {
@@ -36,6 +39,7 @@ export class RemotiveExtractor extends BaseExtractor {
 
   private readonly onlyTechAndProduct: boolean;
   private readonly onlyEnglish: boolean;
+  private readonly onlyEurope: boolean;
 
   // Keyword positive per Ruoli Software & Product Engineer
   private readonly techAndProductKeywords = [
@@ -62,14 +66,16 @@ export class RemotiveExtractor extends BaseExtractor {
     super();
     this.onlyTechAndProduct = options.onlyTechAndProduct ?? true;
     this.onlyEnglish = options.onlyEnglish ?? true;
+    this.onlyEurope = options.onlyEurope ?? true;
   }
 
-  async extract(lastSyncTimestamp?: Date): Promise<RawExtractedJob[]> {
+  async extract(lastSyncTimestamp?: Date): Promise<ExtractionResult> {
     const extractedJobsMap = new Map<string, RawExtractedJob>();
-    const categoriesToFetch = ['software-dev', 'devops', 'data', 'product'];
+    const categoriesToFetch: RemotiveCategory[] = ['software-dev', 'devops', 'data', 'product'];
+    let hasErrors = false;
 
     this.logger.log(
-      `🔍 [${this.sourceName}] Inizio estrazione (Tech/Product: ${this.onlyTechAndProduct}, Solo Inglese: ${this.onlyEnglish}, Watermark: ${lastSyncTimestamp ? lastSyncTimestamp.toISOString() : 'Nessuno'})...`,
+      `🔍 [${this.sourceName}] Inizio estrazione (Tech/Product: ${this.onlyTechAndProduct}, Solo Inglese: ${this.onlyEnglish}, Solo Europa: ${this.onlyEurope}, Watermark: ${lastSyncTimestamp ? lastSyncTimestamp.toISOString() : 'Nessuno'})...`,
     );
 
     for (const category of categoriesToFetch) {
@@ -81,6 +87,7 @@ export class RemotiveExtractor extends BaseExtractor {
 
         if (!response.ok) {
           this.logger.error(`❌ HTTP ${response.status} durante il fetch della categoria ${category} da ${this.sourceName}`);
+          hasErrors = true;
           continue;
         }
 
@@ -90,6 +97,7 @@ export class RemotiveExtractor extends BaseExtractor {
         const parseResult = remotiveApiResponseSchema.safeParse(jsonPayload);
         if (!parseResult.success) {
           this.logger.error(`❌ Validazione Zod fallita per ${this.sourceName} (cat: ${category}):`, parseResult.error.format());
+          hasErrors = true;
           continue;
         }
 
@@ -105,6 +113,11 @@ export class RemotiveExtractor extends BaseExtractor {
 
           // Watermark check
           if (lastSyncTimestamp && itemPostedDate <= lastSyncTimestamp) {
+            continue;
+          }
+
+          // Filtro Europa su candidate_required_location
+          if (this.onlyEurope && !this.isEuropeanLocation(item.candidate_required_location)) {
             continue;
           }
 
@@ -156,12 +169,13 @@ export class RemotiveExtractor extends BaseExtractor {
       }
     } catch (err: any) {
       this.logger.error(`❌ Errore durante l estrazione della categoria ${category} da ${this.sourceName}:`, err?.message || err);
+      hasErrors = true;
     }
   }
 
   const result = Array.from(extractedJobsMap.values());
-  this.logger.log(`✅ [${this.sourceName}] Estrazione completata da tutte le categorie tech. Totale offerte uniche filtrate: ${result.length}`);
-  return result;
+  this.logger.log(`✅ [${this.sourceName}] Estrazione completata da tutte le categorie tech. Totale offerte uniche filtrate: ${result.length} (hasErrors: ${hasErrors})`);
+  return { jobs: result, hasErrors };
 }
 
 

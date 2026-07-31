@@ -25,6 +25,7 @@
     "db:reset-jobs": "npx ts-node scripts/reset-extracted-data.ts",
     "db:reset-evaluations": "npx ts-node scripts/reset-evaluations.ts",
     "db:reset-unanalyzable": "npx ts-node scripts/reset-unanalyzable-evaluations.ts",
+    "db:restore": "npx ts-node scripts/restore-backup.ts",
     "startAndMigrate": "prisma migrate deploy && node dist/src/apps/api/main"
   },
   "dependencies": {
@@ -45,6 +46,7 @@
     "ollama": "^0.6.3",
     "pg": "^8.22.0",
     "reflect-metadata": "^0.2.2",
+    "rss-parser": "^3.13.0",
     "rxjs": "^7.8.1",
     "turndown": "^7.2.4",
     "zod": "^3.24.1"

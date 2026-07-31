@@ -12,6 +12,11 @@ export interface AiConfig {
     model: string;
     timeoutMs: number;
   };
+  gemini35: {
+    apiKey: string;
+    model: string;
+    timeoutMs: number;
+  };
   gemmaCloud: {
     apiKey: string;
     model: string;
@@ -29,6 +34,11 @@ export const aiConfig: AiConfig = {
   gemini: {
     apiKey: process.env.GEMINI_API_KEY || '',
     model: process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite',
+    timeoutMs: 30000,
+  },
+  gemini35: {
+    apiKey: process.env.GEMINI_API_KEY || '',
+    model: process.env.GEMINI_3_5_MODEL || 'gemini-3.5-flash-lite',
     timeoutMs: 30000,
   },
   gemmaCloud: {

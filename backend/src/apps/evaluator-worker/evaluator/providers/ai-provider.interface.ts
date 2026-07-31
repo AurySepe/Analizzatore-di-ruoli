@@ -1,4 +1,4 @@
-export type EvaluatorModelType = 'GEMINI_3_1_FLASH_LITE' | 'GEMMA_4_12B' | 'GEMMA_4_31B' | 'UNKNOWN';
+export type EvaluatorModelType = 'GEMINI_3_1_FLASH_LITE' | 'GEMINI_3_5_FLASH_LITE' | 'GEMMA_4_12B' | 'GEMMA_4_31B' | 'UNKNOWN';
 
 
 export interface LlmEvaluationResult {

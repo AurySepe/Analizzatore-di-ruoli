@@ -2,93 +2,103 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../../../commons/prisma/prisma.service';
 import { aiConfig } from '../../../../config/ai.config';
 import { userProfileConfig } from '../../../../config/user-profile.config';
-import { LlmEvaluationResult } from '../providers/ai-provider.interface';
+import { AiEvaluatorProvider, LlmEvaluationResult } from '../providers/ai-provider.interface';
 import { GeminiProviderService } from '../providers/gemini-provider.service';
+import { Gemini35ProviderService } from '../providers/gemini35-provider.service';
 import { EvaluatorQueueService } from './evaluator-queue.service';
+import { EvaluatorErrorHandler } from './evaluator-error-handler';
+
+import { SlidingWindowRateLimiter } from '../utils/rate-limiter';
 
 @Injectable()
 export class GeminiConsumerService {
   private readonly logger = new Logger(GeminiConsumerService.name);
   private isRunning = false;
+  private readonly rateLimiters = new Map<string, SlidingWindowRateLimiter>();
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly queueService: EvaluatorQueueService,
-    private readonly geminiProvider: GeminiProviderService,
-  ) { }
+    private readonly gemini31Provider: GeminiProviderService,
+    private readonly gemini35Provider: Gemini35ProviderService,
+  ) {
+    // Configura RateLimiter a 14 richieste/minuto per ciascun provider Gemini
+    this.rateLimiters.set(this.gemini31Provider.name, new SlidingWindowRateLimiter(14, 60000));
+    this.rateLimiters.set(this.gemini35Provider.name, new SlidingWindowRateLimiter(14, 60000));
+  }
 
   start() {
     if (this.isRunning) return;
     this.isRunning = true;
-    this.consumerLoop().catch(err => {
-      this.logger.error('❌ Errore critico nel Consumer Gemini:', err);
-    });
+
+    const concurrencyPerProvider = 3;
+
+    this.startProviderWorkers(this.gemini31Provider, concurrencyPerProvider);
+    this.startProviderWorkers(this.gemini35Provider, concurrencyPerProvider);
   }
 
-  private async consumerLoop() {
-    const isAvail = this.geminiProvider.isAvailable();
-    this.logger.log(`✨ Gemini Consumer avviato (limite: max 15 req/min, pacing: 4s - Disponibile: ${isAvail}, Strategy: ${aiConfig.strategy})`);
+  private startProviderWorkers(provider: AiEvaluatorProvider, concurrency: number) {
+    const isAvail = provider.isAvailable();
+    this.logger.log(
+      `✨ Consumer ${provider.name} avviato con ${concurrency} worker paralleli (Disponibile: ${isAvail}, Strategy: ${aiConfig.strategy})`,
+    );
 
-    let notAvailableLogged = false;
+    for (let i = 1; i <= concurrency; i++) {
+      this.runWorkerLoop(i, provider).catch((err) => {
+        this.logger.error(`❌ Errore critico nel Worker #${i} del Provider ${provider.name}:`, err);
+      });
+    }
+  }
+
+  private async runWorkerLoop(workerId: number, provider: AiEvaluatorProvider) {
+    const rateLimiter = this.rateLimiters.get(provider.name)!;
 
     while (true) {
-      if (!this.geminiProvider.isAvailable() || aiConfig.strategy === 'ollama_only') {
-        if (!notAvailableLogged) {
-          this.logger.warn(`⚠️ Gemini Consumer NON ATTIVO! Reason: isAvailable=${this.geminiProvider.isAvailable()}, Strategy=${aiConfig.strategy}`);
-          notAvailableLogged = true;
-        }
-        await new Promise(res => setTimeout(res, 5000));
+      if (!provider.isAvailable() || aiConfig.strategy === 'ollama_only') {
+        await new Promise((res) => setTimeout(res, 5000));
         continue;
       }
-      notAvailableLogged = false;
 
-      // Pesca l'annuncio dalla coda condivisa Denque
+      // Verifica se il provider e in cooldown a causa di rate limit 429 recenti
+      const cooldownMs = EvaluatorErrorHandler.getRemainingCooldownMs(provider.name);
+      if (cooldownMs > 0) {
+        await new Promise((res) => setTimeout(res, Math.min(cooldownMs, 5000)));
+        continue;
+      }
+
+      // Pesca l annuncio dalla coda condivisa Denque
       const job = this.queueService.dequeue();
       if (!job) {
-        await new Promise(res => setTimeout(res, 1000));
+        await new Promise((res) => setTimeout(res, 1000));
         continue;
       }
 
-
-      const startTime = Date.now();
+      // Attendi il token di rate limit prima di inviare la richiesta API
+      await rateLimiter.waitForToken();
 
       try {
-        this.logger.log(`✨ [Gemini Consumer] Pescato annuncio "${job.title}" da Denque (Rimanenti in coda: ${this.queueService.size})`);
-        await this.evaluateJobOffer(job.id);
+        this.logger.log(
+          `✨ [${provider.name} Worker #${workerId}] Pescato annuncio "${job.title}" da Denque (Rimanenti in coda: ${this.queueService.size})`,
+        );
+        await this.evaluateJobOffer(job.id, provider);
+        EvaluatorErrorHandler.recordSuccess(provider.name);
         this.queueService.markCompleted(job.id);
       } catch (err: any) {
-        const errMsg = err?.message || String(err);
-        const isQuotaExhausted = errMsg.includes('QuotaExhausted') || errMsg.includes('quota') || errMsg.includes('Per-Day') || errMsg.includes('DAILY');
-        const isRateLimit = err?.status === 429 || errMsg.includes('429') || errMsg.includes('RESOURCE_EXHAUSTED');
+        const action = EvaluatorErrorHandler.handleError(provider.name, err);
 
-        if (isQuotaExhausted) {
-          this.logger.warn(`🛑 [Gemini Consumer] Quota giornaliera esaurita (QuotaExhausted/DailyLimit) per Gemini Cloud! Rimesso annuncio in coda per gli altri Consumer. Pausa di raffreddamento del Consumer Gemini per 15 minuti...`);
+        if (action.type === 'TEMPORARY_RETRY' || action.type === 'DAILY_PAUSE') {
           this.queueService.requeueToFront(job);
-          await new Promise(res => setTimeout(res, 15 * 60 * 1000));
-          continue;
-        } else if (isRateLimit) {
-          this.logger.warn(`⚠️ [Gemini Consumer] Hit 429 Rate Limit (RPM/Pacing) per "${job.title}". Pausa di raffreddamento (20s) e requeue in Denque...`);
-          this.queueService.requeueToFront(job);
-          await new Promise(res => setTimeout(res, 20000));
+          await new Promise((res) => setTimeout(res, action.waitMs));
           continue;
         } else {
-          this.logger.error(`❌ [Gemini Consumer] Errore irrecuperabile per "${job.title}": ${errMsg}. Registrazione come UNANALYZABLE.`);
-          await this.saveUnanalyzableEvaluation(job.id, job.title, err);
+          await this.saveUnanalyzableEvaluation(job.id, job.title, provider, err);
           this.queueService.markCompleted(job.id);
         }
-      }
-
-
-      // Pacing di sicurezza: max 15 req/min (almeno 4000ms tra ogni richiesta: 60000ms / 15 = 4000ms)
-      const elapsedTime = Date.now() - startTime;
-      const minInterval = 4000;
-      if (elapsedTime < minInterval) {
-        await new Promise(res => setTimeout(res, minInterval - elapsedTime));
       }
     }
   }
 
-  private async evaluateJobOffer(jobOfferId: string) {
+  private async evaluateJobOffer(jobOfferId: string, provider: AiEvaluatorProvider) {
     const jobOffer = await this.prisma.jobOffer.findUnique({
       where: { id: jobOfferId },
       include: { company: true },
@@ -99,8 +109,8 @@ export class GeminiConsumerService {
     }
 
     const prompt = this.buildPrompt(jobOffer);
-    const result = await this.geminiProvider.evaluate(prompt);
-    await this.saveEvaluationToDb(jobOfferId, jobOffer.title, result);
+    const result = await provider.evaluate(prompt);
+    await this.saveEvaluationToDb(jobOfferId, jobOffer.title, provider, result);
   }
 
   private buildPrompt(jobOffer: any): string {
@@ -134,11 +144,16 @@ ${fullDesc}
 Rispondi ESCLUSIVAMENTE in formato JSON valido.`;
   }
 
-  private async saveEvaluationToDb(jobOfferId: string, title: string, result: LlmEvaluationResult) {
+  private async saveEvaluationToDb(
+    jobOfferId: string,
+    title: string,
+    provider: AiEvaluatorProvider,
+    result: LlmEvaluationResult,
+  ) {
     const prosJson = result.pros ? JSON.stringify(result.pros) : null;
     const consJson = result.cons ? JSON.stringify(result.cons) : null;
     const evalStatus = result.status || 'SUCCESS';
-    const evalModel = result.evaluatorModel || 'GEMINI_3_1_FLASH_LITE';
+    const evalModel = result.evaluatorModel || provider.modelEnum;
 
     const evaluation = await this.prisma.jobEvaluation.upsert({
       where: { jobOfferId },
@@ -172,25 +187,31 @@ Rispondi ESCLUSIVAMENTE in formato JSON valido.`;
       },
     });
 
-    this.logger.log(`✅ [Gemini Consumer] Valutazione salvata per "${title}": Model=${evaluation.evaluatorModel}, Status=${evaluation.status}, Priority=${evaluation.priority}`);
+    this.logger.log(
+      `✅ [${provider.name} Consumer] Valutazione salvata per "${title}": Model=${evaluation.evaluatorModel}, Status=${evaluation.status}, Priority=${evaluation.priority}`,
+    );
   }
 
-  private async saveUnanalyzableEvaluation(jobOfferId: string, title: string, err: any) {
+  private async saveUnanalyzableEvaluation(
+    jobOfferId: string,
+    title: string,
+    provider: AiEvaluatorProvider,
+    err: any,
+  ) {
     const unanalyzableResult: LlmEvaluationResult = {
       status: 'UNANALYZABLE',
-      evaluatorModel: 'UNKNOWN',
+      evaluatorModel: provider.modelEnum,
       desireMatchScore: 0,
       competenceScore: 0,
       overallScore: 0,
       priority: 'DISQUALIFIED',
-      desireMatchReasoning: 'Non analizzabile: i provider AI non sono riusciti ad elaborare l annuncio.',
-      competenceMatch: 'Non analizzabile.',
-      detailedReasoning: `### ⚠️ Annuncio Non Analizzabile\n\nImpossibile completare l'analisi automatica dell'annuncio con i provider AI attivi.\n\n**Dettaglio Errore:**\n\`\`\`\n${err?.message || err}\n\`\`\``,
+      desireMatchReasoning: 'Impossibile analizzare l annuncio.',
+      competenceMatch: 'Impossibile analizzare l annuncio.',
+      detailedReasoning: `Analisi non riuscita a causa di un errore irrecuperabile del modello ${provider.name}: ${err?.message || err}`,
       pros: [],
-      cons: ['Errore irrecuperabile durante l analisi AI dei provider.'],
+      cons: ['Errore irrecuperabile durante l analisi AI.'],
     };
 
-    await this.saveEvaluationToDb(jobOfferId, title, unanalyzableResult);
+    await this.saveEvaluationToDb(jobOfferId, title, provider, unanalyzableResult);
   }
-
 }

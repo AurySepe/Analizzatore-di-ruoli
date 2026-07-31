@@ -1,4 +1,4 @@
-import type { JobOfferPriority, JobOfferSource } from '../../State/jobOffersAtoms';
+import type { JobOfferFreshness, JobOfferPriority, JobOfferSource } from '../../State/jobOffersAtoms';
 import type { JobOffersFiltersViewModelDTO } from '../../ViewModel/jobOffersViewModel';
 
 // ── View ──────────────────────────────────────────────────────────────────────
@@ -7,12 +7,14 @@ export const JobOffersFilters: React.FC<{
   onTitleFilterChange: (value: string) => void;
   onSourceFilterChange: (value: JobOfferSource | null) => void;
   onPriorityChange: (value: JobOfferPriority | null) => void;
+  onFreshnessFilterChange: (value: JobOfferFreshness | null) => void;
   onResetFilters: () => void;
 }> = ({
   filters,
   onTitleFilterChange,
   onSourceFilterChange,
   onPriorityChange,
+  onFreshnessFilterChange,
   onResetFilters,
 }) => (
   <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -20,7 +22,7 @@ export const JobOffersFilters: React.FC<{
       <div>
         <h2 className="text-xl font-semibold tracking-tight text-slate-950">Filtri annunci</h2>
         <p className="mt-1 text-sm text-slate-500">
-          Filtra lato server per titolo, fonte e priorità AI.
+          Filtra lato server per titolo, nome azienda, fonte e priorità AI.
         </p>
       </div>
       <div className="flex items-center gap-3">
@@ -37,13 +39,13 @@ export const JobOffersFilters: React.FC<{
       </div>
     </div>
 
-    <div className="mt-5 grid gap-4 lg:grid-cols-3">
+    <div className="mt-5 grid gap-4 lg:grid-cols-4">
       <label className="block">
-        <span className="text-sm font-semibold text-slate-700">Titolo</span>
+        <span className="text-sm font-semibold text-slate-700">Titolo o azienda</span>
         <input
           className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-sky-500 focus:ring-4 focus:ring-sky-100"
           value={filters.title}
-          placeholder="Es. Product Manager"
+          placeholder="Es. Product Manager o nome azienda"
           onChange={(event) => onTitleFilterChange(event.target.value)}
         />
       </label>
@@ -75,6 +77,20 @@ export const JobOffersFilters: React.FC<{
           ))}
         </select>
       </label>
+
+      <label className="block">
+        <span className="text-sm font-semibold text-slate-700">Freschezza</span>
+        <select
+          className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-sky-500 focus:ring-4 focus:ring-sky-100"
+          value={filters.freshness ?? ''}
+          onChange={(event) => onFreshnessFilterChange(parseFreshness(event.target.value))}
+        >
+          <option value="">Tutte</option>
+          {filters.freshnessOptions.map((option) => (
+            <option key={option.value} value={option.value}>{option.label}</option>
+          ))}
+        </select>
+      </label>
     </div>
   </section>
 );
@@ -83,6 +99,20 @@ const parseSource = (value: string): JobOfferSource | null => {
   switch (value) {
     case 'ARBEITNOW':
     case 'REMOTIVE':
+    case 'JOBICY':
+    case 'WE_WORK_REMOTELY':
+      return value;
+    default:
+      return null;
+  }
+};
+
+const parseFreshness = (value: string): JobOfferFreshness | null => {
+  switch (value) {
+    case 'HOT':
+    case 'RECENT':
+    case 'AGING':
+    case 'OLD':
       return value;
     default:
       return null;

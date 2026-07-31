@@ -9,7 +9,7 @@ model JobEvaluation {
   desireMatchScore     Float            @default(0) // Punteggio aderenza desiderata (0-100)
   competenceScore      Float            @default(0) // Punteggio competenza tecnica (0-100)
   overallScore         Float            @default(0) // Punteggio complessivo (0-100)
-  priority             String           // "HIGH", "MEDIUM", "LOW", "DISQUALIFIED"
+  priority             EvaluationPriority
   
   desireMatchReasoning String?          // Spiegazione aderenza ai desiderata
   competenceMatch      String           // Valutazione competenze vs gap

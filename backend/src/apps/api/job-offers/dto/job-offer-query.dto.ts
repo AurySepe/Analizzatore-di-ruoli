@@ -3,10 +3,14 @@ import { IsOptional, IsString, IsNumber, IsEnum, IsBoolean } from 'class-validat
 import { Type, Transform } from 'class-transformer';
 import { JobSource } from '@prisma/client';
 import { QueryPaginationDto } from '../../../../commons/pagination/query-pagination.dto';
-import { RemoteTypeEnum } from './job-offer.dto';
+import { RemoteTypeEnum, ApplicationStatusEnum, JobOfferFreshnessEnum } from './job-offer.dto';
 
 
 export class JobOfferFilterQueryDto extends QueryPaginationDto {
+  @ApiPropertyOptional({ enum: JobOfferFreshnessEnum, description: 'Filtra per freschezza dell annuncio (HOT, RECENT, AGING, OLD)' })
+  @IsOptional()
+  @IsEnum(JobOfferFreshnessEnum)
+  freshness?: JobOfferFreshnessEnum;
   @ApiPropertyOptional({ description: 'Filtra per priorità AI: HIGH, MEDIUM, LOW, DISQUALIFIED' })
   @IsOptional()
   @IsString()
@@ -50,6 +54,11 @@ export class JobOfferFilterQueryDto extends QueryPaginationDto {
   @IsOptional()
   @IsString()
   evaluatorModel?: string;
+
+  @ApiPropertyOptional({ enum: ApplicationStatusEnum, description: 'Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED)' })
+  @IsOptional()
+  @IsEnum(ApplicationStatusEnum)
+  status?: ApplicationStatusEnum;
 
   @ApiPropertyOptional({ description: 'Includi anche gli annunci non ancora valutati dall AI (default: false)' })
   @IsOptional()

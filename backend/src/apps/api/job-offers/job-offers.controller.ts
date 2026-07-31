@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Body, Param, Query, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, Param, Query, NotFoundException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApplicationStatus } from '@prisma/client';
 import { JobOffersService } from './job-offers.service';
-import { JobOfferDto, CreateJobOfferDto, RemoteTypeEnum, ExperienceLevelEnum, ApplicationStatusEnum } from './dto/job-offer.dto';
+import { JobOfferDto, CreateJobOfferDto, RemoteTypeEnum, ExperienceLevelEnum, ApplicationStatusEnum, calculateFreshness } from './dto/job-offer.dto';
 import { JobOfferFilterQueryDto } from './dto/job-offer-query.dto';
+import { UpdateJobOfferStatusDto } from './dto/update-job-offer-status.dto';
 import { CompanyDto } from './dto/company.dto';
 import { JobEvaluationDto } from '../evaluations/dto/job-evaluation.dto';
 import { PaginatedDto } from '../../../commons/pagination/paginated.dto';
@@ -21,18 +23,82 @@ export class JobOffersController {
     return this.mapToDto(rawOffer);
   }
 
-  @Get('paginated')
-  @ApiOperation({ summary: 'Recupera la lista paginata e filtrata degli annunci di lavoro (con punteggi AI)' })
+  @Get()
+  @ApiOperation({ summary: 'Recupera la lista dei nuovi annunci di lavoro non ancora catalogati (stato NEW, esclusi i DISQUALIFIED dall AI)' })
   @ApiPaginatedResponse(JobOfferDto)
-  async findAllPaginated(
+  async findAllNew(
     @Query() query: JobOfferFilterQueryDto,
   ): Promise<PaginatedDto<JobOfferDto>> {
-    const paginated = await this.jobOffersService.findAllPaginated(query);
+    const paginated = await this.jobOffersService.findAllPaginated(query, {
+      allowedStatuses: [ApplicationStatus.NEW],
+      excludeDisqualified: true,
+    });
 
     return {
       data: paginated.data.map((item: any) => this.mapToDto(item)),
       meta: paginated.meta,
     };
+  }
+
+  @Get('active')
+  @ApiOperation({ summary: 'Recupera TUTTI gli annunci attivi in gestione senza paginazione (SAVED, APPLIED, SCREENING, INTERVIEWING, OFFER)' })
+  @ApiResponse({ status: 200, type: [JobOfferDto] })
+  async findActive(
+    @Query() query: JobOfferFilterQueryDto,
+  ): Promise<JobOfferDto[]> {
+    const offers = await this.jobOffersService.findActiveAll(query);
+    return offers.map((item: any) => this.mapToDto(item));
+  }
+
+  @Get('closed')
+  @ApiOperation({ summary: 'Recupera la lista degli annunci conclusi o scartati dall utente (REJECTED, ARCHIVED)' })
+  @ApiPaginatedResponse(JobOfferDto)
+  async findClosed(
+    @Query() query: JobOfferFilterQueryDto,
+  ): Promise<PaginatedDto<JobOfferDto>> {
+    const closedStatuses = [
+      ApplicationStatus.REJECTED,
+      ApplicationStatus.ARCHIVED,
+    ];
+    const paginated = await this.jobOffersService.findAllPaginated(query, {
+      allowedStatuses: closedStatuses,
+    });
+
+    return {
+      data: paginated.data.map((item: any) => this.mapToDto(item)),
+      meta: paginated.meta,
+    };
+  }
+
+  @Get('disqualified')
+  @ApiOperation({ summary: 'Recupera la lista degli annunci scartati dall AI (priorità DISQUALIFIED)' })
+  @ApiPaginatedResponse(JobOfferDto)
+  async findDisqualified(
+    @Query() query: JobOfferFilterQueryDto,
+  ): Promise<PaginatedDto<JobOfferDto>> {
+    const paginated = await this.jobOffersService.findAllPaginated(query, {
+      onlyDisqualified: true,
+    });
+
+    return {
+      data: paginated.data.map((item: any) => this.mapToDto(item)),
+      meta: paginated.meta,
+    };
+  }
+
+  @Get('paginated')
+  @ApiOperation({ summary: 'Alias per il recupero dei nuovi annunci non catalogati' })
+  @ApiPaginatedResponse(JobOfferDto)
+  async findAllPaginated(
+    @Query() query: JobOfferFilterQueryDto,
+  ): Promise<PaginatedDto<JobOfferDto>> {
+    return this.findAllNew(query);
+  }
+
+  @Get('analytics/funnel')
+  @ApiOperation({ summary: 'Recupera le statistiche ed il funnel di avanzamento/scarto delle candidature' })
+  async getFunnelAnalytics() {
+    return this.jobOffersService.getFunnelAnalytics();
   }
 
   @Get(':id')
@@ -44,6 +110,22 @@ export class JobOffersController {
     }
 
     return this.mapToDto(rawOffer);
+  }
+
+  @Patch(':id/status')
+  @ApiOperation({ summary: 'Aggiorna lo stato di un annuncio di lavoro (es. APPLIED, INTERVIEWING, REJECTED, ARCHIVED) e registra la cronologia' })
+  @ApiResponse({ status: 200, type: JobOfferDto })
+  async updateStatus(
+    @Param('id') id: string,
+    @Body() dto: UpdateJobOfferStatusDto,
+  ): Promise<JobOfferDto> {
+    const existing = await this.jobOffersService.findOne(id);
+    if (!existing) {
+      throw new NotFoundException(`Annuncio con ID "${id}" non trovato`);
+    }
+
+    const updated = await this.jobOffersService.updateStatus(id, dto.status as ApplicationStatus);
+    return this.mapToDto(updated);
   }
 
   private mapToDto(rawOffer: any): JobOfferDto {
@@ -81,6 +163,14 @@ export class JobOffersController {
       };
     }
 
+    const statusHistory = rawOffer.statusHistory
+      ? rawOffer.statusHistory.map((h: any) => ({
+          id: h.id,
+          fromStatus: h.fromStatus as ApplicationStatusEnum | null,
+          toStatus: h.toStatus as ApplicationStatusEnum,
+          createdAt: h.createdAt,
+        }))
+      : [];
 
     return new JobOfferDto({
       id: rawOffer.id,
@@ -103,6 +193,8 @@ export class JobOffersController {
       experienceLevel: (rawOffer.experienceLevel as ExperienceLevelEnum) ?? ExperienceLevelEnum.UNSPECIFIED,
       skills: parsedSkills,
       status: (rawOffer.status as ApplicationStatusEnum) ?? ApplicationStatusEnum.NEW,
+      freshness: calculateFreshness(rawOffer.datePosted, rawOffer.createdAt),
+      statusHistory,
       notes: rawOffer.notes ?? null,
       createdAt: rawOffer.createdAt,
       updatedAt: rawOffer.updatedAt,

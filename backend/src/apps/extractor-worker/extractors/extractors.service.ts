@@ -4,6 +4,8 @@ import { PrismaService } from '../../../commons/prisma/prisma.service';
 import { ExtractorRegistry } from './extractor-registry';
 import { ArbeitnowExtractor } from './arbeitnow-extractor';
 import { RemotiveExtractor } from './remotive-extractor';
+import { JobicyExtractor } from './jobicy-extractor';
+import { WeWorkRemotelyExtractor } from './weworkremotely-extractor';
 import { RawExtractedJob } from './base-extractor';
 
 @Injectable()
@@ -19,10 +21,25 @@ export class ExtractorsService implements OnModuleInit {
         onlyTechAndProduct: true,
         onlyEnglish: true,
         onlyRemote: false,
+        onlyEurope: true,
       }),
     );
     this.registry.register(
       new RemotiveExtractor({
+        onlyTechAndProduct: true,
+        onlyEnglish: true,
+        onlyEurope: true,
+      }),
+    );
+    this.registry.register(
+      new JobicyExtractor({
+        onlyTechAndProduct: true,
+        onlyEnglish: true,
+        onlyEurope: true,
+      }),
+    );
+    this.registry.register(
+      new WeWorkRemotelyExtractor({
         onlyTechAndProduct: true,
         onlyEnglish: true,
       }),
@@ -57,31 +74,58 @@ export class ExtractorsService implements OnModuleInit {
 
         const lastSyncWatermark = syncState?.lastSyncedAt ?? undefined;
 
-        const extractedJobs = await extractor.extract(lastSyncWatermark);
+        const extractionResult = await extractor.extract(lastSyncWatermark);
+        const extractedJobs = extractionResult.jobs;
+        const hasErrors = extractionResult.hasErrors;
+
         this.logger.log(`📥 Estratte ${extractedJobs.length} offerte da "${sourceName}". Salvataggio nel DB...`);
 
         const savedCount = await this.saveExtractedJobs(extractedJobs);
 
-        const newWatermark = extractedJobs.length > 0
-          ? new Date(Math.max(...extractedJobs.map(j => (j.datePosted ? new Date(j.datePosted).getTime() : Date.now()))))
-          : new Date();
+        // Se si è verificato un errore durante l'estrazione (es. fetch fallito su 1 o più pagine/categorie),
+        // NON aggiorniamo il watermark `lastSyncedAt` per evitare di perdere annunci non scaricati a causa dell'errore.
+        if (!hasErrors) {
+          const newWatermark = extractedJobs.length > 0
+            ? new Date(Math.max(...extractedJobs.map((j) => (j.datePosted ? new Date(j.datePosted).getTime() : Date.now()))))
+            : (lastSyncWatermark ?? new Date());
 
-        await this.prisma.syncState.upsert({
-          where: { source: sourceName },
-          update: {
-            lastSyncedAt: newWatermark,
-            totalJobsExtracted: { increment: savedCount },
-            lastStatus: 'SUCCESS',
-          },
-          create: {
-            source: sourceName,
-            lastSyncedAt: newWatermark,
-            totalJobsExtracted: savedCount,
-            lastStatus: 'SUCCESS',
-          },
-        });
+          await this.prisma.syncState.upsert({
+            where: { source: sourceName },
+            update: {
+              lastSyncedAt: newWatermark,
+              totalJobsExtracted: { increment: savedCount },
+              lastStatus: 'SUCCESS',
+            },
+            create: {
+              source: sourceName,
+              lastSyncedAt: newWatermark,
+              totalJobsExtracted: savedCount,
+              lastStatus: 'SUCCESS',
+            },
+          });
 
-        this.logger.log(`✅ [${sourceName}] Sincronizzazione completata: ${savedCount}/${extractedJobs.length} offerte salvate. Watermark aggiornato a ${newWatermark.toISOString()}.`);
+          this.logger.log(
+            `✅ [${sourceName}] Sincronizzazione completata con successo: ${savedCount}/${extractedJobs.length} offerte salvate. Watermark aggiornato a ${newWatermark.toISOString()}.`,
+          );
+        } else {
+          this.logger.warn(
+            `⚠️ [${sourceName}] Sincronizzazione completata con ERRORE (almeno un fetch o parse fallito). ${savedCount}/${extractedJobs.length} offerte salvate. Watermark NON avanzato per prevenire perdita dati.`,
+          );
+
+          await this.prisma.syncState.upsert({
+            where: { source: sourceName },
+            update: {
+              totalJobsExtracted: { increment: savedCount },
+              lastStatus: 'ERROR',
+            },
+            create: {
+              source: sourceName,
+              lastSyncedAt: lastSyncWatermark ?? new Date(0),
+              totalJobsExtracted: savedCount,
+              lastStatus: 'ERROR',
+            },
+          });
+        }
       } catch (err: any) {
         this.logger.error(`❌ Errore durante l estrazione/salvataggio per fonte "${sourceName}":`, err);
 
