@@ -24,3 +24,11 @@ dev.db
 .DS_Store
 .vscode/
 .idea/
+
+# Local Storage & Resumes / Backups
+storage/
+backend/storage/
+backups/
+backend/backups/
+temp_*.html
+

@@ -22,6 +22,11 @@ export interface AiConfig {
     model: string;
     timeoutMs: number;
   };
+  curriculum: {
+    apiKey: string;
+    model: string;
+    timeoutMs: number;
+  };
 }
 
 export const aiConfig: AiConfig = {
@@ -45,6 +50,11 @@ export const aiConfig: AiConfig = {
     apiKey: process.env.GEMINI_API_KEY || '',
     model: process.env.GEMMA_CLOUD_MODEL || 'gemma-4-26b-a4b-it',
     timeoutMs: 30000,
+  },
+  curriculum: {
+    apiKey: process.env.CURRICULUM_GEMINI_API_KEY || process.env.GEMINI_API_KEY || '',
+    model: process.env.CURRICULUM_GEMINI_MODEL || 'gemini-3.5-flash-lite',
+    timeoutMs: 45000,
   },
 };
 

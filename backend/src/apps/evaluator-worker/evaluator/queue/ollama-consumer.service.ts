@@ -90,14 +90,15 @@ Descrizione:
 ${fullDesc}
 
 --- REGOLE RIGIDE PER L'ASSEGNAZIONE DEI PUNTEGGI ---
-1. "desireMatchScore" (0-100): Valuta QUANTO L'ANNUNCIO CORRISPONDE IN MODO SPECIFICO E CHIRURGICO ai desiderata dell'utente.
-2. "competenceScore" (0-100): Valuta la corrispondenza tecnica.
-3. "overallScore" (0-100): Punteggio finale ponderato.
-4. "priority": "HIGH" | "MEDIUM" | "LOW" | "DISQUALIFIED".
-5. "desireMatchReasoning": sintesi di 1-2 frasi.
-6. "competenceMatch": sintesi di 1-2 frasi.
-7. "detailedReasoning": breve analisi in Markdown (max 80 parole).
-8. "pros" e "cons": punti di forza e criticità.
+1. "summary": Sintesi/Riassunto chiaro e conciso dell'annuncio di lavoro (ruolo, responsabilità chiave e requisiti principali in 2-4 frasi).
+2. "desireMatchScore" (0-100): Valuta QUANTO L'ANNUNCIO CORRISPONDE IN MODO SPECIFICO E CHIRURGICO ai desiderata dell'utente.
+3. "competenceScore" (0-100): Valuta la corrispondenza tecnica.
+4. "overallScore" (0-100): Punteggio finale ponderato.
+5. "priority": "HIGH" | "MEDIUM" | "LOW" | "DISQUALIFIED".
+6. "desireMatchReasoning": sintesi di 1-2 frasi.
+7. "competenceMatch": sintesi di 1-2 frasi.
+8. "detailedReasoning": breve analisi in Markdown (max 80 parole).
+9. "pros" e "cons": punti di forza e criticità.
 
 Rispondi ESCLUSIVAMENTE in formato JSON valido.`;
   }
@@ -113,6 +114,7 @@ Rispondi ESCLUSIVAMENTE in formato JSON valido.`;
       update: {
         status: evalStatus,
         evaluatorModel: evalModel,
+        summary: result.summary ?? null,
         desireMatchScore: result.desireMatchScore,
         competenceScore: result.competenceScore,
         overallScore: result.overallScore,
@@ -128,6 +130,7 @@ Rispondi ESCLUSIVAMENTE in formato JSON valido.`;
         jobOfferId,
         status: evalStatus,
         evaluatorModel: evalModel,
+        summary: result.summary ?? null,
         desireMatchScore: result.desireMatchScore,
         competenceScore: result.competenceScore,
         overallScore: result.overallScore,

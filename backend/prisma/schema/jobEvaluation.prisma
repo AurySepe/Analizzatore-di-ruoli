@@ -6,6 +6,7 @@ model JobEvaluation {
   status               EvaluationStatus @default(SUCCESS) // SUCCESS | UNANALYZABLE
   evaluatorModel       EvaluatorModel   @default(UNKNOWN) // GEMINI_3_1_FLASH_LITE | GEMMA_4_12B | UNKNOWN
 
+  summary              String?          // Sintesi/Riassunto dell'annuncio di lavoro generato dall'AI
   desireMatchScore     Float            @default(0) // Punteggio aderenza desiderata (0-100)
   competenceScore      Float            @default(0) // Punteggio competenza tecnica (0-100)
   overallScore         Float            @default(0) // Punteggio complessivo (0-100)
@@ -26,5 +27,3 @@ model JobEvaluation {
   @@index([status])
   @@index([evaluatorModel])
 }
-
-

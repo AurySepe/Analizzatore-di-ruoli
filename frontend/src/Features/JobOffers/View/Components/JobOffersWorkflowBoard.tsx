@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useSetAtom } from 'jotai';
+import { selectedCompanyIdAtom } from '../../State/jobOffersAtoms';
 import type { LoadableState } from '@/Commons/loadable-state';
 import type { JobOfferStatus } from '../../State/jobOffersAtoms';
 import type { JobOfferListItemViewModelDTO } from '../../ViewModel/jobOffersViewModel';
@@ -82,6 +84,7 @@ const JobOffersWorkflowBoardView: React.FC<{
   readonly onSelectJobOffer: (id: string) => void;
   readonly onUpdateJobOfferStatus: (id: string, status: JobOfferStatus) => Promise<void>;
 }> = ({ data, isFetching, mode, onSelectJobOffer, onUpdateJobOfferStatus }) => {
+  const setSelectedCompanyId = useSetAtom(selectedCompanyIdAtom);
   const columns = getColumns(mode);
   const [draggedOfferId, setDraggedOfferId] = useState<string | null>(null);
   const [dragOverStatus, setDragOverStatus] = useState<JobOfferStatus | null>(null);
@@ -193,7 +196,44 @@ const JobOffersWorkflowBoardView: React.FC<{
                         <div className="flex items-start justify-between gap-3">
                           <div>
                             <h4 className="line-clamp-2 text-sm font-semibold leading-6 text-slate-950">{offer.title}</h4>
-                            <p className="mt-1 text-xs font-medium text-slate-600">{offer.companyName}</p>
+                            <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (offer.companyId) setSelectedCompanyId(offer.companyId);
+                                }}
+                                className="text-xs font-semibold text-slate-600 hover:text-indigo-600 hover:underline transition"
+                              >
+                                {offer.companyName}
+                              </button>
+                              {(() => {
+                                const saved = offer.companySavedOrAppliedCount ?? 0;
+                                const toDecide = offer.companyNewOffersCount ?? 0;
+                                const total = saved + toDecide;
+                                if (total <= 1) return null;
+
+                                const label = saved > 0 && toDecide > 0
+                                  ? `${saved} validi • ${toDecide} da decidere`
+                                  : saved > 0
+                                  ? `${saved} validi`
+                                  : `${toDecide} da decidere`;
+
+                                return (
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (offer.companyId) setSelectedCompanyId(offer.companyId);
+                                    }}
+                                    className="inline-flex items-center gap-1 rounded-full bg-indigo-100 px-2 py-0.5 text-[10px] font-extrabold text-indigo-900 hover:bg-indigo-200 transition"
+                                    title={`${saved} annunci già segnati validi • ${toDecide} nuovi annunci da decidere per ${offer.companyName}`}
+                                  >
+                                    🏢 {label}
+                                  </button>
+                                );
+                              })()}
+                            </div>
                           </div>
                           {offer.evaluationSummary ? (
                             <span className="shrink-0 rounded-full bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100">

@@ -7,12 +7,14 @@ import {
   jobOffersPageAtom,
   selectedJobOfferIdAtom,
   updateJobOfferStatusMutationAtom,
+  updateCurriculumTailoringMutationAtom,
   jobOffersSectionAtom,
   type JobOfferFreshness,
   type JobOfferPriority,
   type JobOfferSource,
   type JobOfferStatus,
   type JobOffersSection,
+  type UpdateCurriculumTailoringData,
 } from '../State/jobOffersAtoms';
 
 export interface JobOffersController {
@@ -26,6 +28,7 @@ export interface JobOffersController {
   readonly onPriorityChange: (value: JobOfferPriority | null) => void;
   readonly onFreshnessFilterChange: (value: JobOfferFreshness | null) => void;
   readonly onUpdateJobOfferStatus: (id: string, status: JobOfferStatus) => Promise<void>;
+  readonly onUpdateCurriculumTailoring: (id: string, tailoring: UpdateCurriculumTailoringData['tailoring']) => Promise<void>;
   readonly onArchiveJobOffer: (id: string) => Promise<void>;
   readonly onRestoreJobOffer: (id: string) => Promise<void>;
   readonly onResetFilters: () => void;
@@ -37,6 +40,7 @@ export const useJobOffersController = (section: JobOffersSection): JobOffersCont
   const setSelectedJobOfferId = useSetAtom(selectedJobOfferIdAtom);
   const setSection = useSetAtom(jobOffersSectionAtom);
   const updateJobOfferStatus = useAtomValue(updateJobOfferStatusMutationAtom);
+  const updateCurriculumTailoring = useAtomValue(updateCurriculumTailoringMutationAtom);
   const queryClient = useQueryClient();
 
   const handleSelectJobOffer = useCallback(
@@ -115,6 +119,13 @@ export const useJobOffersController = (section: JobOffersSection): JobOffersCont
     [queryClient, setSelectedJobOfferId, updateJobOfferStatus],
   );
 
+  const handleUpdateCurriculumTailoring = useCallback(
+    async (id: string, tailoring: UpdateCurriculumTailoringData['tailoring']) => {
+      await updateCurriculumTailoring.mutateAsync({ id, tailoring });
+    },
+    [updateCurriculumTailoring],
+  );
+
   const handleArchiveJobOffer = useCallback(
     async (id: string) => {
       await updateStatus(id, 'ARCHIVED');
@@ -145,6 +156,7 @@ export const useJobOffersController = (section: JobOffersSection): JobOffersCont
     onPriorityChange: handlePriorityChange,
     onFreshnessFilterChange: handleFreshnessFilterChange,
     onUpdateJobOfferStatus: updateStatus,
+    onUpdateCurriculumTailoring: handleUpdateCurriculumTailoring,
     onArchiveJobOffer: handleArchiveJobOffer,
     onRestoreJobOffer: handleRestoreJobOffer,
     onResetFilters: handleResetFilters,

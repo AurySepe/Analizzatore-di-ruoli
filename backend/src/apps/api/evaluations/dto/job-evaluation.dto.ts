@@ -35,6 +35,12 @@ export class JobEvaluationDto {
   evaluatorModel: string;
 
 
+  @ApiProperty({ description: 'Sintesi/Riassunto dell annuncio di lavoro generato dall AI', nullable: true, required: false })
+  @IsString()
+  @ValidateIf((_, val) => val !== null)
+  @IsOptional()
+  summary?: string | null;
+
   @ApiProperty({ description: 'Spiegazione sintetico aderenza desiderata', nullable: true, required: false })
   @IsString()
   @ValidateIf((_, val) => val !== null)

@@ -974,6 +974,30 @@
         ]
       }
     },
+    "/job-offers/{id}/curriculum/pdf": {
+      "get": {
+        "operationId": "JobOffersController_getCurriculumPdf",
+        "summary": "Scarica o visualizza il file PDF del curriculum personalizzato generato per l annuncio",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "job-offers"
+        ]
+      }
+    },
     "/job-offers/{id}/status": {
       "patch": {
         "operationId": "JobOffersController_updateStatus",
@@ -994,6 +1018,47 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/UpdateJobOfferStatusDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobOfferDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "job-offers"
+        ]
+      }
+    },
+    "/job-offers/{id}/curriculum": {
+      "patch": {
+        "operationId": "JobOffersController_updateCurriculumTailoring",
+        "summary": "Aggiorna i dati di personalizzazione del curriculum e rigenera il PDF",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCurriculumTailoringDto"
               }
             }
           }
@@ -1068,6 +1133,63 @@
           "Evaluations"
         ]
       }
+    },
+    "/companies": {
+      "get": {
+        "operationId": "CompaniesController_findAll",
+        "summary": "Recupera l'elenco di tutte le aziende registrate con i conteggi sintetici delle loro offerte",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CompanySummaryDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Companies"
+        ]
+      }
+    },
+    "/companies/{companyId}/job-offers": {
+      "get": {
+        "operationId": "CompaniesController_getCompanyJobOffers",
+        "summary": "Recupera tutte le offerte di una specifica azienda suddivise per stato (conteggi per pendenti/squalificate, dettaglio completo per le attive)",
+        "parameters": [
+          {
+            "name": "companyId",
+            "required": true,
+            "in": "path",
+            "description": "UUID dell'azienda",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyJobOffersBreakdownDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Companies"
+        ]
+      }
     }
   },
   "info": {
@@ -1096,6 +1218,44 @@
       }
     },
     "schemas": {
+      "JobCurriculumDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "jobOfferId": {
+            "type": "string"
+          },
+          "filePath": {
+            "type": "string"
+          },
+          "explanation": {
+            "type": "string"
+          },
+          "tailoringData": {
+            "type": "object",
+            "description": "Oggetto JSON di personalizzazione del curriculum (ResumeTailoring)",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "jobOfferId",
+          "filePath",
+          "explanation",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
       "JobStatusHistoryDto": {
         "type": "object",
         "properties": {
@@ -1170,6 +1330,22 @@
             "nullable": true
           },
           "employeeCount": {
+            "type": "integer",
+            "nullable": true
+          },
+          "eligibleOffersCount": {
+            "type": "integer",
+            "nullable": true
+          },
+          "activeOffersCount": {
+            "type": "integer",
+            "nullable": true
+          },
+          "savedOrAppliedCount": {
+            "type": "integer",
+            "nullable": true
+          },
+          "newOffersCount": {
             "type": "integer",
             "nullable": true
           }
@@ -1284,6 +1460,14 @@
             "type": "object",
             "nullable": true
           },
+          "curriculum": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/JobCurriculumDto"
+              }
+            ]
+          },
           "statusHistory": {
             "type": "array",
             "items": {
@@ -1337,6 +1521,22 @@
           "employeeCount": {
             "type": "integer",
             "nullable": true
+          },
+          "eligibleOffersCount": {
+            "type": "integer",
+            "nullable": true
+          },
+          "activeOffersCount": {
+            "type": "integer",
+            "nullable": true
+          },
+          "savedOrAppliedCount": {
+            "type": "integer",
+            "nullable": true
+          },
+          "newOffersCount": {
+            "type": "integer",
+            "nullable": true
           }
         },
         "required": [
@@ -1376,6 +1576,11 @@
           "evaluatorModel": {
             "type": "string",
             "description": "Modello AI che ha analizzato l annuncio: GEMINI_3_1_FLASH_LITE | GEMMA_4_12B | UNKNOWN"
+          },
+          "summary": {
+            "type": "object",
+            "description": "Sintesi/Riassunto dell annuncio di lavoro generato dall AI",
+            "nullable": true
           },
           "desireMatchReasoning": {
             "type": "object",
@@ -1548,6 +1753,14 @@
               }
             ]
           },
+          "curriculum": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/JobCurriculumDto"
+              }
+            ]
+          },
           "freshness": {
             "type": "string",
             "enum": [
@@ -1632,6 +1845,175 @@
         },
         "required": [
           "status"
+        ]
+      },
+      "WorkTailoringDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nome azienda (es. MioCFO, Commigo, University of Salerno)"
+          },
+          "position": {
+            "type": "string",
+            "description": "Posizione o titolo ricoperto"
+          },
+          "summary": {
+            "type": "string",
+            "description": "Bullet points riformulati per l annuncio"
+          },
+          "include": {
+            "type": "boolean",
+            "description": "Se false, esclude l esperienza dal CV"
+          }
+        },
+        "required": [
+          "name",
+          "summary"
+        ]
+      },
+      "ProjectTailoringDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nome del progetto"
+          },
+          "description": {
+            "type": "string",
+            "description": "Descrizione e bullet points del progetto"
+          }
+        },
+        "required": [
+          "name",
+          "description"
+        ]
+      },
+      "UpdateCurriculumTailoringDto": {
+        "type": "object",
+        "properties": {
+          "customLabel": {
+            "type": "string",
+            "description": "Titolo professionale personalizzato per l annuncio"
+          },
+          "work": {
+            "description": "Elenco delle esperienze lavorative da includere/modificare",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkTailoringDto"
+            }
+          },
+          "projects": {
+            "description": "Elenco dei progetti tecnici da includere",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectTailoringDto"
+            }
+          },
+          "selectedPublicationTitles": {
+            "description": "Titoli delle pubblicazioni da selezionare",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "explanation": {
+            "type": "string",
+            "description": "Spiegazione testuale delle motivazioni delle modifiche"
+          }
+        }
+      },
+      "CompanySummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "websiteUrl": {
+            "type": "object",
+            "nullable": true
+          },
+          "linkedinUrl": {
+            "type": "object",
+            "nullable": true
+          },
+          "industry": {
+            "type": "object",
+            "nullable": true
+          },
+          "fundingStage": {
+            "type": "object",
+            "nullable": true
+          },
+          "companySizeRange": {
+            "type": "object",
+            "nullable": true
+          },
+          "employeeCount": {
+            "type": "integer",
+            "nullable": true
+          },
+          "eligibleOffersCount": {
+            "type": "integer",
+            "nullable": true
+          },
+          "activeOffersCount": {
+            "type": "integer",
+            "nullable": true
+          },
+          "savedOrAppliedCount": {
+            "type": "integer",
+            "nullable": true
+          },
+          "newOffersCount": {
+            "type": "integer",
+            "nullable": true
+          },
+          "totalOffersCount": {
+            "type": "number",
+            "description": "Numero totale di offerte collegate a questa azienda"
+          },
+          "pendingEvaluationCount": {
+            "type": "number",
+            "description": "Numero di offerte ancora da elaborare dall'AI"
+          },
+          "disqualifiedCount": {
+            "type": "number",
+            "description": "Numero di offerte squalificate dall'AI"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "totalOffersCount",
+          "pendingEvaluationCount",
+          "disqualifiedCount"
+        ]
+      },
+      "CompanyJobOffersBreakdownDto": {
+        "type": "object",
+        "properties": {
+          "company": {
+            "$ref": "#/components/schemas/CompanyDto"
+          },
+          "counts": {
+            "type": "object"
+          },
+          "offers": {
+            "description": "Informazioni complete delle sole offerte idonee (escluse quelle squalificate ed in attesa di valutazione)",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JobOfferDto"
+            }
+          }
+        },
+        "required": [
+          "company",
+          "counts",
+          "offers"
         ]
       }
     }

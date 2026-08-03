@@ -4,6 +4,7 @@ import { plainToInstance } from 'class-transformer';
 import { JobSource } from '@prisma/client';
 import { CompanyDto, CreateCompanyDto } from './company.dto';
 import { JobEvaluationDto } from '../../evaluations/dto/job-evaluation.dto';
+import { JobCurriculumDto } from './job-curriculum.dto';
 
 
 export enum RemoteTypeEnum {
@@ -179,6 +180,11 @@ export class JobOfferDto {
   @ValidateIf((_, val) => val !== null)
   @IsOptional()
   evaluation: JobEvaluationDto | null;
+
+  @ApiProperty({ type: () => JobCurriculumDto, nullable: true, required: false })
+  @ValidateIf((_, val) => val !== null)
+  @IsOptional()
+  curriculum?: JobCurriculumDto | null;
 
   @ApiProperty({ enum: JobOfferFreshnessEnum, example: JobOfferFreshnessEnum.HOT })
   @IsEnum(JobOfferFreshnessEnum)

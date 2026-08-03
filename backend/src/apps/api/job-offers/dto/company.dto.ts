@@ -47,6 +47,26 @@ export class CompanyDto {
   @IsOptional()
   employeeCount: number | null;
 
+  @ApiProperty({ nullable: true, required: false, type: 'integer' })
+  @IsInt()
+  @IsOptional()
+  eligibleOffersCount?: number;
+
+  @ApiProperty({ nullable: true, required: false, type: 'integer' })
+  @IsInt()
+  @IsOptional()
+  activeOffersCount?: number;
+
+  @ApiProperty({ nullable: true, required: false, type: 'integer' })
+  @IsInt()
+  @IsOptional()
+  savedOrAppliedCount?: number;
+
+  @ApiProperty({ nullable: true, required: false, type: 'integer' })
+  @IsInt()
+  @IsOptional()
+  newOffersCount?: number;
+
   constructor(data: CompanyDto) {
     Object.assign(this, plainToInstance(CompanyDto, data));
   }

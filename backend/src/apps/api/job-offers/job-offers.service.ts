@@ -1,13 +1,24 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma, ApplicationStatus, EvaluationPriority } from '@prisma/client';
+import * as path from 'path';
 import { PrismaService } from '../../../commons/prisma/prisma.service';
+import { PdfGeneratorService } from '../../../apps/curriculum-worker/curriculum/pdf/pdf-generator.service';
+import { mergeResumeWithTailoring } from '../../../apps/curriculum-worker/curriculum/pdf/schema';
+import { baseResumeData } from '../../../apps/curriculum-worker/data/base-data';
 import { CreateJobOfferDto, JobOfferFreshnessEnum } from './dto/job-offer.dto';
 import { JobOfferFilterQueryDto } from './dto/job-offer-query.dto';
 import { paginate, PaginationOption } from '../../../commons/pagination/pagination';
+import type { UpdateCurriculumTailoringDto } from './dto/update-curriculum-tailoring.dto';
+
+import { JobOffersAnalyticsService } from './job-offers-analytics.service';
 
 @Injectable()
 export class JobOffersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly pdfGeneratorService: PdfGeneratorService,
+    private readonly analyticsService: JobOffersAnalyticsService,
+  ) {}
 
   async saveOrUpdate(dto: CreateJobOfferDto) {
     const company = await this.prisma.company.upsert({
@@ -209,7 +220,7 @@ export class JobOffersService {
       ];
     }
 
-    const [offers, total] = await Promise.all([
+    const [rawOffers, total] = await Promise.all([
       this.prisma.jobOffer.findMany({
         where: whereClause,
         skip,
@@ -220,19 +231,25 @@ export class JobOffersService {
           { evaluation: { desireMatchScore: 'desc' } },
           { createdAt: 'desc' },
         ],
-        include: { company: true, evaluation: true, statusHistory: { orderBy: { createdAt: 'asc' } } },
+        include: { company: true, evaluation: true, curriculum: true, statusHistory: { orderBy: { createdAt: 'asc' } } },
       }),
       this.prisma.jobOffer.count({ where: whereClause }),
     ]);
 
+    const offers = await this.attachCompanyActiveCounts(rawOffers);
     return PaginationOption(offers, total, query);
   }
 
   async findOne(id: string) {
-    return this.prisma.jobOffer.findUnique({
+    const offer = await this.prisma.jobOffer.findUnique({
       where: { id },
-      include: { company: true, evaluation: true, statusHistory: { orderBy: { createdAt: 'asc' } } },
+      include: { company: true, evaluation: true, curriculum: true, statusHistory: { orderBy: { createdAt: 'asc' } } },
     });
+
+    if (offer) {
+      await this.attachCompanyActiveCounts([offer]);
+    }
+    return offer;
   }
 
   async updateStatus(id: string, status: ApplicationStatus) {
@@ -243,11 +260,7 @@ export class JobOffersService {
       const updated = await tx.jobOffer.update({
         where: { id },
         data: { status },
-        include: {
-          company: true,
-          evaluation: true,
-          statusHistory: { orderBy: { createdAt: 'asc' } },
-        },
+        include: { company: true, evaluation: true, curriculum: true, statusHistory: { orderBy: { createdAt: 'asc' } } },
       });
 
       await tx.jobStatusHistory.create({
@@ -258,86 +271,80 @@ export class JobOffersService {
         },
       });
 
+      if (updated) {
+        await this.attachCompanyActiveCounts([updated]);
+      }
+
       return updated;
     });
   }
 
-  async getFunnelAnalytics() {
-    const historyEntries = await this.prisma.jobStatusHistory.findMany({
-      orderBy: { createdAt: 'asc' },
-    });
+  private async attachCompanyActiveCounts<T extends { company?: any }>(offers: T[]): Promise<T[]> {
+    const companyIds = Array.from(new Set(offers.map((o) => o.company?.id).filter(Boolean)));
+    if (companyIds.length === 0) return offers;
 
-    const statusCounts = await this.prisma.jobOffer.groupBy({
-      by: ['status'],
-      _count: { _all: true },
-    });
-
-    const counts: Record<string, number> = {};
-    for (const item of statusCounts) {
-      counts[item.status] = item._count._all;
-    }
-
-    const stageTransitions: Record<string, number> = {
-      SAVED: 0,
-      APPLIED: 0,
-      SCREENING: 0,
-      INTERVIEWING: 0,
-      OFFER: 0,
-      ACCEPTED: 0,
-      REJECTED: 0,
-      ARCHIVED: 0,
-    };
-
-    const rejectionDropOffs: Record<string, number> = {
-      AFTER_APPLICATION: 0,
-      AFTER_SCREENING: 0,
-      AFTER_INTERVIEW: 0,
-      AFTER_OFFER: 0,
-      PRE_APPLICATION: 0,
-    };
-
-    for (const entry of historyEntries) {
-      if (stageTransitions[entry.toStatus] !== undefined) {
-        stageTransitions[entry.toStatus]++;
-      }
-
-      if (entry.toStatus === 'REJECTED') {
-        switch (entry.fromStatus) {
-          case 'APPLIED':
-            rejectionDropOffs.AFTER_APPLICATION++;
-            break;
-          case 'SCREENING':
-            rejectionDropOffs.AFTER_SCREENING++;
-            break;
-          case 'INTERVIEWING':
-            rejectionDropOffs.AFTER_INTERVIEW++;
-            break;
-          case 'OFFER':
-            rejectionDropOffs.AFTER_OFFER++;
-            break;
-          default:
-            rejectionDropOffs.PRE_APPLICATION++;
-            break;
-        }
-      }
-    }
-
-    const appliedCount = stageTransitions.APPLIED || counts.APPLIED || 0;
-    const interviewingCount = stageTransitions.INTERVIEWING || counts.INTERVIEWING || 0;
-    const offerCount = stageTransitions.OFFER || counts.OFFER || 0;
-    const acceptedCount = stageTransitions.ACCEPTED || counts.ACCEPTED || 0;
-
-    return {
-      statusCounts: counts,
-      stageTransitions,
-      rejectionDropOffs,
-      conversionRates: {
-        applicationToInterview: appliedCount > 0 ? (interviewingCount / appliedCount) * 100 : 0,
-        interviewToOffer: interviewingCount > 0 ? (offerCount / interviewingCount) * 100 : 0,
-        offerToAcceptance: offerCount > 0 ? (acceptedCount / offerCount) * 100 : 0,
-        overallSuccessRate: appliedCount > 0 ? (acceptedCount / appliedCount) * 100 : 0,
+    const companyOffers = await this.prisma.jobOffer.findMany({
+      where: {
+        companyId: { in: companyIds },
+        evaluation: {
+          is: {
+            priority: { not: EvaluationPriority.DISQUALIFIED },
+          },
+        },
       },
-    };
+      select: {
+        companyId: true,
+        status: true,
+      },
+    });
+
+    const activeStatuses: ApplicationStatus[] = [
+      ApplicationStatus.NEW,
+      ApplicationStatus.SAVED,
+      ApplicationStatus.APPLIED,
+      ApplicationStatus.SCREENING,
+      ApplicationStatus.INTERVIEWING,
+      ApplicationStatus.OFFER,
+    ];
+
+    const eligibleMap = new Map<string, number>();
+    const activeMap = new Map<string, number>();
+    const savedOrAppliedMap = new Map<string, number>();
+    const newOffersMap = new Map<string, number>();
+
+    companyOffers.forEach((o) => {
+      eligibleMap.set(o.companyId, (eligibleMap.get(o.companyId) ?? 0) + 1);
+      if (activeStatuses.includes(o.status)) {
+        activeMap.set(o.companyId, (activeMap.get(o.companyId) ?? 0) + 1);
+      }
+      if (o.status === ApplicationStatus.NEW) {
+        newOffersMap.set(o.companyId, (newOffersMap.get(o.companyId) ?? 0) + 1);
+      } else if (
+        o.status === ApplicationStatus.SAVED ||
+        o.status === ApplicationStatus.APPLIED ||
+        o.status === ApplicationStatus.SCREENING ||
+        o.status === ApplicationStatus.INTERVIEWING ||
+        o.status === ApplicationStatus.OFFER ||
+        o.status === ApplicationStatus.ACCEPTED
+      ) {
+        savedOrAppliedMap.set(o.companyId, (savedOrAppliedMap.get(o.companyId) ?? 0) + 1);
+      }
+    });
+
+    offers.forEach((o) => {
+      if (o.company) {
+        o.company.eligibleOffersCount = eligibleMap.get(o.company.id) ?? 0;
+        o.company.activeOffersCount = activeMap.get(o.company.id) ?? 0;
+        o.company.savedOrAppliedCount = savedOrAppliedMap.get(o.company.id) ?? 0;
+        o.company.newOffersCount = newOffersMap.get(o.company.id) ?? 0;
+      }
+    });
+
+    return offers;
+  }
+
+  async getFunnelAnalytics() {
+    return this.analyticsService.getFunnelAnalytics();
   }
 
   async findActiveAll(query?: JobOfferFilterQueryDto) {
@@ -369,7 +376,7 @@ export class JobOffersService {
       ];
     }
 
-    return this.prisma.jobOffer.findMany({
+    const offers = await this.prisma.jobOffer.findMany({
       where: whereClause,
       orderBy: [
         { evaluation: { priority: 'asc' } },
@@ -379,8 +386,51 @@ export class JobOffersService {
       include: {
         company: true,
         evaluation: true,
+        curriculum: true,
         statusHistory: { orderBy: { createdAt: 'asc' } },
       },
     });
+
+    return this.attachCompanyActiveCounts(offers);
+  }
+
+  async updateCurriculumTailoring(jobOfferId: string, dto: UpdateCurriculumTailoringDto) {
+    const curriculum = await this.prisma.jobCurriculum.findUnique({
+      where: { jobOfferId },
+    });
+
+    if (!curriculum) {
+      throw new NotFoundException(`Nessun curriculum trovato per l'annuncio con ID "${jobOfferId}"`);
+    }
+
+    // Aggiornamento dei dati di personalizzazione nel DB
+    const updatedTailoring = {
+      customLabel: dto.customLabel,
+      work: dto.work,
+      projects: dto.projects,
+      selectedPublicationTitles: dto.selectedPublicationTitles,
+      explanation: dto.explanation,
+    };
+
+    // Merge tra dati base e nuove personalizzazioni per creare il FullResumeData
+    const finalResumeData = mergeResumeWithTailoring(baseResumeData, updatedTailoring as any);
+
+    // Rigenerazione del PDF sovrascrivendo quello precedente
+    const storageDir = path.resolve(process.cwd(), 'storage', 'resumes');
+    const filePath = path.join(storageDir, `cv_${jobOfferId}.pdf`);
+    await this.pdfGeneratorService.generateFromData(finalResumeData, filePath);
+
+    // Aggiornamento del record nel DB con i nuovi dati di personalizzazione e il percorso del file
+    await this.prisma.jobCurriculum.update({
+      where: { jobOfferId },
+      data: {
+        filePath,
+        explanation: dto.explanation ?? curriculum.explanation,
+        tailoringData: JSON.stringify(updatedTailoring),
+      },
+    });
+
+    // Restituzione dell'annuncio aggiornato
+    return this.findOne(jobOfferId);
   }
 }

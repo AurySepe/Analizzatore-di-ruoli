@@ -1,0 +1,14 @@
+model JobCurriculum {
+  id            String   @id @default(uuid())
+  jobOfferId    String   @unique
+  jobOffer      JobOffer @relation(fields: [jobOfferId], references: [id], onDelete: Cascade)
+
+  filePath      String   // Path del file curriculum salvato su disco
+  explanation   String   // Spiegazione testuale delle scelte fatte per il curriculum
+  tailoringData String?  // JSON string dell oggetto ResumeTailoring generato dall AI
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([jobOfferId])
+}

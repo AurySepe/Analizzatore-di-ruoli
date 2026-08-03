@@ -12,10 +12,12 @@
     "start:api": "nest start",
     "start:extractor": "npx ts-node src/apps/extractor-worker/main.ts",
     "start:evaluator": "npx ts-node src/apps/evaluator-worker/main.ts",
+    "start:curriculum": "npx ts-node src/apps/curriculum-worker/main.ts",
     "start:dev": "npx ts-node-dev --watch src/apps/api src/apps/api/main.ts",
     "start:dev:api": "npx ts-node-dev --watch src/apps/api src/apps/api/main.ts",
     "start:dev:extractor": "npx ts-node-dev --watch src/apps/extractor-worker src/apps/extractor-worker/main.ts",
     "start:dev:evaluator": "npx ts-node-dev --watch src/apps/evaluator-worker src/apps/evaluator-worker/main.ts",
+    "start:dev:curriculum": "npx ts-node-dev --watch src/apps/curriculum-worker src/apps/curriculum-worker/main.ts",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/src/apps/api/main",
     "prisma:generate": "prisma generate",
@@ -24,6 +26,7 @@
     "prisma:studio": "prisma studio",
     "db:reset-jobs": "npx ts-node scripts/reset-extracted-data.ts",
     "db:reset-evaluations": "npx ts-node scripts/reset-evaluations.ts",
+    "db:reset-curriculums": "npx ts-node scripts/reset-curriculums.ts",
     "db:reset-unanalyzable": "npx ts-node scripts/reset-unanalyzable-evaluations.ts",
     "db:restore": "npx ts-node scripts/restore-backup.ts",
     "startAndMigrate": "prisma migrate deploy && node dist/src/apps/api/main"
@@ -45,11 +48,13 @@
     "dotenv": "^16.4.5",
     "ollama": "^0.6.3",
     "pg": "^8.22.0",
+    "puppeteer": "^25.4.0",
     "reflect-metadata": "^0.2.2",
     "rss-parser": "^3.13.0",
     "rxjs": "^7.8.1",
     "turndown": "^7.2.4",
-    "zod": "^3.24.1"
+    "zod": "^3.24.1",
+    "zod-to-json-schema": "^3.25.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.4.9",

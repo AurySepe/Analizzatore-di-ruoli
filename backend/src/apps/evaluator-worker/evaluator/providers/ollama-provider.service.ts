@@ -100,6 +100,7 @@ export class OllamaProviderService implements AiEvaluatorProvider {
 
       return {
         evaluatorModel: 'GEMMA_4_12B',
+        summary: parsed.summary || undefined,
         desireMatchScore,
         competenceScore,
         overallScore,

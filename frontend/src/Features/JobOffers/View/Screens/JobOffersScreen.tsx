@@ -15,6 +15,7 @@ import { JobOffersList } from '../Components/JobOffersList';
 import { JobOffersWorkflowBoard } from '../Components/JobOffersWorkflowBoard';
 import { JobOffersPagination } from '../Components/JobOffersPagination';
 import { JobOffersStats } from '../Components/JobOffersStats';
+import { CompanyDetailModal } from '@/Features/Companies/View/CompanyDetailModal';
 
 export interface JobOffersScreenProps {
   readonly section: 'new' | 'active' | 'closed' | 'disqualified';
@@ -34,6 +35,7 @@ export interface JobOffersScreenProps {
   readonly onPriorityChange: (value: JobOfferPriority | null) => void;
   readonly onFreshnessFilterChange: (value: JobOfferFreshness | null) => void;
   readonly onUpdateJobOfferStatus: (id: string, status: JobOfferStatus) => Promise<void>;
+  readonly onUpdateCurriculumTailoring: (id: string, tailoring: Record<string, any>) => Promise<void>;
   readonly onResetFilters: () => void;
 }
 
@@ -55,6 +57,7 @@ export const JobOffersScreen: React.FC<JobOffersScreenProps> = ({
   onPriorityChange,
   onFreshnessFilterChange,
   onUpdateJobOfferStatus,
+  onUpdateCurriculumTailoring,
   onResetFilters,
 }) => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
@@ -63,7 +66,7 @@ export const JobOffersScreen: React.FC<JobOffersScreenProps> = ({
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-950">
-      <section className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8">
+      <section className="mx-auto flex w-full max-w-[1600px] flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8">
         {section === 'new' || section === 'active' ? null : (
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <JobOffersStats state={statsState} />
@@ -122,6 +125,7 @@ export const JobOffersScreen: React.FC<JobOffersScreenProps> = ({
           filtersActiveCount={filters.activeFiltersCount}
           onOpenFilters={() => setIsFiltersOpen(true)}
           onUpdateJobOfferStatus={onUpdateJobOfferStatus}
+          onUpdateCurriculumTailoring={onUpdateCurriculumTailoring}
         />
       ) : section === 'active' || section === 'closed' ? (
         <div className="flex flex-col gap-4">
@@ -157,21 +161,25 @@ export const JobOffersScreen: React.FC<JobOffersScreenProps> = ({
             state={selectedJobOfferState}
             onClearSelection={onClearSelection}
             onUpdateJobOfferStatus={onUpdateJobOfferStatus}
+            onUpdateCurriculumTailoring={onUpdateCurriculumTailoring}
           />
         </div>
       )}
 
       {(section === 'active' || section === 'closed') && isDetailModalOpen ? (
         <div className="fixed inset-0 z-30 flex items-start justify-center overflow-y-auto bg-slate-950/50 px-4 py-8 backdrop-blur-sm">
-          <div className="w-full max-w-4xl">
+          <div className="w-full max-w-[1400px]">
             <JobOfferDetail
               state={selectedJobOfferState}
               onClearSelection={onClearSelection}
               onUpdateJobOfferStatus={onUpdateJobOfferStatus}
+              onUpdateCurriculumTailoring={onUpdateCurriculumTailoring}
             />
           </div>
         </div>
       ) : null}
+
+      <CompanyDetailModal />
     </section>
   </main>
   );

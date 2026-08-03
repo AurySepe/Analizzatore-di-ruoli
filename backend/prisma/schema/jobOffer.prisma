@@ -34,6 +34,7 @@ model JobOffer {
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   evaluation      JobEvaluation?
+  curriculum      JobCurriculum?
   statusHistory   JobStatusHistory[]
 
   @@unique([source, externalId])

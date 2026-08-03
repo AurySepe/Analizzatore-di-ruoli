@@ -287,7 +287,6 @@ export const selectedJobOfferQueryAtom = atomWithQuery<JobOfferDto | null>((get)
       if (selectedId === null) {
         return null;
       }
-
       const { data, error } = await openApiClient.GET('/job-offers/{id}', {
         params: {
           path: { id: selectedId },
@@ -299,6 +298,62 @@ export const selectedJobOfferQueryAtom = atomWithQuery<JobOfferDto | null>((get)
       }
 
       return data ?? null;
+    },
+  };
+});
+
+export interface UpdateCurriculumTailoringData {
+  readonly id: string;
+  readonly tailoring: {
+    customLabel?: string;
+    work?: { name: string; position?: string; summary: string; include?: boolean }[];
+    projects?: { name: string; description: string }[];
+    selectedPublicationTitles?: string[];
+    explanation?: string;
+  };
+}
+
+export const updateCurriculumTailoringMutationAtom = atomWithMutation<JobOfferDto, UpdateCurriculumTailoringData, Error>((get) => {
+  const queryClient = get(queryClientAtom);
+
+  return {
+    mutationKey: ['jobOffers', 'updateCurriculumTailoring'],
+    queryClient,
+    mutationFn: async ({ id, tailoring }) => {
+      const apiBaseUrl = (import.meta as any).env?.VITE_API_BASE_URL ?? 'http://localhost:3000';
+      const response = await fetch(`${apiBaseUrl}/job-offers/${id}/curriculum`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(tailoring),
+      });
+
+      if (!response.ok) {
+        const err = await response.text();
+        throw new Error(`Errore aggiornamento curriculum: ${err}`);
+      }
+
+      return response.json() as Promise<JobOfferDto>;
+    },
+    onSuccess: (_data, variables) => {
+      void queryClient.invalidateQueries({ queryKey: ['jobOffers', 'detail', variables.id] });
+      void queryClient.invalidateQueries({ queryKey: ['jobOffers', 'active'] });
+    },
+  };
+});
+
+export const selectedCompanyIdAtom = atom<string | null>(null);
+
+export const companyJobOffersQueryAtom = atomWithQuery((get) => {
+  const companyId = get(selectedCompanyIdAtom);
+  return {
+    queryKey: ['companyJobOffers', companyId],
+    enabled: Boolean(companyId),
+    queryFn: async () => {
+      if (!companyId) return null;
+      const apiBaseUrl = (import.meta as any).env?.VITE_API_BASE_URL ?? 'http://localhost:3000';
+      const resp = await fetch(`${apiBaseUrl}/companies/${companyId}/job-offers`);
+      if (!resp.ok) throw new Error('Impossibile caricare i dati dell\'azienda.');
+      return resp.json();
     },
   };
 });

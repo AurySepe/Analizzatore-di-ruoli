@@ -275,6 +275,8 @@ export interface components {
             status: string;
             /** @description Modello AI che ha analizzato l annuncio: GEMINI_3_1_FLASH_LITE | GEMMA_4_12B | UNKNOWN */
             evaluatorModel: string;
+            /** @description Sintesi/Riassunto dell annuncio di lavoro generato dall AI */
+            summary?: string | null;
             /** @description Spiegazione sintetico aderenza desiderata */
             desireMatchReasoning?: Record<string, never> | null;
             /** @description Valutazione delle competenze dell utente rispetto al ruolo */
@@ -283,6 +285,17 @@ export interface components {
             detailedReasoning: string;
             pros?: string[] | null;
             cons?: string[] | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        JobCurriculumDto: {
+            id: string;
+            jobOfferId: string;
+            filePath: string;
+            explanation: string;
+            tailoringData?: Record<string, any> | null;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
@@ -324,6 +337,7 @@ export interface components {
             status: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
             notes?: Record<string, never> | null;
             evaluation?: components["schemas"]["JobEvaluationDto"] | null;
+            curriculum?: components["schemas"]["JobCurriculumDto"] | null;
             /**
              * @example HOT
              * @enum {string}

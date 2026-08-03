@@ -19,6 +19,7 @@ export const JobOffersDecisionDeck: React.FC<{
   readonly filtersActiveCount: number;
   readonly onOpenFilters: () => void;
   readonly onUpdateJobOfferStatus: (id: string, status: JobOfferStatus) => Promise<void>;
+  readonly onUpdateCurriculumTailoring: (id: string, tailoring: Record<string, any>) => Promise<void>;
 }> = ({
   jobOffersState,
   selectedJobOfferState,
@@ -30,6 +31,7 @@ export const JobOffersDecisionDeck: React.FC<{
   filtersActiveCount,
   onOpenFilters,
   onUpdateJobOfferStatus,
+  onUpdateCurriculumTailoring,
 }) => {
   const [pendingEdgeSelection, setPendingEdgeSelection] = useState<'first' | 'last' | null>(null);
 
@@ -236,6 +238,7 @@ export const JobOffersDecisionDeck: React.FC<{
               state={getVisibleSelectedJobOfferState(selectedJobOfferState, jobOffersState.data)}
               onClearSelection={onClearSelection}
               onUpdateJobOfferStatus={onUpdateJobOfferStatus}
+              onUpdateCurriculumTailoring={onUpdateCurriculumTailoring}
               showHeaderActions={false}
             />
           </div>

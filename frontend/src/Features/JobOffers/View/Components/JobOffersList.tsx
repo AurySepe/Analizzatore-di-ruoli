@@ -1,5 +1,6 @@
+import { useSetAtom } from 'jotai';
+import { selectedCompanyIdAtom, type JobOfferStatus } from '../../State/jobOffersAtoms';
 import type { LoadableState } from '@/Commons/loadable-state';
-import type { JobOfferStatus } from '../../State/jobOffersAtoms';
 import type { JobOfferListItemViewModelDTO } from '../../ViewModel/jobOffersViewModel';
 import { getJobOfferStatusActionClassName, getJobOfferStatusActions } from '../Utils/jobOfferStatusActions';
 
@@ -36,33 +37,73 @@ export const JobOffersListView: React.FC<{
   isFetching?: boolean;
   onSelectJobOffer: (id: string) => void;
   onUpdateJobOfferStatus: (id: string, status: JobOfferStatus) => Promise<void>;
-}> = ({ data, isFetching, onSelectJobOffer, onUpdateJobOfferStatus }) => (
-  <section className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-    {isFetching ? <div className="absolute inset-x-0 top-0 h-1 animate-pulse bg-sky-500" /> : null}
-    <div className="border-b border-slate-200 p-5">
-      <h2 className="text-xl font-semibold tracking-tight text-slate-950">Lista annunci</h2>
-      <p className="mt-1 text-sm text-slate-500">Seleziona un annuncio per aprire tutti i dettagli.</p>
-    </div>
+}> = ({ data, isFetching, onSelectJobOffer, onUpdateJobOfferStatus }) => {
+  const setSelectedCompanyId = useSetAtom(selectedCompanyIdAtom);
 
-    {data.length === 0 ? (
-      <div className="p-8 text-center">
-        <p className="text-lg font-semibold text-slate-900">Nessun annuncio trovato</p>
-        <p className="mt-2 text-sm text-slate-500">Quando il backend avrà annunci disponibili appariranno qui.</p>
+  return (
+    <section className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+      {isFetching ? <div className="absolute inset-x-0 top-0 h-1 animate-pulse bg-sky-500" /> : null}
+      <div className="border-b border-slate-200 p-5">
+        <h2 className="text-xl font-semibold tracking-tight text-slate-950">Lista annunci</h2>
+        <p className="mt-1 text-sm text-slate-500">Seleziona un annuncio per aprire tutti i dettagli.</p>
       </div>
-    ) : (
-      <div className="max-h-[720px] space-y-3 overflow-y-auto p-4">
-        {data.map((offer) => (
-          <article
-            key={offer.id}
-            className={`rounded-2xl border p-4 transition hover:border-sky-300 hover:bg-sky-50 ${
-              offer.isSelected ? 'border-sky-500 bg-sky-50 shadow-sm' : 'border-slate-200 bg-white'
-            }`}
-          >
-            <button type="button" className="w-full text-left" onClick={() => onSelectJobOffer(offer.id)}>
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <h3 className="line-clamp-2 text-base font-semibold text-slate-950">{offer.title}</h3>
-                <p className="mt-1 text-sm text-slate-600">{offer.companyName}</p>
+
+      {data.length === 0 ? (
+        <div className="p-8 text-center">
+          <p className="text-lg font-semibold text-slate-900">Nessun annuncio trovato</p>
+          <p className="mt-2 text-sm text-slate-500">Quando il backend avrà annunci disponibili appariranno qui.</p>
+        </div>
+      ) : (
+        <div className="max-h-[720px] space-y-3 overflow-y-auto p-4">
+          {data.map((offer) => (
+            <article
+              key={offer.id}
+              className={`rounded-2xl border p-4 transition hover:border-sky-300 hover:bg-sky-50 ${
+                offer.isSelected ? 'border-sky-500 bg-sky-50 shadow-sm' : 'border-slate-200 bg-white'
+              }`}
+            >
+              <button type="button" className="w-full text-left" onClick={() => onSelectJobOffer(offer.id)}>
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h3 className="line-clamp-2 text-base font-semibold text-slate-950">{offer.title}</h3>
+                  <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (offer.companyId) setSelectedCompanyId(offer.companyId);
+                      }}
+                      className="text-sm font-semibold text-slate-600 hover:text-indigo-600 hover:underline transition"
+                    >
+                      {offer.companyName}
+                    </button>
+                    {(() => {
+                      const saved = offer.companySavedOrAppliedCount ?? 0;
+                      const toDecide = offer.companyNewOffersCount ?? 0;
+                      const total = saved + toDecide;
+                      if (total <= 1) return null;
+
+                      const label = saved > 0 && toDecide > 0
+                        ? `${saved} validi • ${toDecide} da decidere`
+                        : saved > 0
+                        ? `${saved} validi`
+                        : `${toDecide} da decidere`;
+
+                      return (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (offer.companyId) setSelectedCompanyId(offer.companyId);
+                          }}
+                          className="inline-flex items-center gap-1 rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-extrabold text-indigo-900 hover:bg-indigo-200 transition"
+                          title={`${saved} annunci già segnati validi • ${toDecide} nuovi annunci da decidere per ${offer.companyName}`}
+                        >
+                          🏢 {label}
+                        </button>
+                      );
+                    })()}
+                  </div>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 ring-1 ring-indigo-100">
                     Fonte: {offer.source}
@@ -125,8 +166,9 @@ export const JobOffersListView: React.FC<{
         ))}
       </div>
     )}
-  </section>
-);
+    </section>
+  );
+};
 
 const getPriorityBadgeClassName = (
   tone: NonNullable<JobOfferListItemViewModelDTO['evaluationSummary']>['priorityTone'],

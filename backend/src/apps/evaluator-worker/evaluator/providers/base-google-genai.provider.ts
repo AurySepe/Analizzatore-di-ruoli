@@ -43,6 +43,7 @@ export abstract class BaseGoogleGenAiProvider {
       config.responseSchema = {
         type: Type.OBJECT,
         properties: {
+          summary: { type: Type.STRING, description: 'Sintesi/Riassunto dell annuncio di lavoro (ruolo, responsabilita chiave e requisiti principali in 2-4 frasi)' },
           desireMatchScore: { type: Type.INTEGER, description: 'Punteggio da 0 a 100 per la corrispondenza ai desiderata dell utente' },
           competenceScore: { type: Type.INTEGER, description: 'Punteggio da 0 a 100 per le competenze tecniche' },
           overallScore: { type: Type.INTEGER, description: 'Punteggio complessivo finale (0-100)' },
@@ -62,6 +63,7 @@ export abstract class BaseGoogleGenAiProvider {
           },
         },
         required: [
+          'summary',
           'desireMatchScore',
           'competenceScore',
           'overallScore',
@@ -130,6 +132,7 @@ export abstract class BaseGoogleGenAiProvider {
 
       return {
         evaluatorModel: this.modelEnum,
+        summary: parsed.summary || undefined,
         desireMatchScore,
         competenceScore,
         overallScore,
