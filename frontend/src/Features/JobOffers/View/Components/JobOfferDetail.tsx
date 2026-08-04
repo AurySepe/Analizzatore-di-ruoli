@@ -125,6 +125,7 @@ export const JobOfferDetailView: React.FC<{
           <JobOfferDetailTailoring
             curriculum={data.curriculum}
             jobOfferId={data.id}
+            jobOfferTitle={data.title}
             onUpdateCurriculumTailoring={onUpdateCurriculumTailoring}
           />
         )}

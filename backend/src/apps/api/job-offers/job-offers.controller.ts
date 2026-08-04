@@ -129,7 +129,18 @@ export class JobOffersController {
       throw new NotFoundException(`File PDF non trovato sul disco in: ${filePath}`);
     }
 
-    res.contentType('application/pdf');
+    // Sanitizza il titolo del ruolo (rimuove caratteri speciali/spazi e imposta il formato AurelioSepe-[ruolo]-cv.pdf)
+    const sanitizedTitle = (rawOffer.title || 'Role')
+      .trim()
+      .replace(/[^a-zA-Z0-9]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+
+    const downloadFileName = `AurelioSepe-${sanitizedTitle}-cv.pdf`;
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `inline; filename="${downloadFileName}"`);
+
     return res.sendFile(filePath);
   }
 

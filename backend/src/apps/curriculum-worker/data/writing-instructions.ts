@@ -25,7 +25,22 @@ Whenever generating or updating content:
    - Do NOT include a standalone \`Technical Skills\` section or skill grid/cards in the resume layout.
    - All technologies, languages, frameworks, and methodologies MUST emerge naturally from the text of the experience bullets (specifically within the **Z - Technical Solution** part of the natural XYZ logic).
 
-6. **Preserve Project & Product Business Context**:
-   - Whenever mentioning or tailoring experiences involving specific projects/products (e.g., *MioCFO*, *LearningVerse*, *HapGree*, *MatEditPro*, *FitRats*, *BotanicAR*, *cARdefender*), ALWAYS retain a clear, concise introductory context (1 sentence or embedded phrase) explaining what the product/project is and what problem it solves.
-   - Anyone reading the resume must immediately understand the application domain and business/product context of the work performed.
+6. **Mandatory Explicit Product Names & Context Clauses (Non-Negotiable)**:
+   - NEVER anonymize or abstract specific named projects/products into generic terms like "zero-to-one B2B platforms" or "multiplayer VR systems".
+   - EVERY SINGLE summary for entries mentioning projects/products (*MioCFO*, *LearningVerse*, *HapGree*, *MatEditPro*, *FitRats*, *BotanicAR*, *cARdefender*) MUST explicitly contain an embedded clause explaining WHAT the product is and WHAT problem it solves.
+   - Example MUST-HAVE phrasing: *"Co-created MioCFO, an SME B2B financial advisory platform for automated cash flow categorization, by..."* or *"Monetized LearningVerse, a multiplayer VR language learning app for Meta Quest, by..."*.
+   - Omitting the product explanation clause is STRICTLY FORBIDDEN. Anyone reading the resume MUST immediately know both the exact product name and its functional/business context.
+
+7. **Preserve Founder & Co-Creator Ownership (Zero-to-One Product Leadership)**:
+   - NEVER omit or strip out the candidate's core ownership as a **Co-Creator, Founder, or Lead Product Engineer** for ventures and products like *MioCFO*, *Commigo/LearningVerse*, or *FitRats*.
+   - The phrasing must ALWAYS clearly reflect zero-to-one technical execution and product creation (e.g., *"Co-created and engineered MioCFO..."*, *"Co-founded Commigo and built LearningVerse..."*, *"Co-created FitRats, a zero-to-one SaaS platform..."*), so recruiters immediately understand the candidate was a primary builder and creator, not just a downstream contributor.
+
+8. **Tone, Style, and Typographical Camouflage (Anti-AI Guardrails)**:
+   - **Vocabulary Blacklist**: Categorically avoid clichéd, poetic, or overly enthusiastic terms. NEVER use words such as: *synergy, landscape, delve, revolutionary, beacon, tapestry, cutting-edge, multifaceted, navigate, or testament*. Rely exclusively on concrete, technical, and factual vocabulary.
+   - **Typographical Tell-Tales (Punctuation Ban)**: AI models have highly recognizable formatting habits that instantly reveal their nature. You must strictly avoid them:
+     - **Ban the Em-Dash**: NEVER use the em-dash ("—") to connect clauses, append thoughts, or create dramatic pauses. Use standard, simple punctuation (periods, commas) instead.
+     - **Restrict Colons**: Do not use colons (":") to introduce micro-lists or explanations in the middle of a standard paragraph.
+     - **No Buzzword Bolding**: NEVER use markdown bolding (**text**) to emphasize keywords, soft skills, or core concepts within the paragraphs.
+     - **Stop Random Title Casing**: Do not capitalize methodologies or concepts unless they are strict proper nouns (e.g., write "agile development", not "Agile Development").
+     - **No Metaphorical Quotes**: Do not wrap words in quotation marks to highlight a "clever" concept or idiom.
 `;

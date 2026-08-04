@@ -27,7 +27,7 @@ export const baseResumeData: FullResumeData = {
       url: "https://test.miocfo.com/",
       startDate: "2026-04-01",
       endDate: "Present",
-      summary: "MioCFO is a fintech advisory platform for SMEs built to automate cash flow categorization and invoice management.\nEngineered the B2B platform from scratch using TypeScript, React, Tailwind CSS, NestJS, Prisma, and PostgreSQL, configuring concurrent background task queues to parse 1,000+ invoices and bank statements securely.\nAchieved 95% automated categorization accuracy on cash flows using Gemini APIs while designing a rapid-review UX fallback to make manual correction of low-confidence entries frictionless.\nDelivered real-time financial insights to 20 active SME beta users by conducting weekly interviews to translate feedback directly into updates."
+      summary: "Engineered a zero-to-one SME B2B financial advisory platform for automated cash flow categorization and invoice management using TypeScript, React, Tailwind CSS, NestJS, Prisma, and PostgreSQL, configuring background task queues to parse 1,000+ financial documents.\nAchieved 95% automated categorization accuracy on cash flows using Gemini APIs while designing a rapid-review UX fallback to make manual correction of low-confidence entries frictionless.\nDelivered real-time financial insights to 20 active SME beta users by conducting weekly interviews to translate feedback directly into updates."
     },
     {
       name: "Commigo",
@@ -35,14 +35,14 @@ export const baseResumeData: FullResumeData = {
       url: "https://www.commigo.it/",
       startDate: "2023-08-02",
       endDate: "2026-06-30",
-      summary: "Monetized LearningVerse—a multiplayer VR language learning app for Meta Quest—by securing an 8,000 Euro software licensing contract for an EU-funded integration program and deploying it for a 40-hour course at the University of Salerno.\nEngineered real-time spatial synchronization for 20 concurrent VR users in LearningVerse by building low-latency C# networking pipelines in Unity that synchronized 100 interactable 3D objects simultaneously.\nDelivered HapGree (a 25,000 Euro cross-platform mobile app for automated carbon footprint tracking) and MatEditPro (a 9,000 Euro web 3D editor for furniture catalog production), by leading technical development across Flutter, React, Three.js, and WebGL architectures.\nDoubled team feature delivery speed across 3 co-founders by establishing core software architecture guidelines, automated deployment workflows, and facilitating weekly Agile Scrum sprints."
+      summary: "Monetized LearningVerse, a multiplayer VR language learning app for Meta Quest, by securing an 8,000 Euro software licensing contract for an EU-funded integration program and deploying it for a 40-hour course at the University of Salerno.\nEngineered real-time spatial synchronization for 20 concurrent VR users in LearningVerse by building low-latency C# networking pipelines in Unity that synchronized 100 interactable 3D objects simultaneously.\nDelivered HapGree (a €25,000 cross-platform mobile app for automated carbon footprint tracking) and MatEditPro (a €9,000 web 3D editor for furniture catalog production) by leading technical development across Flutter, React, Three.js, and WebGL architectures.\nDoubled team feature delivery speed across 3 co-founders by establishing core software architecture guidelines, automated deployment workflows, and facilitating weekly Agile Scrum sprints."
     },
     {
       name: "FitRats",
       position: "Co-Creator & Lead Developer",
       startDate: "2026-01-01",
       endDate: "2026-05-31",
-      summary: "FitRats is a B2B personal training software platform designed to streamline workout planning and client tracking.\nDesigned and developed the zero-to-one SaaS platform featuring real-time client tracking using Flutter and Riverpod state management connected to a Node.js and PostgreSQL backend.\nStreamlined workout creation and client tracking for 10 personal trainers by conducting hands-on user testing calls and iterating core product features continuously."
+      summary: "Designed and developed FitRats, a zero-to-one B2B SaaS web platform for fitness professionals providing real-time client tracking and workout planning using Flutter and Riverpod connected to a Node.js and PostgreSQL backend.\nStreamlined workout creation and client tracking for 10 personal trainers by conducting hands-on user testing calls and iterating core product features continuously."
     },
     {
       name: "University of Salerno",
@@ -50,7 +50,7 @@ export const baseResumeData: FullResumeData = {
       url: "https://www.unisa.it/",
       startDate: "2024-12-01",
       endDate: "2025-11-30",
-      summary: "Engineered cooperative AR/VR platforms—such as BotanicAR (a multiplayer co-located MR experience on Meta Quest 3)—and industrial safety training simulations in Unity, co-authoring five peer-reviewed papers published at international IEEE and ACM conferences.\nAccelerated research prototype delivery across 5 collaborative AR/VR projects by establishing modular C# component architectures and reusable data pipelines."
+      summary: "Engineered cooperative AR/VR platforms, including BotanicAR (a multiplayer co-located MR experience on Meta Quest 3), and industrial safety training simulations in Unity, co-authoring five peer-reviewed papers published at international IEEE and ACM conferences.\nAccelerated research prototype delivery across 5 collaborative AR/VR projects by establishing modular C# component architectures and reusable data pipelines."
     },
     {
       name: "University of Salerno",
@@ -66,7 +66,7 @@ export const baseResumeData: FullResumeData = {
       url: "https://ieeexplore.ieee.org/abstract/document/11236242",
       startDate: "2024-03-01",
       endDate: "2024-07-31",
-      summary: "Published a peer-reviewed scientific paper at the IEEE VR conference after securing a competitive Erasmus+ research traineeship grant under the supervision of Prof. Stephen Brewster.\nValidated in-car tracking by executing 20 real-world driving test sessions with participants after building cARdefender (an in-vehicle Mixed Reality passenger game and spatial tracking system) using Unity and a C++ object recognition and spatial mapping algorithm with ZED 2 SDK."
+      summary: "Published a peer-reviewed scientific paper at the IEEE VR conference after securing a competitive Erasmus+ research traineeship grant under the supervision of Prof. Stephen Brewster.\nValidated in-car spatial tracking by executing 20 real-world driving test sessions inside moving vehicles after building cARdefender (an in-vehicle Mixed Reality passenger game) using Unity, ZED 2 Stereo SDK, and C++ spatial mapping algorithms."
     }
   ],
   education: [
@@ -159,10 +159,6 @@ export const baseResumeData: FullResumeData = {
     }
   ],
   projects: [
-    {
-      name: "cARdefender",
-      description: "Engineered an in-vehicle Mixed Reality game and spatial headset tracking system for passengers in moving cars using Unity, C++, and ZED 2 Stereo SDK.\nValidated spatial headset anchoring across 20 live driving test sessions inside moving vehicles during a research traineeship at Glasgow University under Prof. Stephen Brewster."
-    },
     {
       name: "BotanicAR",
       description: "Engineered a co-located multiplayer cooperative AR game in Unity for Meta Quest 3, enabling real-time spatial synchronization of virtual objects for players sharing the same physical environment to fight a giant carnivorous plant."
