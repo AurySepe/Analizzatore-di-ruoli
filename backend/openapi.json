@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "paths": {
-    "/job-offers": {
+    "/api/job-offers": {
       "post": {
         "operationId": "JobOffersController_create",
         "summary": "Crea o aggiorna un annuncio di lavoro",
@@ -41,6 +41,7 @@
             "required": false,
             "in": "query",
             "schema": {
+              "minimum": 1,
               "default": 1,
               "type": "integer"
             }
@@ -50,6 +51,8 @@
             "required": false,
             "in": "query",
             "schema": {
+              "minimum": 1,
+              "maximum": 100,
               "default": 10,
               "type": "integer"
             }
@@ -139,7 +142,8 @@
                 "ARBEITNOW",
                 "REMOTIVE",
                 "JOBICY",
-                "WE_WORK_REMOTELY"
+                "WE_WORK_REMOTELY",
+                "MANUAL"
               ],
               "type": "string"
             }
@@ -214,7 +218,7 @@
         ]
       }
     },
-    "/job-offers/active": {
+    "/api/job-offers/active": {
       "get": {
         "operationId": "JobOffersController_findActive",
         "summary": "Recupera TUTTI gli annunci attivi in gestione senza paginazione (SAVED, APPLIED, SCREENING, INTERVIEWING, OFFER)",
@@ -224,6 +228,7 @@
             "required": false,
             "in": "query",
             "schema": {
+              "minimum": 1,
               "default": 1,
               "type": "integer"
             }
@@ -233,6 +238,8 @@
             "required": false,
             "in": "query",
             "schema": {
+              "minimum": 1,
+              "maximum": 100,
               "default": 10,
               "type": "integer"
             }
@@ -322,7 +329,8 @@
                 "ARBEITNOW",
                 "REMOTIVE",
                 "JOBICY",
-                "WE_WORK_REMOTELY"
+                "WE_WORK_REMOTELY",
+                "MANUAL"
               ],
               "type": "string"
             }
@@ -386,7 +394,7 @@
         ]
       }
     },
-    "/job-offers/closed": {
+    "/api/job-offers/closed": {
       "get": {
         "operationId": "JobOffersController_findClosed",
         "summary": "Recupera la lista degli annunci conclusi o scartati dall utente (REJECTED, ARCHIVED)",
@@ -396,6 +404,7 @@
             "required": false,
             "in": "query",
             "schema": {
+              "minimum": 1,
               "default": 1,
               "type": "integer"
             }
@@ -405,6 +414,8 @@
             "required": false,
             "in": "query",
             "schema": {
+              "minimum": 1,
+              "maximum": 100,
               "default": 10,
               "type": "integer"
             }
@@ -494,7 +505,8 @@
                 "ARBEITNOW",
                 "REMOTIVE",
                 "JOBICY",
-                "WE_WORK_REMOTELY"
+                "WE_WORK_REMOTELY",
+                "MANUAL"
               ],
               "type": "string"
             }
@@ -569,7 +581,7 @@
         ]
       }
     },
-    "/job-offers/disqualified": {
+    "/api/job-offers/disqualified": {
       "get": {
         "operationId": "JobOffersController_findDisqualified",
         "summary": "Recupera la lista degli annunci scartati dall AI (priorità DISQUALIFIED)",
@@ -579,6 +591,7 @@
             "required": false,
             "in": "query",
             "schema": {
+              "minimum": 1,
               "default": 1,
               "type": "integer"
             }
@@ -588,6 +601,8 @@
             "required": false,
             "in": "query",
             "schema": {
+              "minimum": 1,
+              "maximum": 100,
               "default": 10,
               "type": "integer"
             }
@@ -677,7 +692,8 @@
                 "ARBEITNOW",
                 "REMOTIVE",
                 "JOBICY",
-                "WE_WORK_REMOTELY"
+                "WE_WORK_REMOTELY",
+                "MANUAL"
               ],
               "type": "string"
             }
@@ -752,7 +768,7 @@
         ]
       }
     },
-    "/job-offers/paginated": {
+    "/api/job-offers/paginated": {
       "get": {
         "operationId": "JobOffersController_findAllPaginated",
         "summary": "Alias per il recupero dei nuovi annunci non catalogati",
@@ -762,6 +778,7 @@
             "required": false,
             "in": "query",
             "schema": {
+              "minimum": 1,
               "default": 1,
               "type": "integer"
             }
@@ -771,6 +788,8 @@
             "required": false,
             "in": "query",
             "schema": {
+              "minimum": 1,
+              "maximum": 100,
               "default": 10,
               "type": "integer"
             }
@@ -860,7 +879,8 @@
                 "ARBEITNOW",
                 "REMOTIVE",
                 "JOBICY",
-                "WE_WORK_REMOTELY"
+                "WE_WORK_REMOTELY",
+                "MANUAL"
               ],
               "type": "string"
             }
@@ -935,7 +955,7 @@
         ]
       }
     },
-    "/job-offers/analytics/funnel": {
+    "/api/job-offers/analytics/funnel": {
       "get": {
         "operationId": "JobOffersController_getFunnelAnalytics",
         "summary": "Recupera le statistiche ed il funnel di avanzamento/scarto delle candidature",
@@ -950,7 +970,7 @@
         ]
       }
     },
-    "/job-offers/{id}": {
+    "/api/job-offers/{id}": {
       "get": {
         "operationId": "JobOffersController_findOne",
         "summary": "Recupera un singolo annuncio di lavoro tramite ID",
@@ -966,7 +986,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobOfferDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -974,7 +1001,7 @@
         ]
       }
     },
-    "/job-offers/{id}/curriculum/pdf": {
+    "/api/job-offers/{id}/curriculum/pdf": {
       "get": {
         "operationId": "JobOffersController_getCurriculumPdf",
         "summary": "Scarica o visualizza il file PDF del curriculum personalizzato generato per l annuncio",
@@ -990,7 +1017,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -998,7 +1032,7 @@
         ]
       }
     },
-    "/job-offers/{id}/status": {
+    "/api/job-offers/{id}/status": {
       "patch": {
         "operationId": "JobOffersController_updateStatus",
         "summary": "Aggiorna lo stato di un annuncio di lavoro (es. APPLIED, INTERVIEWING, REJECTED, ARCHIVED) e registra la cronologia",
@@ -1039,7 +1073,7 @@
         ]
       }
     },
-    "/job-offers/{id}/curriculum": {
+    "/api/job-offers/{id}/curriculum": {
       "patch": {
         "operationId": "JobOffersController_updateCurriculumTailoring",
         "summary": "Aggiorna i dati di personalizzazione del curriculum e rigenera il PDF",
@@ -1080,7 +1114,7 @@
         ]
       }
     },
-    "/evaluations/status": {
+    "/api/evaluations/status": {
       "get": {
         "operationId": "EvaluationsController_getStatus",
         "summary": "Restituisce le metriche in tempo reale sullo stato di categorizzazione degli annunci",
@@ -1095,14 +1129,55 @@
         ]
       }
     },
-    "/evaluations": {
+    "/api/evaluations": {
       "get": {
         "operationId": "EvaluationsController_findAll",
         "summary": "Recupera tutte le valutazioni salvate, filtrate per priorità o punteggio minimo",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "priority",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per priorità: HIGH, MEDIUM, LOW, DISQUALIFIED",
+            "schema": {
+              "nullable": true,
+              "type": "string"
+            }
+          },
+          {
+            "name": "minDesireScore",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per punteggio minimo aderenza desiderata (0-100)",
+            "schema": {
+              "nullable": true,
+              "type": "number"
+            }
+          },
+          {
+            "name": "minScore",
+            "required": false,
+            "in": "query",
+            "description": "Filtra per punteggio minimo (0-100)",
+            "schema": {
+              "nullable": true,
+              "type": "number"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1110,7 +1185,7 @@
         ]
       }
     },
-    "/evaluations/{jobOfferId}": {
+    "/api/evaluations/{jobOfferId}": {
       "get": {
         "operationId": "EvaluationsController_findOne",
         "summary": "Recupera la valutazione salvata per una specifica offerta",
@@ -1126,7 +1201,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1134,7 +1216,7 @@
         ]
       }
     },
-    "/companies": {
+    "/api/companies": {
       "get": {
         "operationId": "CompaniesController_findAll",
         "summary": "Recupera l'elenco di tutte le aziende registrate con i conteggi sintetici delle loro offerte",
@@ -1159,7 +1241,7 @@
         ]
       }
     },
-    "/companies/{companyId}/job-offers": {
+    "/api/companies/{companyId}/job-offers": {
       "get": {
         "operationId": "CompaniesController_getCompanyJobOffers",
         "summary": "Recupera tutte le offerte di una specifica azienda suddivise per stato (conteggi per pendenti/squalificate, dettaglio completo per le attive)",
@@ -1218,6 +1300,48 @@
       }
     },
     "schemas": {
+      "WorkTailoringDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nome azienda (es. MioCFO, Commigo, University of Salerno)"
+          },
+          "position": {
+            "type": "string",
+            "description": "Posizione o titolo ricoperto"
+          },
+          "summary": {
+            "type": "string",
+            "description": "Bullet points riformulati per l annuncio"
+          },
+          "include": {
+            "type": "boolean",
+            "description": "Se false, esclude l esperienza dal CV"
+          }
+        },
+        "required": [
+          "name",
+          "summary"
+        ]
+      },
+      "ProjectTailoringDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nome del progetto"
+          },
+          "description": {
+            "type": "string",
+            "description": "Descrizione e bullet points del progetto"
+          }
+        },
+        "required": [
+          "name",
+          "description"
+        ]
+      },
       "JobCurriculumDto": {
         "type": "object",
         "properties": {
@@ -1227,16 +1351,38 @@
           "jobOfferId": {
             "type": "string"
           },
-          "filePath": {
-            "type": "string"
+          "storageKey": {
+            "type": "string",
+            "description": "Chiave di identificazione dell oggetto in S3/MinIO"
           },
           "explanation": {
             "type": "string"
           },
-          "tailoringData": {
-            "type": "object",
-            "description": "Oggetto JSON di personalizzazione del curriculum (ResumeTailoring)",
-            "nullable": true
+          "customLabel": {
+            "type": "string",
+            "nullable": true,
+            "description": "Titolo professionale personalizzato per l annuncio"
+          },
+          "work": {
+            "description": "Esperienze lavorative modellate per l annuncio",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkTailoringDto"
+            }
+          },
+          "projects": {
+            "description": "Progetti tecnici modellati per l annuncio",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectTailoringDto"
+            }
+          },
+          "selectedPublicationTitles": {
+            "description": "Titoli delle pubblicazioni scientifiche selezionate",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "createdAt": {
             "format": "date-time",
@@ -1250,11 +1396,48 @@
         "required": [
           "id",
           "jobOfferId",
-          "filePath",
+          "storageKey",
           "explanation",
+          "work",
+          "projects",
+          "selectedPublicationTitles",
           "createdAt",
           "updatedAt"
         ]
+      },
+      "UpdateCurriculumTailoringDto": {
+        "type": "object",
+        "properties": {
+          "customLabel": {
+            "type": "string",
+            "description": "Titolo professionale personalizzato per l annuncio"
+          },
+          "work": {
+            "description": "Elenco delle esperienze lavorative da includere/modificare",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkTailoringDto"
+            }
+          },
+          "projects": {
+            "description": "Elenco dei progetti tecnici da includere",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectTailoringDto"
+            }
+          },
+          "selectedPublicationTitles": {
+            "description": "Titoli delle pubblicazioni da selezionare",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "explanation": {
+            "type": "string",
+            "description": "Spiegazione testuale delle motivazioni delle modifiche"
+          }
+        }
       },
       "JobStatusHistoryDto": {
         "type": "object",
@@ -1263,7 +1446,7 @@
             "type": "string"
           },
           "fromStatus": {
-            "type": "string",
+            "nullable": true,
             "enum": [
               "NEW",
               "SAVED",
@@ -1275,10 +1458,9 @@
               "REJECTED",
               "ARCHIVED"
             ],
-            "nullable": true
+            "type": "string"
           },
           "toStatus": {
-            "type": "string",
             "enum": [
               "NEW",
               "SAVED",
@@ -1289,7 +1471,8 @@
               "ACCEPTED",
               "REJECTED",
               "ARCHIVED"
-            ]
+            ],
+            "type": "string"
           },
           "createdAt": {
             "format": "date-time",
@@ -1310,23 +1493,23 @@
             "type": "string"
           },
           "websiteUrl": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "linkedinUrl": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "industry": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "fundingStage": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "companySizeRange": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "employeeCount": {
@@ -1358,7 +1541,7 @@
         "type": "object",
         "properties": {
           "externalId": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "source": {
@@ -1367,7 +1550,8 @@
               "ARBEITNOW",
               "REMOTIVE",
               "JOBICY",
-              "WE_WORK_REMOTELY"
+              "WE_WORK_REMOTELY",
+              "MANUAL"
             ]
           },
           "url": {
@@ -1377,53 +1561,53 @@
             "type": "string"
           },
           "location": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "remoteType": {
-            "type": "string",
             "enum": [
               "REMOTE",
               "HYBRID",
               "ON_SITE",
               "UNSPECIFIED"
             ],
+            "type": "string",
             "default": "UNSPECIFIED"
           },
           "rawDescription": {
             "type": "string"
           },
           "descriptionMarkdown": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "datePosted": {
-            "type": "object",
+            "format": "date-time",
+            "type": "string",
             "nullable": true
           },
           "salaryMin": {
-            "type": "object",
+            "type": "number",
             "nullable": true
           },
           "salaryMax": {
-            "type": "object",
+            "type": "number",
             "nullable": true
           },
           "currency": {
-            "type": "object",
+            "type": "string",
             "nullable": true,
             "default": "EUR"
           },
           "contractType": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "roleCategory": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "experienceLevel": {
-            "type": "string",
             "enum": [
               "ENTRY_LEVEL",
               "JUNIOR",
@@ -1433,6 +1617,7 @@
               "EXECUTIVE",
               "UNSPECIFIED"
             ],
+            "type": "string",
             "default": "UNSPECIFIED"
           },
           "skills": {
@@ -1442,7 +1627,6 @@
             }
           },
           "status": {
-            "type": "string",
             "enum": [
               "NEW",
               "SAVED",
@@ -1454,10 +1638,11 @@
               "REJECTED",
               "ARCHIVED"
             ],
+            "type": "string",
             "default": "NEW"
           },
           "notes": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "curriculum": {
@@ -1499,23 +1684,23 @@
             "type": "string"
           },
           "websiteUrl": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "linkedinUrl": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "industry": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "fundingStage": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "companySizeRange": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "employeeCount": {
@@ -1578,14 +1763,14 @@
             "description": "Modello AI che ha analizzato l annuncio: GEMINI_3_1_FLASH_LITE | GEMMA_4_12B | UNKNOWN"
           },
           "summary": {
-            "type": "object",
-            "description": "Sintesi/Riassunto dell annuncio di lavoro generato dall AI",
-            "nullable": true
+            "type": "string",
+            "nullable": true,
+            "description": "Sintesi/Riassunto dell annuncio di lavoro generato dall AI"
           },
           "desireMatchReasoning": {
-            "type": "object",
-            "description": "Spiegazione sintetico aderenza desiderata",
-            "nullable": true
+            "type": "string",
+            "nullable": true,
+            "description": "Spiegazione sintetico aderenza desiderata"
           },
           "competenceMatch": {
             "type": "string",
@@ -1640,7 +1825,7 @@
             "type": "string"
           },
           "externalId": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "source": {
@@ -1649,7 +1834,8 @@
               "ARBEITNOW",
               "REMOTIVE",
               "JOBICY",
-              "WE_WORK_REMOTELY"
+              "WE_WORK_REMOTELY",
+              "MANUAL"
             ]
           },
           "url": {
@@ -1659,56 +1845,56 @@
             "type": "string"
           },
           "location": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "remoteType": {
-            "type": "string",
             "enum": [
               "REMOTE",
               "HYBRID",
               "ON_SITE",
               "UNSPECIFIED"
             ],
+            "type": "string",
             "default": "UNSPECIFIED"
           },
           "rawDescription": {
             "type": "string"
           },
           "descriptionMarkdown": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "datePosted": {
-            "type": "object",
+            "format": "date-time",
+            "type": "string",
             "nullable": true
           },
           "company": {
             "$ref": "#/components/schemas/CompanyDto"
           },
           "salaryMin": {
-            "type": "object",
+            "type": "number",
             "nullable": true
           },
           "salaryMax": {
-            "type": "object",
+            "type": "number",
             "nullable": true
           },
           "currency": {
-            "type": "object",
+            "type": "string",
             "nullable": true,
             "default": "EUR"
           },
           "contractType": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "roleCategory": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "experienceLevel": {
-            "type": "string",
             "enum": [
               "ENTRY_LEVEL",
               "JUNIOR",
@@ -1718,6 +1904,7 @@
               "EXECUTIVE",
               "UNSPECIFIED"
             ],
+            "type": "string",
             "default": "UNSPECIFIED"
           },
           "skills": {
@@ -1727,7 +1914,6 @@
             }
           },
           "status": {
-            "type": "string",
             "enum": [
               "NEW",
               "SAVED",
@@ -1739,10 +1925,11 @@
               "REJECTED",
               "ARCHIVED"
             ],
+            "type": "string",
             "default": "NEW"
           },
           "notes": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "evaluation": {
@@ -1762,13 +1949,13 @@
             ]
           },
           "freshness": {
-            "type": "string",
             "enum": [
               "HOT",
               "RECENT",
               "AGING",
               "OLD"
             ],
+            "type": "string",
             "example": "HOT"
           },
           "statusHistory": {
@@ -1828,7 +2015,6 @@
         "type": "object",
         "properties": {
           "status": {
-            "type": "string",
             "enum": [
               "NEW",
               "SAVED",
@@ -1840,88 +2026,13 @@
               "REJECTED",
               "ARCHIVED"
             ],
+            "type": "string",
             "description": "Nuovo stato dell annuncio"
           }
         },
         "required": [
           "status"
         ]
-      },
-      "WorkTailoringDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Nome azienda (es. MioCFO, Commigo, University of Salerno)"
-          },
-          "position": {
-            "type": "string",
-            "description": "Posizione o titolo ricoperto"
-          },
-          "summary": {
-            "type": "string",
-            "description": "Bullet points riformulati per l annuncio"
-          },
-          "include": {
-            "type": "boolean",
-            "description": "Se false, esclude l esperienza dal CV"
-          }
-        },
-        "required": [
-          "name",
-          "summary"
-        ]
-      },
-      "ProjectTailoringDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Nome del progetto"
-          },
-          "description": {
-            "type": "string",
-            "description": "Descrizione e bullet points del progetto"
-          }
-        },
-        "required": [
-          "name",
-          "description"
-        ]
-      },
-      "UpdateCurriculumTailoringDto": {
-        "type": "object",
-        "properties": {
-          "customLabel": {
-            "type": "string",
-            "description": "Titolo professionale personalizzato per l annuncio"
-          },
-          "work": {
-            "description": "Elenco delle esperienze lavorative da includere/modificare",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/WorkTailoringDto"
-            }
-          },
-          "projects": {
-            "description": "Elenco dei progetti tecnici da includere",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ProjectTailoringDto"
-            }
-          },
-          "selectedPublicationTitles": {
-            "description": "Titoli delle pubblicazioni da selezionare",
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "explanation": {
-            "type": "string",
-            "description": "Spiegazione testuale delle motivazioni delle modifiche"
-          }
-        }
       },
       "CompanySummaryDto": {
         "type": "object",
@@ -1933,23 +2044,23 @@
             "type": "string"
           },
           "websiteUrl": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "linkedinUrl": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "industry": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "fundingStage": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "companySizeRange": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "employeeCount": {
@@ -2000,7 +2111,37 @@
             "$ref": "#/components/schemas/CompanyDto"
           },
           "counts": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "totalOffers": {
+                "required": true,
+                "type": "number"
+              },
+              "pendingEvaluationCount": {
+                "required": true,
+                "type": "number"
+              },
+              "disqualifiedCount": {
+                "required": true,
+                "type": "number"
+              },
+              "eligibleOffersCount": {
+                "required": true,
+                "type": "number"
+              },
+              "activeOffersCount": {
+                "required": true,
+                "type": "number"
+              },
+              "savedOrAppliedCount": {
+                "required": true,
+                "type": "number"
+              },
+              "newOffersCount": {
+                "required": true,
+                "type": "number"
+              }
+            }
           },
           "offers": {
             "description": "Informazioni complete delle sole offerte idonee (escluse quelle squalificate ed in attesa di valutazione)",

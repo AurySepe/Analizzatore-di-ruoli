@@ -3,9 +3,27 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "sync:api": "npm --prefix backend run openapi:generate && npm --prefix frontend run openapi:generate",
+    "build:all": "npm --prefix backend run build && npm --prefix frontend run build",
     "backend:dev": "npm --prefix backend run start:dev",
     "backend:build": "npm --prefix backend run build",
     "backend:prisma:generate": "npm --prefix backend run prisma:generate",
-    "backend:prisma:studio": "npm --prefix backend run prisma:studio"
+    "backend:prisma:migrate": "npm --prefix backend run prisma:migrate:dev",
+    "backend:prisma:studio": "npm --prefix backend run prisma:studio",
+    "frontend:dev": "npm --prefix frontend run dev",
+    "frontend:build": "npm --prefix frontend run build",
+    "frontend:typecheck": "npm --prefix frontend run typecheck",
+    "frontend:lint": "npm --prefix frontend run lint",
+    "k8s:deploy": "node scripts/deploy-k8s.mjs",
+    "k8s:deploy:backend": "node scripts/deploy-k8s.mjs --backend-only",
+    "k8s:deploy:frontend": "node scripts/deploy-k8s.mjs --frontend-only",
+    "k8s:restart": "kubectl rollout restart deployment backend-api backend-curriculum backend-evaluator backend-extractor frontend",
+    "k8s:status": "kubectl get pods,svc,ingress",
+    "k8s:logs:backend": "kubectl logs -f deployment/backend-api",
+    "k8s:logs:curriculum": "kubectl logs -f deployment/backend-curriculum",
+    "cluster:create": "k3d cluster create --config k3d.config.yaml",
+    "cluster:delete": "k3d cluster delete analizzatore-cluster",
+    "cluster:start": "k3d cluster start analizzatore-cluster",
+    "cluster:stop": "k3d cluster stop analizzatore-cluster"
   }
 }

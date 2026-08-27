@@ -6,7 +6,7 @@ interface DiffPart {
   removed?: boolean;
 }
 
-export function diffWords(oldStr: string, newStr: string): DiffPart[] {
+function diffWords(oldStr: string, newStr: string): DiffPart[] {
   if (!oldStr) return [{ value: newStr, added: true }];
   if (!newStr) return [];
 

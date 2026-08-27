@@ -29,15 +29,17 @@ export class CurriculumProducerService {
         if (this.queueService.size < 20) {
           const excludeIds = this.queueService.getQueuedOrProcessingIds();
 
-          const pendingJobs = await this.prisma.jobOffer.findMany({
-            where: {
-              status: ApplicationStatus.SAVED,
-              curriculum: null,
-              id: { notIn: excludeIds },
-            },
-            select: { id: true, title: true },
-            take: 50,
-          });
+          const pendingJobs = await this.prisma.executeWithRetry((p) =>
+            p.jobOffer.findMany({
+              where: {
+                status: ApplicationStatus.SAVED,
+                curriculum: null,
+                id: { notIn: excludeIds },
+              },
+              select: { id: true, title: true },
+              take: 50,
+            }),
+          );
 
           if (pendingJobs.length > 0) {
             this.queueService.enqueueMany(pendingJobs);

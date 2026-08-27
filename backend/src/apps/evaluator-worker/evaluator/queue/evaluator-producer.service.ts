@@ -42,14 +42,16 @@ export class EvaluatorProducerService {
         if (this.queueService.size < 20) {
           const excludeIds = this.queueService.getQueuedOrProcessingIds();
 
-          const pendingJobs = await this.prisma.jobOffer.findMany({
-            where: {
-              evaluation: null,
-              id: { notIn: excludeIds },
-            },
-            select: { id: true, title: true },
-            take: 50,
-          });
+          const pendingJobs = await this.prisma.executeWithRetry((p) =>
+            p.jobOffer.findMany({
+              where: {
+                evaluation: null,
+                id: { notIn: excludeIds },
+              },
+              select: { id: true, title: true },
+              take: 50,
+            }),
+          );
 
           if (pendingJobs.length > 0) {
             this.queueService.enqueueMany(pendingJobs);

@@ -42,7 +42,6 @@ Thumbs.db
 /coverage
 
 # Local Storage & Resumes / Backups
-/storage
 /backups
 temp_*.html
 

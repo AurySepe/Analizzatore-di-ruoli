@@ -6,6 +6,11 @@ import type { components } from '@/Core/OpenApi/schema';
 
 export type JobOfferDto = components['schemas']['JobOfferDto'];
 export type PaginatedMetaDto = components['schemas']['PaginatedMetaDto'];
+export type UpdateCurriculumTailoringDto = components['schemas']['UpdateCurriculumTailoringDto'];
+export type WorkTailoringDto = components['schemas']['WorkTailoringDto'];
+export type ProjectTailoringDto = components['schemas']['ProjectTailoringDto'];
+export type JobCurriculumDto = components['schemas']['JobCurriculumDto'];
+export type CompanyJobOffersBreakdownDto = components['schemas']['CompanyJobOffersBreakdownDto'];
 export type JobOfferSource = JobOfferDto['source'] | 'WE_WORK_REMOTELY';
 export type JobOfferStatus = JobOfferDto['status'];
 export type JobOfferFreshness = JobOfferDto['freshness'];
@@ -45,98 +50,74 @@ export interface JobOffersFiltersData {
   readonly freshness: JobOfferFreshness | null;
 }
 
+export const emptyMeta: PaginatedMetaDto = {
+  total: 0,
+  page: 1,
+  limit: 10,
+  totalPages: 1,
+};
+
 export const emptyJobOffersFilters: JobOffersFiltersData = {
   title: '',
   source: null,
   priority: null,
   freshness: null,
 };
+export const initialFiltersState = emptyJobOffersFilters;
 
-export const jobOffersPageAtom = atom(1);
-export const jobOffersLimitAtom = atom(8);
-export const selectedJobOfferIdAtom = atom<string | null>(null);
-export const jobOffersFiltersAtom = atom<JobOffersFiltersData>(emptyJobOffersFilters);
 export const jobOffersSectionAtom = atom<JobOffersSection>('new');
+export const jobOffersPageAtom = atom<number>(1);
+export const jobOffersLimitAtom = atom<number>(10);
+export const jobOffersFiltersAtom = atom<JobOffersFiltersData>(initialFiltersState);
+export const selectedJobOfferIdAtom = atom<string | null>(null);
 
-const emptyMeta: PaginatedMetaDto = {
-  total: 0,
-  page: 1,
-  limit: 8,
-  totalPages: 1,
-};
-
-const isRecord = (value: unknown): value is Record<string, unknown> => {
-  return typeof value === 'object' && value !== null;
-};
-
-const parseNumberRecord = (value: unknown, errorMessage: string): Readonly<Record<string, number>> => {
-  if (!isRecord(value)) {
-    throw new Error(errorMessage);
+const parseCountRecord = (value: unknown): Record<string, number> => {
+  if (!value || typeof value !== 'object') {
+    return {};
   }
 
-  return Object.fromEntries(
-    Object.entries(value).filter((entry): entry is [string, number] => typeof entry[1] === 'number'),
-  );
+  return Object.entries(value).reduce<Record<string, number>>((acc, [key, count]) => {
+    if (typeof count === 'number') {
+      acc[key] = count;
+    }
+    return acc;
+  }, {});
 };
 
 const parseEvaluationProcessingStatus = (payload: unknown): EvaluationProcessingStatusDto => {
-  if (!isRecord(payload)) {
-    throw new Error('Risposta stato elaborazione non valida.');
-  }
-
-  const { totalJobs, evaluatedJobs, pendingJobs, isCategorizing, isProfileComplete, message } = payload;
-
-  if (
-    typeof totalJobs !== 'number' ||
-    typeof evaluatedJobs !== 'number' ||
-    typeof pendingJobs !== 'number' ||
-    typeof isCategorizing !== 'boolean' ||
-    typeof isProfileComplete !== 'boolean' ||
-    typeof message !== 'string'
-  ) {
-    throw new Error('Formato stato elaborazione non riconosciuto.');
-  }
+  const data = (payload && typeof payload === 'object' ? payload : {}) as Record<string, unknown>;
 
   return {
-    totalJobs,
-    evaluatedJobs,
-    pendingJobs,
-    isCategorizing,
-    isProfileComplete,
-    message,
+    totalJobs: typeof data.totalJobs === 'number' ? data.totalJobs : 0,
+    evaluatedJobs: typeof data.evaluatedJobs === 'number' ? data.evaluatedJobs : 0,
+    pendingJobs: typeof data.pendingJobs === 'number' ? data.pendingJobs : 0,
+    isCategorizing: Boolean(data.isCategorizing),
+    isProfileComplete: typeof data.isProfileComplete === 'boolean' ? data.isProfileComplete : true,
+    message: typeof data.message === 'string' ? data.message : 'Nessuna attività in corso.',
   };
 };
 
 const parseJobOffersFunnelAnalytics = (payload: unknown): JobOffersFunnelAnalyticsDto => {
-  if (!isRecord(payload)) {
-    throw new Error('Risposta analytics funnel non valida.');
-  }
+  const data = (payload && typeof payload === 'object' ? payload : {}) as Record<string, unknown>;
+  const rawConversion = (data.conversionRates && typeof data.conversionRates === 'object'
+    ? data.conversionRates
+    : {}) as Record<string, unknown>;
 
-  const { statusCounts, stageTransitions, rejectionDropOffs, conversionRates } = payload;
-  if (!isRecord(conversionRates)) {
-    throw new Error('Formato conversion rates non riconosciuto.');
-  }
-
-  const {
-    applicationToInterview,
-    interviewToOffer,
-    offerToAcceptance,
-    overallSuccessRate,
-  } = conversionRates;
-
-  if (
-    typeof applicationToInterview !== 'number' ||
-    typeof interviewToOffer !== 'number' ||
-    typeof offerToAcceptance !== 'number' ||
-    typeof overallSuccessRate !== 'number'
-  ) {
-    throw new Error('Formato conversion rates non valido.');
-  }
+  const applicationToInterview =
+    typeof rawConversion.applicationToInterview === 'number'
+      ? rawConversion.applicationToInterview
+      : 0;
+  const interviewToOffer =
+    typeof rawConversion.interviewToOffer === 'number' ? rawConversion.interviewToOffer : 0;
+  const offerToAcceptance =
+    typeof rawConversion.offerToAcceptance === 'number' ? rawConversion.offerToAcceptance : 0;
+  const overallSuccessRate =
+    typeof rawConversion.overallSuccessRate === 'number' ? rawConversion.overallSuccessRate : 0;
 
   return {
-    statusCounts: parseNumberRecord(statusCounts, 'Formato conteggi stato non valido.'),
-    stageTransitions: parseNumberRecord(stageTransitions, 'Formato transizioni non valido.'),
-    rejectionDropOffs: parseNumberRecord(rejectionDropOffs, 'Formato drop-off non valido.'),
+    statusCounts: parseCountRecord(data.statusCounts),
+    stageTransitions: parseCountRecord(data.stageTransitions),
+    rejectionDropOffs: parseCountRecord(data.rejectionDropOffs),
     conversionRates: {
       applicationToInterview,
       interviewToOffer,
@@ -148,16 +129,16 @@ const parseJobOffersFunnelAnalytics = (payload: unknown): JobOffersFunnelAnalyti
 
 const getJobOffersPath = (
   section: JobOffersSection,
-): '/job-offers' | '/job-offers/active' | '/job-offers/closed' | '/job-offers/disqualified' => {
+): '/api/job-offers' | '/api/job-offers/active' | '/api/job-offers/closed' | '/api/job-offers/disqualified' => {
   switch (section) {
     case 'active':
-      return '/job-offers/active';
+      return '/api/job-offers/active';
     case 'closed':
-      return '/job-offers/closed';
+      return '/api/job-offers/closed';
     case 'disqualified':
-      return '/job-offers/disqualified';
+      return '/api/job-offers/disqualified';
     case 'new':
-      return '/job-offers';
+      return '/api/job-offers';
   }
 };
 
@@ -186,7 +167,7 @@ export const jobOffersQueryAtom = atomWithQuery<PaginatedJobOffersResponse>((get
         },
       });
 
-      if (error) {
+      if (error || !data) {
         throw new Error('Impossibile recuperare gli annunci di lavoro.');
       }
 
@@ -217,9 +198,9 @@ export const jobOffersFunnelAnalyticsQueryAtom = atomWithQuery<JobOffersFunnelAn
     queryKey: ['jobOffers', 'analytics', 'funnel'],
     queryClient,
     queryFn: async () => {
-      const { data, error } = await openApiClient.GET('/job-offers/analytics/funnel');
+      const { data, error } = await openApiClient.GET('/api/job-offers/analytics/funnel');
 
-      if (error) {
+      if (error || !data) {
         throw new Error('Impossibile recuperare il funnel analytics.');
       }
 
@@ -236,9 +217,9 @@ export const evaluationProcessingStatusQueryAtom = atomWithQuery<EvaluationProce
     queryClient,
     refetchInterval: 5000,
     queryFn: async () => {
-      const { data, error } = await openApiClient.GET('/evaluations/status');
+      const { data, error } = await openApiClient.GET('/api/evaluations/status');
 
-      if (error) {
+      if (error || !data) {
         throw new Error('Impossibile recuperare lo stato di elaborazione degli annunci.');
       }
 
@@ -259,14 +240,14 @@ export const updateJobOfferStatusMutationAtom = atomWithMutation<JobOfferDto, Up
     mutationKey: ['jobOffers', 'updateStatus'],
     queryClient,
     mutationFn: async ({ id, status }) => {
-      const { data, error } = await openApiClient.PATCH('/job-offers/{id}/status', {
+      const { data, error } = await openApiClient.PATCH('/api/job-offers/{id}/status', {
         params: {
           path: { id },
         },
         body: { status },
       });
 
-      if (error) {
+      if (error || !data) {
         throw new Error('Impossibile aggiornare lo stato dell’annuncio.');
       }
 
@@ -287,13 +268,13 @@ export const selectedJobOfferQueryAtom = atomWithQuery<JobOfferDto | null>((get)
       if (selectedId === null) {
         return null;
       }
-      const { data, error } = await openApiClient.GET('/job-offers/{id}', {
+      const { data, error } = await openApiClient.GET('/api/job-offers/{id}', {
         params: {
           path: { id: selectedId },
         },
       });
 
-      if (error) {
+      if (error || !data) {
         throw new Error('Impossibile recuperare il dettaglio dell’annuncio.');
       }
 
@@ -304,13 +285,7 @@ export const selectedJobOfferQueryAtom = atomWithQuery<JobOfferDto | null>((get)
 
 export interface UpdateCurriculumTailoringData {
   readonly id: string;
-  readonly tailoring: {
-    customLabel?: string;
-    work?: { name: string; position?: string; summary: string; include?: boolean }[];
-    projects?: { name: string; description: string }[];
-    selectedPublicationTitles?: string[];
-    explanation?: string;
-  };
+  readonly tailoring: UpdateCurriculumTailoringDto;
 }
 
 export const updateCurriculumTailoringMutationAtom = atomWithMutation<JobOfferDto, UpdateCurriculumTailoringData, Error>((get) => {
@@ -320,19 +295,18 @@ export const updateCurriculumTailoringMutationAtom = atomWithMutation<JobOfferDt
     mutationKey: ['jobOffers', 'updateCurriculumTailoring'],
     queryClient,
     mutationFn: async ({ id, tailoring }) => {
-      const apiBaseUrl = (import.meta as any).env?.VITE_API_BASE_URL ?? 'http://localhost:3000';
-      const response = await fetch(`${apiBaseUrl}/job-offers/${id}/curriculum`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(tailoring),
+      const { data, error } = await openApiClient.PATCH('/api/job-offers/{id}/curriculum', {
+        params: {
+          path: { id },
+        },
+        body: tailoring,
       });
 
-      if (!response.ok) {
-        const err = await response.text();
-        throw new Error(`Errore aggiornamento curriculum: ${err}`);
+      if (error || !data) {
+        throw new Error(`Errore aggiornamento curriculum: ${error ? JSON.stringify(error) : 'Risposta vuota'}`);
       }
 
-      return response.json() as Promise<JobOfferDto>;
+      return data;
     },
     onSuccess: (_data, variables) => {
       void queryClient.invalidateQueries({ queryKey: ['jobOffers', 'detail', variables.id] });
@@ -343,17 +317,20 @@ export const updateCurriculumTailoringMutationAtom = atomWithMutation<JobOfferDt
 
 export const selectedCompanyIdAtom = atom<string | null>(null);
 
-export const companyJobOffersQueryAtom = atomWithQuery((get) => {
+export const companyJobOffersQueryAtom = atomWithQuery<CompanyJobOffersBreakdownDto | null>((get) => {
   const companyId = get(selectedCompanyIdAtom);
   return {
     queryKey: ['companyJobOffers', companyId],
     enabled: Boolean(companyId),
     queryFn: async () => {
       if (!companyId) return null;
-      const apiBaseUrl = (import.meta as any).env?.VITE_API_BASE_URL ?? 'http://localhost:3000';
-      const resp = await fetch(`${apiBaseUrl}/companies/${companyId}/job-offers`);
-      if (!resp.ok) throw new Error('Impossibile caricare i dati dell\'azienda.');
-      return resp.json();
+      const { data, error } = await openApiClient.GET('/api/companies/{companyId}/job-offers', {
+        params: {
+          path: { companyId },
+        },
+      });
+      if (error || !data) throw new Error('Impossibile caricare i dati dell\'azienda.');
+      return data;
     },
   };
 });

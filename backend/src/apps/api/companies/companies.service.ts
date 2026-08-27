@@ -102,7 +102,13 @@ export class CompaniesService {
       include: {
         company: true,
         evaluation: true,
-        curriculum: true,
+        curriculum: {
+          include: {
+            work: { orderBy: { order: 'asc' } },
+            projects: { orderBy: { order: 'asc' } },
+            publications: { orderBy: { order: 'asc' } },
+          },
+        },
         statusHistory: { orderBy: { createdAt: 'asc' } },
       },
       orderBy: [

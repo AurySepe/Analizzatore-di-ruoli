@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/job-offers": {
+    "/api/job-offers": {
         parameters: {
             query?: never;
             header?: never;
@@ -22,7 +22,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/job-offers/active": {
+    "/api/job-offers/active": {
         parameters: {
             query?: never;
             header?: never;
@@ -39,7 +39,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/job-offers/closed": {
+    "/api/job-offers/closed": {
         parameters: {
             query?: never;
             header?: never;
@@ -56,7 +56,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/job-offers/disqualified": {
+    "/api/job-offers/disqualified": {
         parameters: {
             query?: never;
             header?: never;
@@ -73,7 +73,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/job-offers/paginated": {
+    "/api/job-offers/paginated": {
         parameters: {
             query?: never;
             header?: never;
@@ -90,7 +90,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/job-offers/analytics/funnel": {
+    "/api/job-offers/analytics/funnel": {
         parameters: {
             query?: never;
             header?: never;
@@ -107,7 +107,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/job-offers/{id}": {
+    "/api/job-offers/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -124,7 +124,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/job-offers/{id}/status": {
+    "/api/job-offers/{id}/curriculum/pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Scarica o visualizza il file PDF del curriculum personalizzato generato per l annuncio */
+        get: operations["JobOffersController_getCurriculumPdf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/job-offers/{id}/status": {
         parameters: {
             query?: never;
             header?: never;
@@ -141,7 +158,24 @@ export interface paths {
         patch: operations["JobOffersController_updateStatus"];
         trace?: never;
     };
-    "/evaluations/status": {
+    "/api/job-offers/{id}/curriculum": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Aggiorna i dati di personalizzazione del curriculum e rigenera il PDF */
+        patch: operations["JobOffersController_updateCurriculumTailoring"];
+        trace?: never;
+    };
+    "/api/evaluations/status": {
         parameters: {
             query?: never;
             header?: never;
@@ -158,7 +192,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/evaluations": {
+    "/api/evaluations": {
         parameters: {
             query?: never;
             header?: never;
@@ -175,7 +209,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/evaluations/{jobOfferId}": {
+    "/api/evaluations/{jobOfferId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -192,10 +226,91 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/companies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recupera l'elenco di tutte le aziende registrate con i conteggi sintetici delle loro offerte */
+        get: operations["CompaniesController_findAll"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/companies/{companyId}/job-offers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recupera tutte le offerte di una specifica azienda suddivise per stato (conteggi per pendenti/squalificate, dettaglio completo per le attive) */
+        get: operations["CompaniesController_getCompanyJobOffers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        WorkTailoringDto: {
+            /** @description Nome azienda (es. MioCFO, Commigo, University of Salerno) */
+            name: string;
+            /** @description Posizione o titolo ricoperto */
+            position?: string;
+            /** @description Bullet points riformulati per l annuncio */
+            summary: string;
+            /** @description Se false, esclude l esperienza dal CV */
+            include?: boolean;
+        };
+        ProjectTailoringDto: {
+            /** @description Nome del progetto */
+            name: string;
+            /** @description Descrizione e bullet points del progetto */
+            description: string;
+        };
+        JobCurriculumDto: {
+            id: string;
+            jobOfferId: string;
+            /** @description Chiave di identificazione dell oggetto in S3/MinIO */
+            storageKey: string;
+            explanation: string;
+            /** @description Titolo professionale personalizzato per l annuncio */
+            customLabel?: string | null;
+            /** @description Esperienze lavorative modellate per l annuncio */
+            work: components["schemas"]["WorkTailoringDto"][];
+            /** @description Progetti tecnici modellati per l annuncio */
+            projects: components["schemas"]["ProjectTailoringDto"][];
+            /** @description Titoli delle pubblicazioni scientifiche selezionate */
+            selectedPublicationTitles: string[];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        UpdateCurriculumTailoringDto: {
+            /** @description Titolo professionale personalizzato per l annuncio */
+            customLabel?: string;
+            /** @description Elenco delle esperienze lavorative da includere/modificare */
+            work?: components["schemas"]["WorkTailoringDto"][];
+            /** @description Elenco dei progetti tecnici da includere */
+            projects?: components["schemas"]["ProjectTailoringDto"][];
+            /** @description Titoli delle pubblicazioni da selezionare */
+            selectedPublicationTitles?: string[];
+            /** @description Spiegazione testuale delle motivazioni delle modifiche */
+            explanation?: string;
+        };
         JobStatusHistoryDto: {
             id: string;
             /** @enum {string|null} */
@@ -207,34 +322,39 @@ export interface components {
         };
         CreateCompanyDto: {
             name: string;
-            websiteUrl?: Record<string, never> | null;
-            linkedinUrl?: Record<string, never> | null;
-            industry?: Record<string, never> | null;
-            fundingStage?: Record<string, never> | null;
-            companySizeRange?: Record<string, never> | null;
+            websiteUrl?: string | null;
+            linkedinUrl?: string | null;
+            industry?: string | null;
+            fundingStage?: string | null;
+            companySizeRange?: string | null;
             employeeCount?: number | null;
+            eligibleOffersCount?: number | null;
+            activeOffersCount?: number | null;
+            savedOrAppliedCount?: number | null;
+            newOffersCount?: number | null;
         };
         CreateJobOfferDto: {
-            externalId?: Record<string, never> | null;
+            externalId?: string | null;
             /** @enum {string} */
-            source: "ARBEITNOW" | "REMOTIVE" | "JOBICY";
+            source: "ARBEITNOW" | "REMOTIVE" | "JOBICY" | "WE_WORK_REMOTELY" | "MANUAL";
             url: string;
             title: string;
-            location?: Record<string, never> | null;
+            location?: string | null;
             /**
              * @default UNSPECIFIED
              * @enum {string}
              */
             remoteType: "REMOTE" | "HYBRID" | "ON_SITE" | "UNSPECIFIED";
             rawDescription: string;
-            descriptionMarkdown?: Record<string, never> | null;
-            datePosted?: Record<string, never> | null;
-            salaryMin?: Record<string, never> | null;
-            salaryMax?: Record<string, never> | null;
+            descriptionMarkdown?: string | null;
+            /** Format: date-time */
+            datePosted?: string | null;
+            salaryMin?: number | null;
+            salaryMax?: number | null;
             /** @default EUR */
-            currency: Record<string, never> | null;
-            contractType?: Record<string, never> | null;
-            roleCategory?: Record<string, never> | null;
+            currency: string | null;
+            contractType?: string | null;
+            roleCategory?: string | null;
             /**
              * @default UNSPECIFIED
              * @enum {string}
@@ -246,19 +366,24 @@ export interface components {
              * @enum {string}
              */
             status: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
-            notes?: Record<string, never> | null;
+            notes?: string | null;
+            curriculum?: components["schemas"]["JobCurriculumDto"] | null;
             statusHistory?: components["schemas"]["JobStatusHistoryDto"][];
             company: components["schemas"]["CreateCompanyDto"];
         };
         CompanyDto: {
             id: string;
             name: string;
-            websiteUrl?: Record<string, never> | null;
-            linkedinUrl?: Record<string, never> | null;
-            industry?: Record<string, never> | null;
-            fundingStage?: Record<string, never> | null;
-            companySizeRange?: Record<string, never> | null;
+            websiteUrl?: string | null;
+            linkedinUrl?: string | null;
+            industry?: string | null;
+            fundingStage?: string | null;
+            companySizeRange?: string | null;
             employeeCount?: number | null;
+            eligibleOffersCount?: number | null;
+            activeOffersCount?: number | null;
+            savedOrAppliedCount?: number | null;
+            newOffersCount?: number | null;
         };
         JobEvaluationDto: {
             id: string;
@@ -278,7 +403,7 @@ export interface components {
             /** @description Sintesi/Riassunto dell annuncio di lavoro generato dall AI */
             summary?: string | null;
             /** @description Spiegazione sintetico aderenza desiderata */
-            desireMatchReasoning?: Record<string, never> | null;
+            desireMatchReasoning?: string | null;
             /** @description Valutazione delle competenze dell utente rispetto al ruolo */
             competenceMatch: string;
             /** @description Spiegazione dettagliata dell AI in Markdown */
@@ -290,40 +415,30 @@ export interface components {
             /** Format: date-time */
             updatedAt: string;
         };
-        JobCurriculumDto: {
-            id: string;
-            jobOfferId: string;
-            filePath: string;
-            explanation: string;
-            tailoringData?: Record<string, any> | null;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
         JobOfferDto: {
             id: string;
-            externalId?: Record<string, never> | null;
+            externalId?: string | null;
             /** @enum {string} */
-            source: "ARBEITNOW" | "REMOTIVE" | "JOBICY";
+            source: "ARBEITNOW" | "REMOTIVE" | "JOBICY" | "WE_WORK_REMOTELY" | "MANUAL";
             url: string;
             title: string;
-            location?: Record<string, never> | null;
+            location?: string | null;
             /**
              * @default UNSPECIFIED
              * @enum {string}
              */
             remoteType: "REMOTE" | "HYBRID" | "ON_SITE" | "UNSPECIFIED";
             rawDescription: string;
-            descriptionMarkdown?: Record<string, never> | null;
-            datePosted?: Record<string, never> | null;
+            descriptionMarkdown?: string | null;
+            /** Format: date-time */
+            datePosted?: string | null;
             company: components["schemas"]["CompanyDto"];
-            salaryMin?: Record<string, never> | null;
-            salaryMax?: Record<string, never> | null;
+            salaryMin?: number | null;
+            salaryMax?: number | null;
             /** @default EUR */
-            currency: Record<string, never> | null;
-            contractType?: Record<string, never> | null;
-            roleCategory?: Record<string, never> | null;
+            currency: string | null;
+            contractType?: string | null;
+            roleCategory?: string | null;
             /**
              * @default UNSPECIFIED
              * @enum {string}
@@ -335,7 +450,7 @@ export interface components {
              * @enum {string}
              */
             status: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
-            notes?: Record<string, never> | null;
+            notes?: string | null;
             evaluation?: components["schemas"]["JobEvaluationDto"] | null;
             curriculum?: components["schemas"]["JobCurriculumDto"] | null;
             /**
@@ -361,6 +476,40 @@ export interface components {
              * @enum {string}
              */
             status: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
+        };
+        CompanySummaryDto: {
+            id: string;
+            name: string;
+            websiteUrl?: string | null;
+            linkedinUrl?: string | null;
+            industry?: string | null;
+            fundingStage?: string | null;
+            companySizeRange?: string | null;
+            employeeCount?: number | null;
+            eligibleOffersCount?: number | null;
+            activeOffersCount?: number | null;
+            savedOrAppliedCount?: number | null;
+            newOffersCount?: number | null;
+            /** @description Numero totale di offerte collegate a questa azienda */
+            totalOffersCount: number;
+            /** @description Numero di offerte ancora da elaborare dall'AI */
+            pendingEvaluationCount: number;
+            /** @description Numero di offerte squalificate dall'AI */
+            disqualifiedCount: number;
+        };
+        CompanyJobOffersBreakdownDto: {
+            company: components["schemas"]["CompanyDto"];
+            counts: {
+                totalOffers?: number;
+                pendingEvaluationCount?: number;
+                disqualifiedCount?: number;
+                eligibleOffersCount?: number;
+                activeOffersCount?: number;
+                savedOrAppliedCount?: number;
+                newOffersCount?: number;
+            };
+            /** @description Informazioni complete delle sole offerte idonee (escluse quelle squalificate ed in attesa di valutazione) */
+            offers: components["schemas"]["JobOfferDto"][];
         };
     };
     responses: never;
@@ -391,7 +540,7 @@ export interface operations {
                 /** @description Cerca per testo nel titolo o nel nome azienda */
                 search?: string;
                 /** @description Filtra per fonte dell annuncio (ARBEITNOW, REMOTIVE) */
-                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY";
+                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY" | "WE_WORK_REMOTELY" | "MANUAL";
                 /** @description Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B) */
                 evaluatorModel?: string;
                 /** @description Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED) */
@@ -461,7 +610,7 @@ export interface operations {
                 /** @description Cerca per testo nel titolo o nel nome azienda */
                 search?: string;
                 /** @description Filtra per fonte dell annuncio (ARBEITNOW, REMOTIVE) */
-                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY";
+                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY" | "WE_WORK_REMOTELY" | "MANUAL";
                 /** @description Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B) */
                 evaluatorModel?: string;
                 /** @description Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED) */
@@ -505,7 +654,7 @@ export interface operations {
                 /** @description Cerca per testo nel titolo o nel nome azienda */
                 search?: string;
                 /** @description Filtra per fonte dell annuncio (ARBEITNOW, REMOTIVE) */
-                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY";
+                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY" | "WE_WORK_REMOTELY" | "MANUAL";
                 /** @description Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B) */
                 evaluatorModel?: string;
                 /** @description Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED) */
@@ -552,7 +701,7 @@ export interface operations {
                 /** @description Cerca per testo nel titolo o nel nome azienda */
                 search?: string;
                 /** @description Filtra per fonte dell annuncio (ARBEITNOW, REMOTIVE) */
-                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY";
+                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY" | "WE_WORK_REMOTELY" | "MANUAL";
                 /** @description Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B) */
                 evaluatorModel?: string;
                 /** @description Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED) */
@@ -599,7 +748,7 @@ export interface operations {
                 /** @description Cerca per testo nel titolo o nel nome azienda */
                 search?: string;
                 /** @description Filtra per fonte dell annuncio (ARBEITNOW, REMOTIVE) */
-                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY";
+                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY" | "WE_WORK_REMOTELY" | "MANUAL";
                 /** @description Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B) */
                 evaluatorModel?: string;
                 /** @description Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED) */
@@ -658,7 +807,30 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["JobOfferDto"];
+                };
+            };
+        };
+    };
+    JobOffersController_getCurriculumPdf: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                };
             };
         };
     };
@@ -674,6 +846,31 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["UpdateJobOfferStatusDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobOfferDto"];
+                };
+            };
+        };
+    };
+    JobOffersController_updateCurriculumTailoring: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateCurriculumTailoringDto"];
             };
         };
         responses: {
@@ -706,7 +903,14 @@ export interface operations {
     };
     EvaluationsController_findAll: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Filtra per priorità: HIGH, MEDIUM, LOW, DISQUALIFIED */
+                priority?: string | null;
+                /** @description Filtra per punteggio minimo aderenza desiderata (0-100) */
+                minDesireScore?: number | null;
+                /** @description Filtra per punteggio minimo (0-100) */
+                minScore?: number | null;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -717,7 +921,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": Record<string, never>[];
+                };
             };
         };
     };
@@ -736,7 +942,50 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": Record<string, never>;
+                };
+            };
+        };
+    };
+    CompaniesController_findAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompanySummaryDto"][];
+                };
+            };
+        };
+    };
+    CompaniesController_getCompanyJobOffers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description UUID dell'azienda */
+                companyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompanyJobOffersBreakdownDto"];
+                };
             };
         };
     };

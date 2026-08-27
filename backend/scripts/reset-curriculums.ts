@@ -92,20 +92,21 @@ async function resetCurriculums() {
     fs.writeFileSync(backupFilePath, JSON.stringify(backupPayload, null, 2), 'utf-8');
     console.log(`✅ Backup salvato con successo in: backups/${backupFileName}`);
 
-    // 4. Rimozione dei file fisici su disco
-    console.log(`🗑️ Rimozione dei file fisici dei curriculum su disco...`);
+    // 4. Rimozione dei file fisici su disco / storage
+    console.log(`🗑️ Rimozione dei file dei curriculum...`);
     let deletedFilesCount = 0;
     for (const item of recordsToBackup) {
-      if (item.filePath && fs.existsSync(item.filePath)) {
+      const fileTarget = item.storageKey;
+      if (fileTarget && fs.existsSync(fileTarget)) {
         try {
-          fs.unlinkSync(item.filePath);
+          fs.unlinkSync(fileTarget);
           deletedFilesCount++;
         } catch (err: any) {
-          console.warn(`⚠️ Impossibile cancellare il file ${item.filePath}: ${err?.message || err}`);
+          console.warn(`⚠️ Impossibile cancellare il file ${fileTarget}: ${err?.message || err}`);
         }
       }
     }
-    console.log(`🧹 Cancellati ${deletedFilesCount} file fisici dal disco.`);
+    console.log(`🧹 Cancellati ${deletedFilesCount} file locali.`);
 
     // 5. Cancellazione dal DB
     console.log(`🗑️ Eliminazione dei record dei curriculum dal DB...`);

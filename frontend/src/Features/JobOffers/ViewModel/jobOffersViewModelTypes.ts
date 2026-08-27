@@ -64,13 +64,28 @@ export interface JobOfferEvaluationDetailViewModelDTO extends JobOfferEvaluation
   readonly updatedAt: string;
 }
 
+export interface JobCurriculumWorkViewModelDTO {
+  readonly name: string;
+  readonly position?: string;
+  readonly summary: string;
+  readonly include?: boolean;
+}
+
+export interface JobCurriculumProjectViewModelDTO {
+  readonly name: string;
+  readonly description: string;
+}
+
 export interface JobCurriculumViewModelDTO {
   readonly id: string;
   readonly jobOfferId: string;
-  readonly filePath: string;
+  readonly storageKey: string;
   readonly pdfUrl: string;
   readonly explanation: string;
-  readonly tailoringData: Record<string, any> | null;
+  readonly customLabel?: string | null;
+  readonly work: readonly JobCurriculumWorkViewModelDTO[];
+  readonly projects: readonly JobCurriculumProjectViewModelDTO[];
+  readonly selectedPublicationTitles: readonly string[];
   readonly createdAt: string;
   readonly updatedAt: string;
 }
@@ -144,6 +159,51 @@ export interface JobOffersFiltersViewModelDTO {
   readonly freshnessOptions: readonly { readonly value: JobOfferFreshness; readonly label: string }[];
 }
 
+import type { WorkFormEntry, ProjectFormEntry } from '../State/curriculumEditorAtoms';
+
+export interface CompanyJobOfferItemViewModelDTO {
+  readonly id: string;
+  readonly title: string;
+  readonly location: string;
+  readonly remoteType: string;
+  readonly source: string;
+  readonly status: JobOfferStatus;
+  readonly statusLabel: string;
+  readonly overallScore?: number;
+  readonly priority?: string;
+}
+
+export interface CompanyDetailModalViewModelDTO {
+  readonly companyId: string;
+  readonly companyName: string;
+  readonly industry: string | null;
+  readonly websiteUrl: string | null;
+  readonly linkedinUrl: string | null;
+  readonly companySizeRange: string | null;
+  readonly fundingStage: string | null;
+  readonly counts: {
+    readonly savedOrAppliedCount: number;
+    readonly newOffersCount: number;
+    readonly pendingEvaluationCount: number;
+    readonly disqualifiedCount: number;
+  };
+  readonly offers: readonly CompanyJobOfferItemViewModelDTO[];
+}
+
+export interface CurriculumEditorViewModelDTO {
+  readonly isEditing: boolean;
+  readonly customLabel: string;
+  readonly explanation: string;
+  readonly workEntries: readonly WorkFormEntry[];
+  readonly projects: readonly ProjectFormEntry[];
+  readonly selectedPubs: readonly string[];
+  readonly saveError: string | null;
+  readonly pdfKey: number;
+  readonly allPublications: readonly string[];
+  readonly allBaseWork: readonly { readonly name: string; readonly position: string }[];
+  readonly allBaseProjects: readonly { readonly name: string; readonly description: string }[];
+}
+
 export interface JobOffersPaginationViewModelDTO {
   readonly page: number;
   readonly totalPages: number;
@@ -163,4 +223,6 @@ export interface JobOffersViewModelDTO {
   readonly processingStatusState: LoadableState<EvaluationProcessingStatusViewModelDTO>;
   readonly filters: JobOffersFiltersViewModelDTO;
   readonly paginationState: LoadableState<JobOffersPaginationViewModelDTO>;
+  readonly companyModalState: LoadableState<CompanyDetailModalViewModelDTO | null>;
+  readonly curriculumEditor: CurriculumEditorViewModelDTO;
 }

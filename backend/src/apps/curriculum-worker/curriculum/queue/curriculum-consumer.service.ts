@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import * as fs from 'fs';
-import * as path from 'path';
 import { PrismaService } from '../../../../commons/prisma/prisma.service';
+import { S3StorageService } from '../../../../commons/storage/s3-storage.service';
 import { CurriculumQueueService } from './curriculum-queue.service';
 import { PdfGeneratorService } from '../pdf/pdf-generator.service';
 import { CurriculumLlmService } from '../services/curriculum-llm.service';
@@ -12,19 +11,14 @@ import { baseResumeData } from '../../data/base-data';
 export class CurriculumConsumerService {
   private readonly logger = new Logger(CurriculumConsumerService.name);
   private isRunning = false;
-  private readonly storageDir: string;
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly queueService: CurriculumQueueService,
     private readonly pdfGeneratorService: PdfGeneratorService,
     private readonly curriculumLlmService: CurriculumLlmService,
-  ) {
-    this.storageDir = path.resolve(process.cwd(), 'storage', 'resumes');
-    if (!fs.existsSync(this.storageDir)) {
-      fs.mkdirSync(this.storageDir, { recursive: true });
-    }
-  }
+    private readonly s3StorageService: S3StorageService,
+  ) {}
 
   start() {
     if (this.isRunning) return;
@@ -59,8 +53,7 @@ export class CurriculumConsumerService {
           continue;
         }
 
-        const fileName = `cv_${job.id}.pdf`;
-        const filePath = path.join(this.storageDir, fileName);
+        const storageKey = `curriculums/cv_${job.id}.pdf`;
 
         // 1. Uso dei dati base del candidato
         const initialResumeData = baseResumeData;
@@ -71,20 +64,45 @@ export class CurriculumConsumerService {
         // 3. Merging tra dati base e personalizzazioni LLM per creare il FullResumeData finale
         const finalResumeData = mergeResumeWithTailoring(initialResumeData, tailoring);
 
-        // 4. Generazione effettiva del PDF in-memory tramite Puppeteer
-        await this.pdfGeneratorService.generateFromData(finalResumeData, filePath);
+        // 4. Generazione effettiva del PDF in-memory tramite Puppeteer (buffer)
+        const pdfBuffer = await this.pdfGeneratorService.generateBufferFromData(finalResumeData);
 
-        // 5. Salvataggio record JobCurriculum con percorso file, spiegazione e dati JSON delle personalizzazioni
+        // 5. Upload diretto del PDF nell'Object Storage (MinIO / S3)
+        await this.s3StorageService.upload(storageKey, pdfBuffer, 'application/pdf');
+
+        // 6. Salvataggio record JobCurriculum con storageKey, spiegazione e modelli relazionali
         await this.prisma.jobCurriculum.create({
           data: {
             jobOfferId: jobOffer.id,
-            filePath: filePath,
+            storageKey: storageKey,
             explanation: tailoring.explanation,
-            tailoringData: JSON.stringify(tailoring),
+            customLabel: tailoring.customLabel,
+            work: {
+              create: (tailoring.work || []).map((w, idx) => ({
+                name: w.name,
+                position: w.position || '',
+                summary: w.summary,
+                include: w.include !== false,
+                order: idx,
+              })),
+            },
+            projects: {
+              create: (tailoring.projects || []).map((p, idx) => ({
+                name: p.name,
+                description: p.description,
+                order: idx,
+              })),
+            },
+            publications: {
+              create: (tailoring.selectedPublicationTitles || []).map((title, idx) => ({
+                title,
+                order: idx,
+              })),
+            },
           },
         });
 
-        this.logger.log(`✅ Curriculum PDF personalizzato creato con successo per "${job.title}" -> File: ${filePath}`);
+        this.logger.log(`✅ Curriculum PDF personalizzato creato e caricato in S3 per "${job.title}" -> Key: ${storageKey}`);
         this.queueService.markCompleted(job.id);
       } catch (err: any) {
         this.logger.error(`❌ Errore durante la creazione del curriculum PDF per l'annuncio "${job.title}":`, err?.message || err);

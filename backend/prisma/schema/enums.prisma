@@ -53,6 +53,7 @@ enum JobSource {
   REMOTIVE
   JOBICY
   WE_WORK_REMOTELY
+  MANUAL
 }
 
 

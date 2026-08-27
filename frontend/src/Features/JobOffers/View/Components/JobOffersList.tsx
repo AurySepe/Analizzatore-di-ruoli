@@ -1,5 +1,4 @@
-import { useSetAtom } from 'jotai';
-import { selectedCompanyIdAtom, type JobOfferStatus } from '../../State/jobOffersAtoms';
+import type { JobOfferStatus } from '../../State/jobOffersAtoms';
 import type { LoadableState } from '@/Commons/loadable-state';
 import type { JobOfferListItemViewModelDTO } from '../../ViewModel/jobOffersViewModel';
 import { getJobOfferStatusActionClassName, getJobOfferStatusActions } from '../Utils/jobOfferStatusActions';
@@ -37,8 +36,8 @@ export const JobOffersListView: React.FC<{
   isFetching?: boolean;
   onSelectJobOffer: (id: string) => void;
   onUpdateJobOfferStatus: (id: string, status: JobOfferStatus) => Promise<void>;
-}> = ({ data, isFetching, onSelectJobOffer, onUpdateJobOfferStatus }) => {
-  const setSelectedCompanyId = useSetAtom(selectedCompanyIdAtom);
+  onSelectCompany?: (companyId: string) => void;
+}> = ({ data, isFetching, onSelectJobOffer, onUpdateJobOfferStatus, onSelectCompany }) => {
 
   return (
     <section className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
@@ -71,7 +70,7 @@ export const JobOffersListView: React.FC<{
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        if (offer.companyId) setSelectedCompanyId(offer.companyId);
+                        if (offer.companyId && onSelectCompany) onSelectCompany(offer.companyId);
                       }}
                       className="text-sm font-semibold text-slate-600 hover:text-indigo-600 hover:underline transition"
                     >
@@ -94,7 +93,7 @@ export const JobOffersListView: React.FC<{
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            if (offer.companyId) setSelectedCompanyId(offer.companyId);
+                            if (offer.companyId && onSelectCompany) onSelectCompany(offer.companyId);
                           }}
                           className="inline-flex items-center gap-1 rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-extrabold text-indigo-900 hover:bg-indigo-200 transition"
                           title={`${saved} annunci già segnati validi • ${toDecide} nuovi annunci da decidere per ${offer.companyName}`}
@@ -192,7 +191,8 @@ export const JobOffersList: React.FC<{
   state: LoadableState<readonly JobOfferListItemViewModelDTO[]>;
   onSelectJobOffer: (id: string) => void;
   onUpdateJobOfferStatus: (id: string, status: JobOfferStatus) => Promise<void>;
-}> = ({ state, onSelectJobOffer, onUpdateJobOfferStatus }) => {
+  onSelectCompany?: (companyId: string) => void;
+}> = ({ state, onSelectJobOffer, onUpdateJobOfferStatus, onSelectCompany }) => {
   switch (state.status) {
     case 'loading':
       return <JobOffersListSkeleton />;
@@ -205,6 +205,7 @@ export const JobOffersList: React.FC<{
           isFetching={state.isFetching}
           onSelectJobOffer={onSelectJobOffer}
           onUpdateJobOfferStatus={onUpdateJobOfferStatus}
+          onSelectCompany={onSelectCompany}
         />
       );
   }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { MarkdownContent } from '@/Commons/Components/MarkdownContent';
-import type { JobOfferDetailViewModelDTO } from '../../../ViewModel/jobOffersViewModel';
+import type { JobOfferDetailViewModelDTO } from '../../ViewModel/jobOffersViewModel';
 
 const getPriorityBadgeClassName = (tone: string): string => {
   switch (tone) {

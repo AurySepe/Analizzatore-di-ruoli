@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import type { LoadableState } from '@/Commons/loadable-state';
-import type { JobOfferStatus, UpdateCurriculumTailoringData } from '../../State/jobOffersAtoms';
-import type { JobOfferDetailViewModelDTO } from '../../ViewModel/jobOffersViewModel';
-import { JobOfferDetailEvaluation } from './Subcomponents/JobOfferDetailEvaluation';
-import { JobOfferDetailHeader } from './Subcomponents/JobOfferDetailHeader';
-import { JobOfferDetailOverview } from './Subcomponents/JobOfferDetailOverview';
-import { JobOfferDetailTailoring } from './Subcomponents/JobOfferDetailTailoring';
+import type { JobOfferStatus } from '../../State/jobOffersAtoms';
+import type {
+  CurriculumEditorViewModelDTO,
+  JobOfferDetailViewModelDTO,
+} from '../../ViewModel/jobOffersViewModelTypes';
+import type { CurriculumEditorController } from '../../Controller/useCurriculumEditorController';
+import { JobOfferDetailEvaluation } from './JobOfferDetailEvaluation';
+import { JobOfferDetailHeader } from './JobOfferDetailHeader';
+import { JobOfferDetailOverview } from './JobOfferDetailOverview';
+import { JobOfferDetailTailoring } from './JobOfferDetailTailoring';
 
 // ── Skeleton ──────────────────────────────────────────────────────────────────
 export const JobOfferDetailSkeleton: React.FC = () => (
@@ -45,9 +49,20 @@ export const JobOfferDetailView: React.FC<{
   isFetching?: boolean;
   onClearSelection: () => void;
   onUpdateJobOfferStatus: (id: string, status: JobOfferStatus) => Promise<void>;
-  onUpdateCurriculumTailoring: (id: string, tailoring: UpdateCurriculumTailoringData['tailoring']) => Promise<void>;
+  onSelectCompany?: (companyId: string) => void;
+  editorState?: CurriculumEditorViewModelDTO;
+  editorController?: CurriculumEditorController;
   showHeaderActions?: boolean;
-}> = ({ data, isFetching, onClearSelection, onUpdateJobOfferStatus, onUpdateCurriculumTailoring, showHeaderActions = true }) => {
+}> = ({
+  data,
+  isFetching,
+  onClearSelection,
+  onUpdateJobOfferStatus,
+  onSelectCompany,
+  editorState,
+  editorController,
+  showHeaderActions = true,
+}) => {
   const [activeTab, setActiveTab] = useState<'details' | 'curriculum'>('details');
 
   if (data === null) {
@@ -75,6 +90,7 @@ export const JobOfferDetailView: React.FC<{
         data={data}
         onClearSelection={onClearSelection}
         onUpdateJobOfferStatus={onUpdateJobOfferStatus}
+        onSelectCompany={onSelectCompany}
         showHeaderActions={showHeaderActions}
       />
 
@@ -119,16 +135,17 @@ export const JobOfferDetailView: React.FC<{
         {currentTab === 'details' ? (
           <>
             <JobOfferDetailEvaluation evaluation={data.evaluation} />
-            <JobOfferDetailOverview data={data} />
+            <JobOfferDetailOverview data={data} onSelectCompany={onSelectCompany} />
           </>
-        ) : (
+        ) : editorState && editorController ? (
           <JobOfferDetailTailoring
             curriculum={data.curriculum}
             jobOfferId={data.id}
             jobOfferTitle={data.title}
-            onUpdateCurriculumTailoring={onUpdateCurriculumTailoring}
+            editorState={editorState}
+            editorController={editorController}
           />
-        )}
+        ) : null}
       </div>
     </aside>
   );
@@ -139,9 +156,19 @@ export const JobOfferDetail: React.FC<{
   state: LoadableState<JobOfferDetailViewModelDTO | null>;
   onClearSelection: () => void;
   onUpdateJobOfferStatus: (id: string, status: JobOfferStatus) => Promise<void>;
-  onUpdateCurriculumTailoring: (id: string, tailoring: UpdateCurriculumTailoringData['tailoring']) => Promise<void>;
+  onSelectCompany?: (companyId: string) => void;
+  editorState?: CurriculumEditorViewModelDTO;
+  editorController?: CurriculumEditorController;
   showHeaderActions?: boolean;
-}> = ({ state, onClearSelection, onUpdateJobOfferStatus, onUpdateCurriculumTailoring, showHeaderActions = true }) => {
+}> = ({
+  state,
+  onClearSelection,
+  onUpdateJobOfferStatus,
+  onSelectCompany,
+  editorState,
+  editorController,
+  showHeaderActions = true,
+}) => {
   switch (state.status) {
     case 'loading':
       return <JobOfferDetailSkeleton />;
@@ -154,7 +181,9 @@ export const JobOfferDetail: React.FC<{
           isFetching={state.isFetching}
           onClearSelection={onClearSelection}
           onUpdateJobOfferStatus={onUpdateJobOfferStatus}
-          onUpdateCurriculumTailoring={onUpdateCurriculumTailoring}
+          onSelectCompany={onSelectCompany}
+          editorState={editorState}
+          editorController={editorController}
           showHeaderActions={showHeaderActions}
         />
       );

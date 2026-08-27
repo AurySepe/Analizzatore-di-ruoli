@@ -1,12 +1,18 @@
 import type { LoadableState } from '@/Commons/loadable-state';
 import type {
+  CompanyJobOffersBreakdownDto,
   EvaluationProcessingStatusDto,
   JobOfferDto,
   JobOffersFiltersData,
   JobOffersSection,
   PaginatedJobOffersResponse,
 } from '../State/jobOffersAtoms';
+import type { WorkFormEntry, ProjectFormEntry } from '../State/curriculumEditorAtoms';
 import {
+  ALL_BASE_PROJECTS,
+  ALL_BASE_WORK,
+  ALL_PUBLICATIONS,
+  mapCompanyDetailModal,
   mapDetail,
   mapFilters,
   mapListItem,
@@ -21,6 +27,17 @@ import type {
 } from './jobOffersViewModelTypes';
 
 export type * from './jobOffersViewModelTypes';
+
+export interface CurriculumEditorFormState {
+  readonly isEditing: boolean;
+  readonly customLabel: string;
+  readonly explanation: string;
+  readonly workEntries: readonly WorkFormEntry[];
+  readonly projects: readonly ProjectFormEntry[];
+  readonly selectedPubs: readonly string[];
+  readonly saveError: string | null;
+  readonly pdfKey: number;
+}
 
 export class JobOffersViewModel {
   public static createProcessingStatus(
@@ -37,9 +54,12 @@ export class JobOffersViewModel {
     jobOffersQuery: QueryResultLike<PaginatedJobOffersResponse>,
     selectedJobOfferQuery: QueryResultLike<JobOfferDto | null>,
     processingStatusQuery: QueryResultLike<EvaluationProcessingStatusDto>,
+    companyJobOffersQuery: QueryResultLike<CompanyJobOffersBreakdownDto | null>,
     filters: JobOffersFiltersData,
     selectedJobOfferId: string | null,
+    selectedCompanyId: string | null,
     section: JobOffersSection,
+    curriculumEditorForm: CurriculumEditorFormState,
   ): JobOffersViewModelDTO {
     return {
       header: sectionHeaders[section],
@@ -83,6 +103,27 @@ export class JobOffersViewModel {
         }),
         'Errore durante il caricamento della paginazione.',
       ),
+      companyModalState:
+        selectedCompanyId === null
+          ? { status: 'success', data: null, isFetching: false }
+          : mapQueryToLoadableState(
+              companyJobOffersQuery,
+              (breakdown) => mapCompanyDetailModal(breakdown),
+              'Errore durante il caricamento delle informazioni aziendali.',
+            ),
+      curriculumEditor: {
+        isEditing: curriculumEditorForm.isEditing,
+        customLabel: curriculumEditorForm.customLabel,
+        explanation: curriculumEditorForm.explanation,
+        workEntries: curriculumEditorForm.workEntries,
+        projects: curriculumEditorForm.projects,
+        selectedPubs: curriculumEditorForm.selectedPubs,
+        saveError: curriculumEditorForm.saveError,
+        pdfKey: curriculumEditorForm.pdfKey,
+        allPublications: ALL_PUBLICATIONS,
+        allBaseWork: ALL_BASE_WORK,
+        allBaseProjects: ALL_BASE_PROJECTS,
+      },
     };
   }
 }

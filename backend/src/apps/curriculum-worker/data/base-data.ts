@@ -171,7 +171,7 @@ export const baseResumeData: FullResumeData = {
     },
     {
       language: "English",
-      fluency: "C2 Understanding, C1 Speaking, C1 Writing"
+      fluency: "C2 (Full Professional / Proficient)"
     }
   ],
   interests: [

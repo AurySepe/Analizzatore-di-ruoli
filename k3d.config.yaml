@@ -1,0 +1,43 @@
+# k3d configuration file
+# https://k3d.io/v5.x.x/usage/configfile/
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: analizzatore-cluster
+servers: 1
+agents: 1
+image: rancher/k3s:v1.30.2-k3s1
+kubeAPI:
+  hostIP: "127.0.0.1"
+  hostPort: "6443"
+ports:
+  # Ingress HTTP (Traefik) mapped to host port 80 (or change to 8080 if port 80 is occupied)
+  - port: 80:80
+    nodeFilters:
+      - loadbalancer
+  # Ingress HTTPS mapped to host port 443
+  - port: 443:443
+    nodeFilters:
+      - loadbalancer
+volumes:
+  - volume: analizzatorediruoli_postgres_data:/var/lib/postgres-data
+    nodeFilters:
+      - server:0
+registries:
+  create:
+    name: analizzatore-registry.localhost
+    host: "0.0.0.0"
+    hostPort: "5001"
+options:
+  k3d:
+    wait: true
+    timeout: "120s"
+    disableLoadbalancer: false
+  k3s:
+    extraArgs:
+      - arg: --tls-san=127.0.0.1
+        nodeFilters:
+          - server:*
+  kubeconfig:
+    updateDefaultKubeconfig: true
+    switchCurrentContext: true

@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import type { LoadableState } from '@/Commons/loadable-state';
 import type {
+  CompanyDetailModalViewModelDTO,
+  CurriculumEditorViewModelDTO,
   JobOfferDetailViewModelDTO,
   JobOfferListItemViewModelDTO,
   JobOffersFiltersViewModelDTO,
   JobOffersPaginationViewModelDTO,
   JobOffersStatsViewModelDTO,
-} from '../../ViewModel/jobOffersViewModel';
+} from '../../ViewModel/jobOffersViewModelTypes';
 import type { JobOfferFreshness, JobOfferPriority, JobOfferSource, JobOfferStatus } from '../../State/jobOffersAtoms';
+import type { CurriculumEditorController } from '../../Controller/useCurriculumEditorController';
 import { JobOfferDetail } from '../Components/JobOfferDetail';
 import { JobOffersDecisionDeck } from '../Components/JobOffersDecisionDeck';
 import { JobOffersFilters } from '../Components/JobOffersFilters';
@@ -25,6 +28,9 @@ export interface JobOffersScreenProps {
   readonly statsState: LoadableState<JobOffersStatsViewModelDTO>;
   readonly filters: JobOffersFiltersViewModelDTO;
   readonly paginationState: LoadableState<JobOffersPaginationViewModelDTO>;
+  readonly companyModalState: LoadableState<CompanyDetailModalViewModelDTO | null>;
+  readonly curriculumEditor: CurriculumEditorViewModelDTO;
+  readonly curriculumEditorController: CurriculumEditorController;
   readonly onSelectJobOffer: (id: string) => void;
   readonly onClearSelection: () => void;
   readonly onNextPage: () => void;
@@ -35,8 +41,10 @@ export interface JobOffersScreenProps {
   readonly onPriorityChange: (value: JobOfferPriority | null) => void;
   readonly onFreshnessFilterChange: (value: JobOfferFreshness | null) => void;
   readonly onUpdateJobOfferStatus: (id: string, status: JobOfferStatus) => Promise<void>;
-  readonly onUpdateCurriculumTailoring: (id: string, tailoring: Record<string, any>) => Promise<void>;
   readonly onResetFilters: () => void;
+  readonly onSelectCompany: (companyId: string) => void;
+  readonly onCloseCompanyModal: () => void;
+  readonly onSelectOfferFromCompany: (offerId: string) => void;
 }
 
 export const JobOffersScreen: React.FC<JobOffersScreenProps> = ({
@@ -47,6 +55,9 @@ export const JobOffersScreen: React.FC<JobOffersScreenProps> = ({
   statsState,
   filters,
   paginationState,
+  companyModalState,
+  curriculumEditor,
+  curriculumEditorController,
   onSelectJobOffer,
   onClearSelection,
   onNextPage,
@@ -57,8 +68,10 @@ export const JobOffersScreen: React.FC<JobOffersScreenProps> = ({
   onPriorityChange,
   onFreshnessFilterChange,
   onUpdateJobOfferStatus,
-  onUpdateCurriculumTailoring,
   onResetFilters,
+  onSelectCompany,
+  onCloseCompanyModal,
+  onSelectOfferFromCompany,
 }) => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
@@ -125,7 +138,9 @@ export const JobOffersScreen: React.FC<JobOffersScreenProps> = ({
           filtersActiveCount={filters.activeFiltersCount}
           onOpenFilters={() => setIsFiltersOpen(true)}
           onUpdateJobOfferStatus={onUpdateJobOfferStatus}
-          onUpdateCurriculumTailoring={onUpdateCurriculumTailoring}
+          onSelectCompany={onSelectCompany}
+          editorState={curriculumEditor}
+          editorController={curriculumEditorController}
         />
       ) : section === 'active' || section === 'closed' ? (
         <div className="flex flex-col gap-4">
@@ -134,6 +149,7 @@ export const JobOffersScreen: React.FC<JobOffersScreenProps> = ({
             mode={section}
             onSelectJobOffer={onSelectJobOffer}
             onUpdateJobOfferStatus={onUpdateJobOfferStatus}
+            onSelectCompany={onSelectCompany}
           />
           {section === 'closed' ? (
             <JobOffersPagination
@@ -150,6 +166,7 @@ export const JobOffersScreen: React.FC<JobOffersScreenProps> = ({
               state={jobOffersState}
               onSelectJobOffer={onSelectJobOffer}
               onUpdateJobOfferStatus={onUpdateJobOfferStatus}
+              onSelectCompany={onSelectCompany}
             />
             <JobOffersPagination
               state={paginationState}
@@ -161,7 +178,9 @@ export const JobOffersScreen: React.FC<JobOffersScreenProps> = ({
             state={selectedJobOfferState}
             onClearSelection={onClearSelection}
             onUpdateJobOfferStatus={onUpdateJobOfferStatus}
-            onUpdateCurriculumTailoring={onUpdateCurriculumTailoring}
+            onSelectCompany={onSelectCompany}
+            editorState={curriculumEditor}
+            editorController={curriculumEditorController}
           />
         </div>
       )}
@@ -173,13 +192,19 @@ export const JobOffersScreen: React.FC<JobOffersScreenProps> = ({
               state={selectedJobOfferState}
               onClearSelection={onClearSelection}
               onUpdateJobOfferStatus={onUpdateJobOfferStatus}
-              onUpdateCurriculumTailoring={onUpdateCurriculumTailoring}
+              onSelectCompany={onSelectCompany}
+              editorState={curriculumEditor}
+              editorController={curriculumEditorController}
             />
           </div>
         </div>
       ) : null}
 
-      <CompanyDetailModal />
+      <CompanyDetailModal
+        state={companyModalState}
+        onClose={onCloseCompanyModal}
+        onSelectOffer={onSelectOfferFromCompany}
+      />
     </section>
   </main>
   );

@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import type { LoadableState } from '@/Commons/loadable-state';
 import type { JobOfferStatus } from '../../State/jobOffersAtoms';
 import type {
+  CurriculumEditorViewModelDTO,
   JobOfferDetailViewModelDTO,
   JobOfferListItemViewModelDTO,
   JobOffersPaginationViewModelDTO,
-} from '../../ViewModel/jobOffersViewModel';
+} from '../../ViewModel/jobOffersViewModelTypes';
+import type { CurriculumEditorController } from '../../Controller/useCurriculumEditorController';
 import { JobOfferDetail } from './JobOfferDetail';
 
 export const JobOffersDecisionDeck: React.FC<{
@@ -19,7 +21,9 @@ export const JobOffersDecisionDeck: React.FC<{
   readonly filtersActiveCount: number;
   readonly onOpenFilters: () => void;
   readonly onUpdateJobOfferStatus: (id: string, status: JobOfferStatus) => Promise<void>;
-  readonly onUpdateCurriculumTailoring: (id: string, tailoring: Record<string, any>) => Promise<void>;
+  readonly onSelectCompany?: (companyId: string) => void;
+  readonly editorState?: CurriculumEditorViewModelDTO;
+  readonly editorController?: CurriculumEditorController;
 }> = ({
   jobOffersState,
   selectedJobOfferState,
@@ -31,7 +35,9 @@ export const JobOffersDecisionDeck: React.FC<{
   filtersActiveCount,
   onOpenFilters,
   onUpdateJobOfferStatus,
-  onUpdateCurriculumTailoring,
+  onSelectCompany,
+  editorState,
+  editorController,
 }) => {
   const [pendingEdgeSelection, setPendingEdgeSelection] = useState<'first' | 'last' | null>(null);
 
@@ -238,7 +244,9 @@ export const JobOffersDecisionDeck: React.FC<{
               state={getVisibleSelectedJobOfferState(selectedJobOfferState, jobOffersState.data)}
               onClearSelection={onClearSelection}
               onUpdateJobOfferStatus={onUpdateJobOfferStatus}
-              onUpdateCurriculumTailoring={onUpdateCurriculumTailoring}
+              onSelectCompany={onSelectCompany}
+              editorState={editorState}
+              editorController={editorController}
               showHeaderActions={false}
             />
           </div>

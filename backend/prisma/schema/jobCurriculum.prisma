@@ -1,14 +1,64 @@
 model JobCurriculum {
-  id            String   @id @default(uuid())
-  jobOfferId    String   @unique
-  jobOffer      JobOffer @relation(fields: [jobOfferId], references: [id], onDelete: Cascade)
+  id            String                     @id @default(uuid())
+  jobOfferId    String                     @unique
+  jobOffer      JobOffer                   @relation(fields: [jobOfferId], references: [id], onDelete: Cascade)
 
-  filePath      String   // Path del file curriculum salvato su disco
-  explanation   String   // Spiegazione testuale delle scelte fatte per il curriculum
-  tailoringData String?  // JSON string dell oggetto ResumeTailoring generato dall AI
+  storageKey    String                     // Chiave identificativa dell'oggetto salvato in S3/MinIO
+  explanation   String                     // Spiegazione testuale delle scelte fatte per il curriculum
+  customLabel   String?                    // Titolo professionale personalizzato
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  work          JobCurriculumWork[]
+  projects      JobCurriculumProject[]
+  publications  JobCurriculumPublication[]
+
+  createdAt     DateTime                   @default(now())
+  updatedAt     DateTime                   @updatedAt
 
   @@index([jobOfferId])
+}
+
+model JobCurriculumWork {
+  id           String        @id @default(uuid())
+  curriculumId String
+  curriculum   JobCurriculum @relation(fields: [curriculumId], references: [id], onDelete: Cascade)
+
+  name         String
+  position     String
+  summary      String
+  include      Boolean       @default(true)
+  order        Int           @default(0)
+
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([curriculumId])
+}
+
+model JobCurriculumProject {
+  id           String        @id @default(uuid())
+  curriculumId String
+  curriculum   JobCurriculum @relation(fields: [curriculumId], references: [id], onDelete: Cascade)
+
+  name         String
+  description  String
+  order        Int           @default(0)
+
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([curriculumId])
+}
+
+model JobCurriculumPublication {
+  id           String        @id @default(uuid())
+  curriculumId String
+  curriculum   JobCurriculum @relation(fields: [curriculumId], references: [id], onDelete: Cascade)
+
+  title        String
+  order        Int           @default(0)
+
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([curriculumId])
 }

@@ -94,6 +94,7 @@ export const sourceLabels: Record<JobOfferSource, string> = {
   REMOTIVE: 'Remotive',
   JOBICY: 'Jobicy',
   WE_WORK_REMOTELY: 'We Work Remotely',
+  MANUAL: 'Inserito Manualmente',
 };
 
 export const sourceOptions: readonly { readonly value: JobOfferSource; readonly label: string }[] = [
@@ -101,6 +102,7 @@ export const sourceOptions: readonly { readonly value: JobOfferSource; readonly 
   { value: 'REMOTIVE', label: sourceLabels.REMOTIVE },
   { value: 'JOBICY', label: sourceLabels.JOBICY },
   { value: 'WE_WORK_REMOTELY', label: sourceLabels.WE_WORK_REMOTELY },
+  { value: 'MANUAL', label: sourceLabels.MANUAL },
 ];
 
 export const priorityLabels: Record<JobOfferPriority, string> = {
@@ -382,15 +384,28 @@ export const mapCurriculumDetail = (
     return null;
   }
 
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000';
+  const rawBaseUrl = import.meta.env.VITE_API_BASE_URL ?? '/api';
+  const normalizedBase = rawBaseUrl.replace(/\/$/, '');
+  const apiBase = normalizedBase.endsWith('/api') ? normalizedBase : `${normalizedBase}/api`;
 
   return {
     id: curriculum.id,
     jobOfferId: curriculum.jobOfferId,
-    filePath: curriculum.filePath,
-    pdfUrl: `${apiBaseUrl}/job-offers/${jobOfferId}/curriculum/pdf`,
+    storageKey: curriculum.storageKey ?? '',
+    pdfUrl: `${apiBase}/job-offers/${jobOfferId}/curriculum/pdf`,
     explanation: curriculum.explanation,
-    tailoringData: (curriculum.tailoringData as Record<string, any>) ?? null,
+    customLabel: curriculum.customLabel ?? null,
+    work: (curriculum.work || []).map((w) => ({
+      name: w.name,
+      position: w.position,
+      summary: w.summary,
+      include: w.include,
+    })),
+    projects: (curriculum.projects || []).map((p) => ({
+      name: p.name,
+      description: p.description,
+    })),
+    selectedPublicationTitles: curriculum.selectedPublicationTitles || [],
     createdAt: formatDateTime(curriculum.createdAt),
     updatedAt: formatDateTime(curriculum.updatedAt),
   };
@@ -409,10 +424,10 @@ export const mapListItem = (
   title: offer.title,
   companyName: offer.company.name,
   companyId: offer.company.id,
-  companyEligibleOffersCount: (offer.company as any).eligibleOffersCount ?? 0,
-  companyActiveOffersCount: (offer.company as any).activeOffersCount ?? 0,
-  companySavedOrAppliedCount: (offer.company as any).savedOrAppliedCount ?? 0,
-  companyNewOffersCount: (offer.company as any).newOffersCount ?? 0,
+  companyEligibleOffersCount: offer.company.eligibleOffersCount ?? 0,
+  companyActiveOffersCount: offer.company.activeOffersCount ?? 0,
+  companySavedOrAppliedCount: offer.company.savedOrAppliedCount ?? 0,
+  companyNewOffersCount: offer.company.newOffersCount ?? 0,
   source: sourceLabels[offer.source],
   freshness: freshnessLabels[offer.freshness],
   evaluatorModel: formatEvaluatorModel(offer.evaluation?.evaluatorModel),
@@ -456,10 +471,10 @@ export const mapDetail = (offer: JobOfferDto): JobOfferDetailViewModelDTO => ({
   company: {
     id: offer.company.id,
     name: offer.company.name,
-    eligibleOffersCount: (offer.company as any).eligibleOffersCount ?? 0,
-    activeOffersCount: (offer.company as any).activeOffersCount ?? 0,
-    savedOrAppliedCount: (offer.company as any).savedOrAppliedCount ?? 0,
-    newOffersCount: (offer.company as any).newOffersCount ?? 0,
+    eligibleOffersCount: offer.company.eligibleOffersCount ?? 0,
+    activeOffersCount: offer.company.activeOffersCount ?? 0,
+    savedOrAppliedCount: offer.company.savedOrAppliedCount ?? 0,
+    newOffersCount: offer.company.newOffersCount ?? 0,
     websiteUrl: formatOptional(offer.company.websiteUrl),
     linkedinUrl: formatOptional(offer.company.linkedinUrl),
     industry: formatOptional(offer.company.industry),
@@ -468,3 +483,134 @@ export const mapDetail = (offer: JobOfferDto): JobOfferDetailViewModelDTO => ({
     employeeCount: offer.company.employeeCount?.toLocaleString('it-IT') ?? missingValue,
   },
 });
+
+import type { CompanyJobOffersBreakdownDto } from '../State/jobOffersAtoms';
+import type {
+  CompanyDetailModalViewModelDTO,
+  CompanyJobOfferItemViewModelDTO,
+} from './jobOffersViewModelTypes';
+
+export const mapCompanyDetailModal = (
+  breakdown: CompanyJobOffersBreakdownDto | null | undefined,
+): CompanyDetailModalViewModelDTO | null => {
+  if (!breakdown || !breakdown.company) return null;
+
+  const offers: CompanyJobOfferItemViewModelDTO[] = (breakdown.offers ?? []).map((offer) => ({
+    id: offer.id,
+    title: offer.title,
+    location: offer.location || 'Remote',
+    remoteType: remoteTypeLabels[offer.remoteType] || offer.remoteType,
+    source: sourceLabels[offer.source] || offer.source,
+    status: offer.status,
+    statusLabel: statusLabels[offer.status] || offer.status,
+    overallScore: offer.evaluation?.overallScore,
+    priority: offer.evaluation?.priority,
+  }));
+
+  return {
+    companyId: breakdown.company.id,
+    companyName: breakdown.company.name,
+    industry: breakdown.company.industry ?? null,
+    websiteUrl: breakdown.company.websiteUrl ?? null,
+    linkedinUrl: breakdown.company.linkedinUrl ?? null,
+    companySizeRange: breakdown.company.companySizeRange ?? null,
+    fundingStage: breakdown.company.fundingStage ?? null,
+    counts: {
+      savedOrAppliedCount: breakdown.counts?.savedOrAppliedCount ?? 0,
+      newOffersCount: breakdown.counts?.newOffersCount ?? 0,
+      pendingEvaluationCount: breakdown.counts?.pendingEvaluationCount ?? 0,
+      disqualifiedCount: breakdown.counts?.disqualifiedCount ?? 0,
+    },
+    offers,
+  };
+};
+
+export const ALL_PUBLICATIONS = [
+  'Contextualized experiential language learning in the metaverse',
+  'MetaCUX: Social interaction and collaboration in the metaverse',
+  'The yin and yang of software quality: On the relationship between design patterns and code smells',
+  'MetaCUX-a multi-user, multi-scenario environment for a cooperative workspace',
+  'Designing a collaborative safety training experience in virtual reality',
+  'A task-oriented multimodal conversational interface for a CSCW immersive virtual environment',
+  'Muxi: a multimodal conversational interface for the metaverse',
+  'Botanicar: A cooperative experience in augmented reality',
+  'A Glimpse on HCAI Frameworks: A Scoping Review to Adapt them to Mixed Reality',
+  'Neuro-physiological and Subjective measures of Presence Experience in Virtual Reality: Insights from a scoping review',
+  'cARdefender: a Mixed Reality Game for Vehicle Passengers',
+] as const;
+
+export const ALL_BASE_WORK = [
+  { name: 'MioCFO', position: 'Co-Creator & Lead Developer' },
+  { name: 'Commigo', position: 'Founder & Lead Architect' },
+  { name: 'FitRats', position: 'Co-Creator & Lead Developer' },
+  { name: 'University of Salerno', position: 'Research Associate' },
+  { name: 'University of Salerno', position: 'Research Scholar, Marte Media Lab' },
+  { name: 'Glasgow University', position: 'Traineeship, HCI Lab' },
+] as const;
+
+export const ALL_BASE_PROJECTS = [
+  { name: 'cARdefender', description: '' },
+  { name: 'BotanicAR', description: '' },
+] as const;
+
+export const baseWorkCatalog: Record<string, { position: string; summary: string }[]> = {
+  miocfo: [
+    {
+      position: 'Co-Creator & Lead Developer',
+      summary:
+        'Engineered a B2B financial advisory platform from scratch using TypeScript, React, Tailwind CSS, NestJS, Prisma, and PostgreSQL, configuring concurrent background task queues to parse 1,000+ invoices and bank statements securely.\nAchieved 95% automated categorization accuracy on cash flows using Gemini APIs while designing a rapid-review UX fallback to make manual correction of low-confidence entries frictionless.\nDelivered real-time financial insights to 20 active SME beta users by conducting weekly interviews to translate feedback directly into updates.',
+    },
+  ],
+  commigo: [
+    {
+      position: 'Founder & Lead Architect',
+      summary:
+        'Monetized the multiplayer VR platform, LearningVerse, by securing an 8,000 Euro software licensing contract for an EU-funded integration program and deploying it for a 40-hour course at the University of Salerno.\nEngineered real-time spatial synchronization for 20 concurrent VR users in a single room by building low-latency C# networking pipelines in Unity that synchronized 100 interactable 3D objects simultaneously.\nDelivered HapGree, a 25,000 Euro sustainability tracking SaaS, and MatEditPro, a 9,000 Euro web 3D editor, by leading technical development across Flutter, React, Three.js, and WebGL architectures.\nDoubled team feature delivery speed across 3 co-founders by establishing core software architecture guidelines, automated deployment workflows, and facilitating weekly Agile Scrum sprints.',
+    },
+  ],
+  fitrats: [
+    {
+      position: 'Co-Creator & Lead Developer',
+      summary:
+        'Designed and developed a zero-to-one B2B SaaS web platform for fitness professionals featuring real-time client tracking using Flutter and Riverpod state management connected to a Node.js and PostgreSQL backend.\nStreamlined workout creation and client tracking for 10 personal trainers by conducting hands-on user testing calls and iterating core product features continuously.',
+    },
+  ],
+  'university of salerno': [
+    {
+      position: 'Research Associate',
+      summary:
+        'Engineered cooperative AR/VR platforms like BotanicAR and industrial safety training simulations in Unity, co-authoring five peer-reviewed papers published at international IEEE and ACM conferences.\nAccelerated research prototype delivery across 5 collaborative AR/VR projects by establishing modular C# component architectures and reusable data pipelines.',
+    },
+    {
+      position: 'Research Scholar, Marte Media Lab',
+      summary:
+        "Published four peer-reviewed scientific papers at international HCI conferences by conducting user studies and testing usability metrics on social interaction in virtual environments.\nSelected for a research scholarship at Marte Media Lab during Master's studies based on top academic standing (GPA: 3.92/4.0).",
+    },
+  ],
+  'glasgow university': [
+    {
+      position: 'Traineeship, HCI Lab',
+      summary:
+        'Published a peer-reviewed scientific paper at the IEEE VR conference after securing a competitive Erasmus+ research traineeship grant under the supervision of Prof. Stephen Brewster.\nValidated in-car tracking by executing 20 real-world driving test sessions with participants after building cARdefender, an in-vehicle Mixed Reality game with a C++ object recognition and spatial mapping algorithm using the ZED 2 SDK.',
+    },
+  ],
+};
+
+export function getBaseWorkExperience(name: string, position?: string) {
+  const normName = (name || '').trim().toLowerCase();
+  const normPos = (position || '').trim().toLowerCase();
+  const list = baseWorkCatalog[normName];
+  if (!list || list.length === 0) return null;
+
+  if (normPos) {
+    const match = list.find(
+      (item) =>
+        item.position.toLowerCase() === normPos ||
+        item.position.toLowerCase().includes(normPos) ||
+        normPos.includes(item.position.toLowerCase()),
+    );
+    if (match) return match;
+  }
+
+  return list[0];
+}

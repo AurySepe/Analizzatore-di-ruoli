@@ -6,6 +6,7 @@ import {
   jobOffersFiltersAtom,
   jobOffersPageAtom,
   selectedJobOfferIdAtom,
+  selectedCompanyIdAtom,
   updateJobOfferStatusMutationAtom,
   updateCurriculumTailoringMutationAtom,
   jobOffersSectionAtom,
@@ -32,6 +33,9 @@ export interface JobOffersController {
   readonly onArchiveJobOffer: (id: string) => Promise<void>;
   readonly onRestoreJobOffer: (id: string) => Promise<void>;
   readonly onResetFilters: () => void;
+  readonly onSelectCompany: (companyId: string) => void;
+  readonly onCloseCompanyModal: () => void;
+  readonly onSelectOfferFromCompany: (offerId: string) => void;
 }
 
 export const useJobOffersController = (section: JobOffersSection): JobOffersController => {
@@ -145,6 +149,27 @@ export const useJobOffersController = (section: JobOffersSection): JobOffersCont
     resetToFirstPage();
   }, [resetToFirstPage, setFilters]);
 
+  const setSelectedCompanyId = useSetAtom(selectedCompanyIdAtom);
+
+  const handleSelectCompany = useCallback(
+    (companyId: string) => {
+      setSelectedCompanyId(companyId);
+    },
+    [setSelectedCompanyId],
+  );
+
+  const handleCloseCompanyModal = useCallback(() => {
+    setSelectedCompanyId(null);
+  }, [setSelectedCompanyId]);
+
+  const handleSelectOfferFromCompany = useCallback(
+    (offerId: string) => {
+      setSelectedJobOfferId(offerId);
+      setSelectedCompanyId(null);
+    },
+    [setSelectedCompanyId, setSelectedJobOfferId],
+  );
+
   return {
     onSelectJobOffer: handleSelectJobOffer,
     onClearSelection: handleClearSelection,
@@ -160,5 +185,8 @@ export const useJobOffersController = (section: JobOffersSection): JobOffersCont
     onArchiveJobOffer: handleArchiveJobOffer,
     onRestoreJobOffer: handleRestoreJobOffer,
     onResetFilters: handleResetFilters,
+    onSelectCompany: handleSelectCompany,
+    onCloseCompanyModal: handleCloseCompanyModal,
+    onSelectOfferFromCompany: handleSelectOfferFromCompany,
   };
 };

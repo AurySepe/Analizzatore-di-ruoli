@@ -1,23 +1,28 @@
 import { Controller, Get, Post, Patch, Body, Param, Query, NotFoundException, Res } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiExtraModels } from '@nestjs/swagger';
 import { ApplicationStatus } from '@prisma/client';
 import { Response } from 'express';
 import * as fs from 'fs';
+import * as path from 'path';
 import { JobOffersService } from './job-offers.service';
 import { JobOfferDto, CreateJobOfferDto, RemoteTypeEnum, ExperienceLevelEnum, ApplicationStatusEnum, calculateFreshness } from './dto/job-offer.dto';
 import { JobOfferFilterQueryDto } from './dto/job-offer-query.dto';
 import { UpdateJobOfferStatusDto } from './dto/update-job-offer-status.dto';
-import { UpdateCurriculumTailoringDto } from './dto/update-curriculum-tailoring.dto';
+import { UpdateCurriculumTailoringDto, WorkTailoringDto, ProjectTailoringDto } from './dto/update-curriculum-tailoring.dto';
 import { CompanyDto } from './dto/company.dto';
 import { JobEvaluationDto } from '../evaluations/dto/job-evaluation.dto';
 import { JobCurriculumDto } from './dto/job-curriculum.dto';
-import { PaginatedDto } from '../../../commons/pagination/paginated.dto';
-import { ApiPaginatedResponse } from '../../../commons/pagination/paginated.dto';
+import { PaginatedDto, ApiPaginatedResponse } from '../../../commons/pagination/paginated.dto';
+import { S3StorageService } from '../../../commons/storage/s3-storage.service';
 
 @ApiTags('job-offers')
+@ApiExtraModels(JobCurriculumDto, UpdateCurriculumTailoringDto, WorkTailoringDto, ProjectTailoringDto)
 @Controller('job-offers')
 export class JobOffersController {
-  constructor(private readonly jobOffersService: JobOffersService) {}
+  constructor(
+    private readonly jobOffersService: JobOffersService,
+    private readonly s3StorageService: S3StorageService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Crea o aggiorna un annuncio di lavoro' })
@@ -124,12 +129,9 @@ export class JobOffersController {
       throw new NotFoundException(`Curriculum PDF per l'annuncio "${id}" non ancora disponibile.`);
     }
 
-    const filePath = rawOffer.curriculum.filePath;
-    if (!fs.existsSync(filePath)) {
-      throw new NotFoundException(`File PDF non trovato sul disco in: ${filePath}`);
-    }
+    const rawKey = rawOffer.curriculum.storageKey;
+    const storageKey = rawKey && rawKey.startsWith('curriculums/') ? rawKey : `curriculums/cv_${id}.pdf`;
 
-    // Sanitizza il titolo del ruolo (rimuove caratteri speciali/spazi e imposta il formato AurelioSepe-[ruolo]-cv.pdf)
     const sanitizedTitle = (rawOffer.title || 'Role')
       .trim()
       .replace(/[^a-zA-Z0-9]/g, '-')
@@ -138,10 +140,33 @@ export class JobOffersController {
 
     const downloadFileName = `AurelioSepe-${sanitizedTitle}-cv.pdf`;
 
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `inline; filename="${downloadFileName}"`);
+    // 1. Prova recupero da Object Storage (S3 / MinIO)
+    try {
+      const s3Object = await this.s3StorageService.getStream(storageKey);
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `inline; filename="${downloadFileName}"`);
+      if (s3Object.contentLength) {
+        res.setHeader('Content-Length', s3Object.contentLength);
+      }
+      return s3Object.stream.pipe(res);
+    } catch {
+      // 2. Fallback resiliente al filesystem locale
+      const fileName = `cv_${id}.pdf`;
+      const candidates = [
+        rawKey,
+        path.resolve(process.cwd(), 'storage', 'resumes', fileName),
+        path.resolve('/app/storage/resumes', fileName),
+      ].filter(Boolean) as string[];
 
-    return res.sendFile(filePath);
+      for (const cand of candidates) {
+        if (fs.existsSync(cand)) {
+          res.setHeader('Content-Type', 'application/pdf');
+          res.setHeader('Content-Disposition', `inline; filename="${downloadFileName}"`);
+          return res.sendFile(path.resolve(cand));
+        }
+      }
+      throw new NotFoundException(`Curriculum PDF non trovato in S3 (${storageKey}) o su disco locale.`);
+    }
   }
 
   @Patch(':id/status')
@@ -213,21 +238,23 @@ export class JobOffersController {
 
     let curriculumDto: JobCurriculumDto | null = null;
     if (rawOffer.curriculum) {
-      let parsedTailoringData = null;
-      if (rawOffer.curriculum.tailoringData) {
-        try {
-          parsedTailoringData = JSON.parse(rawOffer.curriculum.tailoringData);
-        } catch {
-          parsedTailoringData = null;
-        }
-      }
-
       curriculumDto = new JobCurriculumDto({
         id: rawOffer.curriculum.id,
         jobOfferId: rawOffer.curriculum.jobOfferId,
-        filePath: rawOffer.curriculum.filePath,
+        storageKey: rawOffer.curriculum.storageKey,
         explanation: rawOffer.curriculum.explanation,
-        tailoringData: parsedTailoringData,
+        customLabel: rawOffer.curriculum.customLabel,
+        work: (rawOffer.curriculum.work || []).map((w: any) => ({
+          name: w.name,
+          position: w.position,
+          summary: w.summary,
+          include: w.include,
+        })),
+        projects: (rawOffer.curriculum.projects || []).map((p: any) => ({
+          name: p.name,
+          description: p.description,
+        })),
+        selectedPublicationTitles: (rawOffer.curriculum.publications || []).map((pub: any) => pub.title),
         createdAt: rawOffer.curriculum.createdAt,
         updatedAt: rawOffer.curriculum.updatedAt,
       });

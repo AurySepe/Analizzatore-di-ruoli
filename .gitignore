@@ -11,14 +11,22 @@ build/
 
 # Environment files
 .env
-.env.local
+.env.*
+*.env
 backend/.env
 frontend/.env
 
-# SQLite / Local Database
+# Kubernetes Secrets
+k8s/secrets.yaml
+k8s/*secret*.yaml
+
+# Database dumps & SQL backups (ignore all except prisma migration sql files)
+*.sql
+*.dump
 *.db
 *.db-journal
 dev.db
+!backend/prisma/schema/migrations/**/*.sql
 
 # IDE & OS
 .DS_Store
@@ -31,4 +39,3 @@ backend/storage/
 backups/
 backend/backups/
 temp_*.html
-

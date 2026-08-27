@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: analizzatore-ingress
+  labels:
+    app.kubernetes.io/name: analizzatore-ingress
+  annotations:
+    # Dimensione massima payload per upload
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    # Timeout per chiamate AI / scraping lunghe
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "180"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "180"
+spec:
+  ingressClassName: traefik
+  rules:
+    - http:
+        paths:
+          # Rotta API & Swagger documentation
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-api
+                port:
+                  number: 3000
+
+          # Rotta Frontend SPA (tutto il resto)
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  labels:
+    app.kubernetes.io/name: app-config
+    app.kubernetes.io/part-of: analizzatore-di-ruoli
+data:
+  PORT: "3000"
+  DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/analizzatore_ruoli?schema=public"
+  S3_ENDPOINT: "http://minio:9000"
+  S3_BUCKET_NAME: "resumes"
+  S3_REGION: "local"
+  S3_FORCE_PATH_STYLE: "true"
+  AI_STRATEGY: "balanced"
+  LOCAL_AI_BASE_URL: "http://ollama:11434"

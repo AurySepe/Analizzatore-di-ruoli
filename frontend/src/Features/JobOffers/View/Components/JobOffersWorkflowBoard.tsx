@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import { useSetAtom } from 'jotai';
-import { selectedCompanyIdAtom } from '../../State/jobOffersAtoms';
 import type { LoadableState } from '@/Commons/loadable-state';
 import type { JobOfferStatus } from '../../State/jobOffersAtoms';
 import type { JobOfferListItemViewModelDTO } from '../../ViewModel/jobOffersViewModel';
@@ -30,7 +28,8 @@ export const JobOffersWorkflowBoard: React.FC<{
   readonly mode: 'active' | 'closed';
   readonly onSelectJobOffer: (id: string) => void;
   readonly onUpdateJobOfferStatus: (id: string, status: JobOfferStatus) => Promise<void>;
-}> = ({ state, mode, onSelectJobOffer, onUpdateJobOfferStatus }) => {
+  readonly onSelectCompany?: (companyId: string) => void;
+}> = ({ state, mode, onSelectJobOffer, onUpdateJobOfferStatus, onSelectCompany }) => {
   switch (state.status) {
     case 'loading':
       return <JobOffersWorkflowBoardSkeleton mode={mode} />;
@@ -44,6 +43,7 @@ export const JobOffersWorkflowBoard: React.FC<{
           mode={mode}
           onSelectJobOffer={onSelectJobOffer}
           onUpdateJobOfferStatus={onUpdateJobOfferStatus}
+          onSelectCompany={onSelectCompany}
         />
       );
   }
@@ -83,8 +83,8 @@ const JobOffersWorkflowBoardView: React.FC<{
   readonly mode: 'active' | 'closed';
   readonly onSelectJobOffer: (id: string) => void;
   readonly onUpdateJobOfferStatus: (id: string, status: JobOfferStatus) => Promise<void>;
-}> = ({ data, isFetching, mode, onSelectJobOffer, onUpdateJobOfferStatus }) => {
-  const setSelectedCompanyId = useSetAtom(selectedCompanyIdAtom);
+  readonly onSelectCompany?: (companyId: string) => void;
+}> = ({ data, isFetching, mode, onSelectJobOffer, onUpdateJobOfferStatus, onSelectCompany }) => {
   const columns = getColumns(mode);
   const [draggedOfferId, setDraggedOfferId] = useState<string | null>(null);
   const [dragOverStatus, setDragOverStatus] = useState<JobOfferStatus | null>(null);
@@ -201,7 +201,7 @@ const JobOffersWorkflowBoardView: React.FC<{
                                 type="button"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  if (offer.companyId) setSelectedCompanyId(offer.companyId);
+                                  if (offer.companyId && onSelectCompany) onSelectCompany(offer.companyId);
                                 }}
                                 className="text-xs font-semibold text-slate-600 hover:text-indigo-600 hover:underline transition"
                               >
@@ -224,7 +224,7 @@ const JobOffersWorkflowBoardView: React.FC<{
                                     type="button"
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      if (offer.companyId) setSelectedCompanyId(offer.companyId);
+                                      if (offer.companyId && onSelectCompany) onSelectCompany(offer.companyId);
                                     }}
                                     className="inline-flex items-center gap-1 rounded-full bg-indigo-100 px-2 py-0.5 text-[10px] font-extrabold text-indigo-900 hover:bg-indigo-200 transition"
                                     title={`${saved} annunci già segnati validi • ${toDecide} nuovi annunci da decidere per ${offer.companyName}`}

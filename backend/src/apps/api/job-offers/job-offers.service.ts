@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma, ApplicationStatus, EvaluationPriority } from '@prisma/client';
 import * as path from 'path';
 import { PrismaService } from '../../../commons/prisma/prisma.service';
+import { S3StorageService } from '../../../commons/storage/s3-storage.service';
 import { PdfGeneratorService } from '../../../apps/curriculum-worker/curriculum/pdf/pdf-generator.service';
 import { mergeResumeWithTailoring } from '../../../apps/curriculum-worker/curriculum/pdf/schema';
 import { baseResumeData } from '../../../apps/curriculum-worker/data/base-data';
@@ -12,11 +13,25 @@ import type { UpdateCurriculumTailoringDto } from './dto/update-curriculum-tailo
 
 import { JobOffersAnalyticsService } from './job-offers-analytics.service';
 
+const defaultOfferInclude = {
+  company: true,
+  evaluation: true,
+  curriculum: {
+    include: {
+      work: { orderBy: { order: 'asc' as const } },
+      projects: { orderBy: { order: 'asc' as const } },
+      publications: { orderBy: { order: 'asc' as const } },
+    },
+  },
+  statusHistory: { orderBy: { createdAt: 'asc' as const } },
+};
+
 @Injectable()
 export class JobOffersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly pdfGeneratorService: PdfGeneratorService,
+    private readonly s3StorageService: S3StorageService,
     private readonly analyticsService: JobOffersAnalyticsService,
   ) {}
 
@@ -231,7 +246,7 @@ export class JobOffersService {
           { evaluation: { desireMatchScore: 'desc' } },
           { createdAt: 'desc' },
         ],
-        include: { company: true, evaluation: true, curriculum: true, statusHistory: { orderBy: { createdAt: 'asc' } } },
+        include: defaultOfferInclude,
       }),
       this.prisma.jobOffer.count({ where: whereClause }),
     ]);
@@ -243,7 +258,7 @@ export class JobOffersService {
   async findOne(id: string) {
     const offer = await this.prisma.jobOffer.findUnique({
       where: { id },
-      include: { company: true, evaluation: true, curriculum: true, statusHistory: { orderBy: { createdAt: 'asc' } } },
+      include: defaultOfferInclude,
     });
 
     if (offer) {
@@ -260,7 +275,7 @@ export class JobOffersService {
       const updated = await tx.jobOffer.update({
         where: { id },
         data: { status },
-        include: { company: true, evaluation: true, curriculum: true, statusHistory: { orderBy: { createdAt: 'asc' } } },
+        include: defaultOfferInclude,
       });
 
       await tx.jobStatusHistory.create({
@@ -368,12 +383,88 @@ export class JobOffersService {
       whereClause.source = query.source;
     }
 
-    if (query?.search && query.search.trim().length > 0) {
-      const searchStr = query.search.trim();
-      whereClause.OR = [
-        { title: { contains: searchStr, mode: 'insensitive' } },
-        { company: { name: { contains: searchStr, mode: 'insensitive' } } },
-      ];
+    const offers = await this.prisma.jobOffer.findMany({
+      where: whereClause,
+      orderBy: [
+        { evaluation: { priority: 'asc' } },
+        { evaluation: { overallScore: 'desc' } },
+        { updatedAt: 'desc' },
+      ],
+      include: defaultOfferInclude,
+    });
+
+    return this.attachCompanyActiveCounts(offers);
+  }
+
+  async getCompanyJobOffersBreakdown(companyId: string) {
+    const company = await this.prisma.company.findUnique({
+      where: { id: companyId },
+    });
+
+    if (!company) {
+      throw new NotFoundException(`Azienda con ID "${companyId}" non trovata`);
+    }
+
+    const offers = await this.prisma.jobOffer.findMany({
+      where: { companyId },
+      include: defaultOfferInclude,
+    });
+
+    const pendingEvaluationCount = offers.filter(
+      (o) => !o.evaluation || o.evaluation.status !== 'SUCCESS',
+    ).length;
+
+    const disqualifiedCount = offers.filter(
+      (o) => o.evaluation && o.evaluation.priority === 'DISQUALIFIED',
+    ).length;
+
+    const newOffersCount = offers.filter(
+      (o) =>
+        o.evaluation &&
+        o.evaluation.status === 'SUCCESS' &&
+        o.evaluation.priority !== 'DISQUALIFIED' &&
+        o.status === 'NEW',
+    ).length;
+
+    const savedOrAppliedCount = offers.filter(
+      (o) =>
+        o.evaluation &&
+        o.evaluation.status === 'SUCCESS' &&
+        o.evaluation.priority !== 'DISQUALIFIED' &&
+        o.status !== 'NEW' &&
+        o.status !== 'REJECTED' &&
+        o.status !== 'ARCHIVED',
+    ).length;
+
+    const eligibleOffers = offers.filter(
+      (o) =>
+        o.evaluation &&
+        o.evaluation.status === 'SUCCESS' &&
+        o.evaluation.priority !== 'DISQUALIFIED',
+    );
+
+    return {
+      company,
+      counts: {
+        total: offers.length,
+        savedOrAppliedCount,
+        newOffersCount,
+        pendingEvaluationCount,
+        disqualifiedCount,
+      },
+      offers: eligibleOffers,
+    };
+  }
+
+  async getActiveJobOffers(companyId?: string) {
+    const whereClause: any = {
+      status: {
+        in: ['SAVED', 'APPLIED', 'SCREENING', 'INTERVIEWING', 'OFFER', 'ACCEPTED'],
+      },
+    };
+
+    if (companyId) {
+      whereClause.companyId = companyId;
     }
 
     const offers = await this.prisma.jobOffer.findMany({
@@ -383,12 +474,7 @@ export class JobOffersService {
         { evaluation: { overallScore: 'desc' } },
         { updatedAt: 'desc' },
       ],
-      include: {
-        company: true,
-        evaluation: true,
-        curriculum: true,
-        statusHistory: { orderBy: { createdAt: 'asc' } },
-      },
+      include: defaultOfferInclude,
     });
 
     return this.attachCompanyActiveCounts(offers);
@@ -397,40 +483,88 @@ export class JobOffersService {
   async updateCurriculumTailoring(jobOfferId: string, dto: UpdateCurriculumTailoringDto) {
     const curriculum = await this.prisma.jobCurriculum.findUnique({
       where: { jobOfferId },
+      include: {
+        work: { orderBy: { order: 'asc' } },
+        projects: { orderBy: { order: 'asc' } },
+        publications: { orderBy: { order: 'asc' } },
+      },
     });
 
     if (!curriculum) {
       throw new NotFoundException(`Nessun curriculum trovato per l'annuncio con ID "${jobOfferId}"`);
     }
 
-    // Aggiornamento dei dati di personalizzazione nel DB
+    // Costruzione dell'oggetto tailoring per il PDF generator
     const updatedTailoring = {
-      customLabel: dto.customLabel,
-      work: dto.work,
-      projects: dto.projects,
-      selectedPublicationTitles: dto.selectedPublicationTitles,
-      explanation: dto.explanation,
+      customLabel: dto.customLabel !== undefined ? dto.customLabel : curriculum.customLabel ?? undefined,
+      work: dto.work ?? curriculum.work.map(w => ({ name: w.name, position: w.position, summary: w.summary, include: w.include })),
+      projects: dto.projects ?? curriculum.projects.map(p => ({ name: p.name, description: p.description })),
+      selectedPublicationTitles: dto.selectedPublicationTitles ?? curriculum.publications.map(p => p.title),
+      explanation: dto.explanation ?? curriculum.explanation,
     };
 
     // Merge tra dati base e nuove personalizzazioni per creare il FullResumeData
-    const finalResumeData = mergeResumeWithTailoring(baseResumeData, updatedTailoring as any);
+    const finalResumeData = mergeResumeWithTailoring(baseResumeData, updatedTailoring);
 
-    // Rigenerazione del PDF sovrascrivendo quello precedente
-    const storageDir = path.resolve(process.cwd(), 'storage', 'resumes');
-    const filePath = path.join(storageDir, `cv_${jobOfferId}.pdf`);
-    await this.pdfGeneratorService.generateFromData(finalResumeData, filePath);
+    // Rigenerazione del PDF in memoria tramite Puppeteer
+    const pdfBuffer = await this.pdfGeneratorService.generateBufferFromData(finalResumeData);
 
-    // Aggiornamento del record nel DB con i nuovi dati di personalizzazione e il percorso del file
-    await this.prisma.jobCurriculum.update({
-      where: { jobOfferId },
-      data: {
-        filePath,
-        explanation: dto.explanation ?? curriculum.explanation,
-        tailoringData: JSON.stringify(updatedTailoring),
-      },
+    // Upload del PDF aggiornato su S3/MinIO
+    const storageKey = `curriculums/cv_${jobOfferId}.pdf`;
+    await this.s3StorageService.upload(storageKey, pdfBuffer, 'application/pdf');
+
+    // Aggiornamento del record nel DB con transazione relazionale
+    await this.prisma.$transaction(async (tx) => {
+      if (dto.work) {
+        await tx.jobCurriculumWork.deleteMany({ where: { curriculumId: curriculum.id } });
+      }
+      if (dto.projects) {
+        await tx.jobCurriculumProject.deleteMany({ where: { curriculumId: curriculum.id } });
+      }
+      if (dto.selectedPublicationTitles) {
+        await tx.jobCurriculumPublication.deleteMany({ where: { curriculumId: curriculum.id } });
+      }
+
+      await tx.jobCurriculum.update({
+        where: { id: curriculum.id },
+        data: {
+          storageKey,
+          explanation: dto.explanation ?? curriculum.explanation,
+          customLabel: dto.customLabel !== undefined ? dto.customLabel : curriculum.customLabel,
+          work: dto.work
+            ? {
+                create: dto.work.map((w, idx) => ({
+                  name: w.name,
+                  position: w.position || '',
+                  summary: w.summary,
+                  include: w.include !== false,
+                  order: idx,
+                })),
+              }
+            : undefined,
+          projects: dto.projects
+            ? {
+                create: dto.projects.map((p, idx) => ({
+                  name: p.name,
+                  description: p.description,
+                  order: idx,
+                })),
+              }
+            : undefined,
+          publications: dto.selectedPublicationTitles
+            ? {
+                create: dto.selectedPublicationTitles.map((title, idx) => ({
+                  title,
+                  order: idx,
+                })),
+              }
+            : undefined,
+        },
+      });
     });
 
     // Restituzione dell'annuncio aggiornato
     return this.findOne(jobOfferId);
   }
 }
+

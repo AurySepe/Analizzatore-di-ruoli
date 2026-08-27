@@ -5,6 +5,12 @@
   "entryFile": "apps/api/main",
   "compilerOptions": {
     "deleteOutDir": true,
-    "plugins": ["@nestjs/swagger"]
+    "plugins": ["@nestjs/swagger"],
+    "assets": [
+      {
+        "include": "apps/curriculum-worker/templates/**/*",
+        "outDir": "dist/src"
+      }
+    ]
   }
 }

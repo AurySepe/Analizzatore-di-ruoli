@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-curriculum
+  labels:
+    app: backend-curriculum
+    app.kubernetes.io/name: backend-curriculum
+    app.kubernetes.io/component: worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-curriculum
+  template:
+    metadata:
+      labels:
+        app: backend-curriculum
+    spec:
+      containers:
+        - name: backend-curriculum
+          image: analizzatore-registry.localhost:5000/backend:latest
+          imagePullPolicy: Always
+          command: ["node", "dist/src/apps/curriculum-worker/main"]
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - secretRef:
+                name: app-secrets
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi

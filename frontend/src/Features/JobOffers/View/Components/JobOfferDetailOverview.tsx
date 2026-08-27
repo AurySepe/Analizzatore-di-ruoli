@@ -1,8 +1,6 @@
 import React from 'react';
-import { useSetAtom } from 'jotai';
-import { selectedCompanyIdAtom } from '../../../State/jobOffersAtoms';
 import { MarkdownContent } from '@/Commons/Components/MarkdownContent';
-import type { JobOfferDetailViewModelDTO } from '../../../ViewModel/jobOffersViewModel';
+import type { JobOfferDetailViewModelDTO } from '../../ViewModel/jobOffersViewModel';
 
 const Badge: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
@@ -34,9 +32,8 @@ const InfoLink: React.FC<{ label: string; value: string }> = ({ label, value }) 
 
 export const JobOfferDetailOverview: React.FC<{
   data: JobOfferDetailViewModelDTO;
-}> = ({ data }) => {
-  const setSelectedCompanyId = useSetAtom(selectedCompanyIdAtom);
-
+  onSelectCompany?: (companyId: string) => void;
+}> = ({ data, onSelectCompany }) => {
   return (
     <>
       <section>
@@ -79,7 +76,9 @@ export const JobOfferDetailOverview: React.FC<{
           <h3 className="text-lg font-semibold text-slate-950">Azienda</h3>
           <button
             type="button"
-            onClick={() => setSelectedCompanyId(data.company.id)}
+            onClick={() => {
+              if (data.company.id && onSelectCompany) onSelectCompany(data.company.id);
+            }}
             className="rounded-xl border border-indigo-200 bg-indigo-50 px-3.5 py-1.5 text-xs font-extrabold text-indigo-700 hover:bg-indigo-100 transition shadow-2xs"
           >
             🏢 Profilo Aziendale & Annunci ➔

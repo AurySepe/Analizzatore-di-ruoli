@@ -18,6 +18,7 @@ async function bootstrap() {
   );
 
   app.enableCors();
+  app.setGlobalPrefix('api');
 
   const config = new DocumentBuilder()
     .setTitle('Analizzatore di Ruoli & Job Aggregator API')
@@ -29,7 +30,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api/docs', app, document);
 
   const openapiPath = path.resolve(process.cwd(), 'openapi.json');
   fs.writeFileSync(openapiPath, JSON.stringify(document, null, 2));

@@ -1,8 +1,7 @@
 import React from 'react';
-import { useSetAtom } from 'jotai';
-import { selectedCompanyIdAtom, type JobOfferStatus } from '../../../State/jobOffersAtoms';
-import type { JobOfferDetailViewModelDTO } from '../../../ViewModel/jobOffersViewModel';
-import { getJobOfferStatusActionClassName, getJobOfferStatusActions } from '../../Utils/jobOfferStatusActions';
+import type { JobOfferStatus } from '../../State/jobOffersAtoms';
+import type { JobOfferDetailViewModelDTO } from '../../ViewModel/jobOffersViewModel';
+import { getJobOfferStatusActionClassName, getJobOfferStatusActions } from '../Utils/jobOfferStatusActions';
 
 const Badge: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
@@ -29,10 +28,9 @@ export const JobOfferDetailHeader: React.FC<{
   data: JobOfferDetailViewModelDTO;
   onClearSelection: () => void;
   onUpdateJobOfferStatus: (id: string, status: JobOfferStatus) => Promise<void>;
+  onSelectCompany?: (companyId: string) => void;
   showHeaderActions?: boolean;
-}> = ({ data, onClearSelection, onUpdateJobOfferStatus, showHeaderActions = true }) => {
-  const setSelectedCompanyId = useSetAtom(selectedCompanyIdAtom);
-
+}> = ({ data, onClearSelection, onUpdateJobOfferStatus, onSelectCompany, showHeaderActions = true }) => {
   return (
     <div className="border-b border-slate-200 p-4">
       <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:items-start">
@@ -41,7 +39,9 @@ export const JobOfferDetailHeader: React.FC<{
           <div className="mt-1.5 flex flex-wrap items-center gap-2">
             <button
               type="button"
-              onClick={() => setSelectedCompanyId(data.company.id)}
+              onClick={() => {
+                if (data.company.id && onSelectCompany) onSelectCompany(data.company.id);
+              }}
               className="text-base font-bold text-slate-700 hover:text-indigo-600 hover:underline transition flex items-center gap-1.5"
             >
               <span>🏢 {data.company.name}</span>
@@ -62,7 +62,9 @@ export const JobOfferDetailHeader: React.FC<{
               return (
                 <button
                   type="button"
-                  onClick={() => setSelectedCompanyId(data.company.id)}
+                  onClick={() => {
+                    if (data.company.id && onSelectCompany) onSelectCompany(data.company.id);
+                  }}
                   className="inline-flex items-center gap-1.5 rounded-full bg-indigo-100 px-3 py-0.5 text-xs font-extrabold text-indigo-900 shadow-2xs hover:bg-indigo-200 ring-1 ring-indigo-300/60 transition"
                   title={`${savedCount} annunci già segnati validi per candidarsi • ${newCount} nuovi annunci per cui decidere per ${data.company.name}`}
                 >

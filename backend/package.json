@@ -28,10 +28,11 @@
     "db:reset-evaluations": "npx ts-node scripts/reset-evaluations.ts",
     "db:reset-curriculums": "npx ts-node scripts/reset-curriculums.ts",
     "db:reset-unanalyzable": "npx ts-node scripts/reset-unanalyzable-evaluations.ts",
-    "db:restore": "npx ts-node scripts/restore-backup.ts",
+    "openapi:generate": "nest build && node dist/scripts/generate-openapi.js",
     "startAndMigrate": "prisma migrate deploy && node dist/src/apps/api/main"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1119.0",
     "@google/genai": "^2.13.0",
     "@nestjs/common": "^10.4.15",
     "@nestjs/config": "^3.3.0",
@@ -61,8 +62,9 @@
     "@nestjs/schematics": "^10.2.3",
     "@nestjs/testing": "^10.4.15",
     "@types/express": "^5.0.0",
-    "@types/node": "^20.17.0",
+    "@types/node": "^20.19.43",
     "@types/pg": "^8.20.0",
+    "concurrently": "^10.0.4",
     "prisma": "^7.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
