@@ -18,9 +18,8 @@ spec:
     spec:
       containers:
         - name: backend-evaluator
-          image: analizzatore-registry.localhost:5000/backend:latest
+          image: analizzatore-registry.localhost:5000/worker-evaluator:latest
           imagePullPolicy: Always
-          command: ["node", "dist/src/apps/evaluator-worker/main"]
           envFrom:
             - configMapRef:
                 name: app-config
