@@ -1,0 +1,248 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../client"
+}
+
+model Company {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  websiteUrl  String?
+  linkedinUrl String?
+  industry    String?
+
+  // Funding & Size
+  fundingStage     String?
+  companySizeRange String?
+  employeeCount    Int?
+
+  jobOffers JobOffer[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+enum RemoteType {
+  REMOTE
+  HYBRID
+  ON_SITE
+  UNSPECIFIED
+}
+
+enum ExperienceLevel {
+  ENTRY_LEVEL
+  JUNIOR
+  MID
+  SENIOR
+  LEAD
+  EXECUTIVE
+  UNSPECIFIED
+}
+
+enum ApplicationStatus {
+  NEW
+  SAVED
+  APPLIED
+  SCREENING
+  INTERVIEWING
+  OFFER
+  ACCEPTED
+  REJECTED
+  ARCHIVED
+}
+
+enum EvaluationStatus {
+  SUCCESS
+  UNANALYZABLE
+}
+
+enum EvaluatorModel {
+  GEMINI_3_1_FLASH_LITE
+  GEMINI_3_5_FLASH_LITE
+  GEMMA_4_12B
+  GEMMA_4_31B
+  UNKNOWN
+}
+
+enum EvaluationPriority {
+  HIGH
+  MEDIUM
+  LOW
+  DISQUALIFIED
+}
+
+enum JobSource {
+  ARBEITNOW
+  REMOTIVE
+  JOBICY
+  WE_WORK_REMOTELY
+  MANUAL
+}
+
+model JobCurriculum {
+  id         String   @id @default(uuid())
+  jobOfferId String   @unique
+  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id], onDelete: Cascade)
+
+  storageKey  String // Chiave identificativa dell'oggetto salvato in S3/MinIO
+  explanation String // Spiegazione testuale delle scelte fatte per il curriculum
+  customLabel String? // Titolo professionale personalizzato
+
+  work         JobCurriculumWork[]
+  projects     JobCurriculumProject[]
+  publications JobCurriculumPublication[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([jobOfferId])
+}
+
+model JobCurriculumWork {
+  id           String        @id @default(uuid())
+  curriculumId String
+  curriculum   JobCurriculum @relation(fields: [curriculumId], references: [id], onDelete: Cascade)
+
+  name     String
+  position String
+  summary  String
+  include  Boolean @default(true)
+  order    Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([curriculumId])
+}
+
+model JobCurriculumProject {
+  id           String        @id @default(uuid())
+  curriculumId String
+  curriculum   JobCurriculum @relation(fields: [curriculumId], references: [id], onDelete: Cascade)
+
+  name        String
+  description String
+  order       Int    @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([curriculumId])
+}
+
+model JobCurriculumPublication {
+  id           String        @id @default(uuid())
+  curriculumId String
+  curriculum   JobCurriculum @relation(fields: [curriculumId], references: [id], onDelete: Cascade)
+
+  title String
+  order Int    @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([curriculumId])
+}
+
+model JobEvaluation {
+  id         String   @id @default(uuid())
+  jobOfferId String   @unique
+  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id], onDelete: Cascade)
+
+  status         EvaluationStatus @default(SUCCESS) // SUCCESS | UNANALYZABLE
+  evaluatorModel EvaluatorModel   @default(UNKNOWN) // GEMINI_3_1_FLASH_LITE | GEMMA_4_12B | UNKNOWN
+
+  summary          String? // Sintesi/Riassunto dell'annuncio di lavoro generato dall'AI
+  desireMatchScore Float              @default(0) // Punteggio aderenza desiderata (0-100)
+  competenceScore  Float              @default(0) // Punteggio competenza tecnica (0-100)
+  overallScore     Float              @default(0) // Punteggio complessivo (0-100)
+  priority         EvaluationPriority
+
+  desireMatchReasoning String? // Spiegazione aderenza ai desiderata
+  competenceMatch      String // Valutazione competenze vs gap
+  detailedReasoning    String // Spiegazione completa in Markdown
+  pros                 String? // JSON string array
+  cons                 String? // JSON string array
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([desireMatchScore])
+  @@index([overallScore])
+  @@index([priority])
+  @@index([status])
+  @@index([evaluatorModel])
+}
+
+model JobOffer {
+  id         String    @id @default(uuid())
+  externalId String?
+  source     JobSource
+  url        String    @unique
+
+  // Offer details
+  title               String
+  location            String?
+  remoteType          RemoteType @default(UNSPECIFIED)
+  rawDescription      String
+  descriptionMarkdown String?
+  datePosted          DateTime?
+
+  // Company relation
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  // Compensation & Contract
+  salaryMin    Float?
+  salaryMax    Float?
+  currency     String? @default("EUR")
+  contractType String?
+
+  // Profile & Requirements
+  roleCategory    String?
+  experienceLevel ExperienceLevel @default(UNSPECIFIED)
+  skills          String? // JSON string array (e.g. '["TypeScript","Node.js"]')
+
+  // Tracking
+  status        ApplicationStatus  @default(NEW)
+  notes         String?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  evaluation    JobEvaluation?
+  curriculum    JobCurriculum?
+  statusHistory JobStatusHistory[]
+
+  @@unique([source, externalId])
+  @@index([companyId])
+  @@index([source])
+  @@index([status])
+}
+
+model JobStatusHistory {
+  id         String             @id @default(uuid())
+  jobOfferId String
+  jobOffer   JobOffer           @relation(fields: [jobOfferId], references: [id], onDelete: Cascade)
+  fromStatus ApplicationStatus?
+  toStatus   ApplicationStatus
+  createdAt  DateTime           @default(now())
+
+  @@index([jobOfferId])
+}
+
+model SyncState {
+  source             String   @id
+  lastSyncedAt       DateTime @default(now())
+  totalJobsExtracted Int      @default(0)
+  lastStatus         String   @default("SUCCESS")
+  updatedAt          DateTime @updatedAt
+}
+
+model UserProfile {
+  id                 String   @id @default("default")
+  resumeText         String?
+  searchCriteriaText String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}

@@ -33,6 +33,8 @@ WORKDIR /app/services/extractors/remotive
 COPY --from=builder /app/services/extractors/remotive/package*.json ./
 COPY --from=builder /app/services/extractors/remotive/node_modules ./node_modules
 COPY --from=builder /app/services/extractors/remotive/dist ./dist
+COPY --from=builder /app/services/extractors/remotive/src/generated ./src/generated
+COPY --from=builder /app/services/extractors/remotive/src/generated ./dist/src/generated
 COPY --from=builder /app/services/extractors/remotive/prisma ./prisma
 COPY --from=builder /app/services/extractors/remotive/prisma.config.ts ./prisma.config.ts
 

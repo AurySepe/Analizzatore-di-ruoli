@@ -28,6 +28,7 @@ WORKDIR /app
 COPY --from=builder /app/packages/contracts/dist /app/packages/contracts/dist
 COPY --from=builder /app/packages/contracts/package.json /app/packages/contracts/package.json
 COPY --from=builder /app/packages/database/dist /app/packages/database/dist
+COPY --from=builder /app/packages/database/client /app/packages/database/client
 COPY --from=builder /app/packages/database/package.json /app/packages/database/package.json
 COPY --from=builder /app/packages/database/node_modules /app/packages/database/node_modules
 

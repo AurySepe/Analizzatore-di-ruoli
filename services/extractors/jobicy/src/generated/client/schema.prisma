@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum OutboxStatus {
+  PENDING
+  PUBLISHED
+  FAILED
+}
+
+model JobicyScrapedJob {
+  id                  String    @id @default(uuid())
+  externalId          String    @unique
+  url                 String    @unique
+  title               String
+  companyName         String
+  location            String?
+  remoteType          String?   @default("REMOTE")
+  salaryMin           Float?
+  salaryMax           Float?
+  currency            String?
+  contractType        String?
+  rawDescription      String    @db.Text
+  descriptionMarkdown String?   @db.Text
+  datePosted          DateTime?
+  tags                String?   @db.Text
+
+  // Outbox Pattern Fields
+  outboxStatus OutboxStatus @default(PENDING)
+  publishedAt  DateTime?
+  retryCount   Int          @default(0)
+  lastError    String?      @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([outboxStatus])
+  @@index([createdAt])
+  @@map("jobicy_scraped_jobs")
+}
+
+model JobicySyncState {
+  id                   String    @id @default(uuid())
+  source               String    @unique @default("JOBICY")
+  lastSyncAt           DateTime?
+  lastSuccessfulSyncAt DateTime?
+  itemsExtracted       Int       @default(0)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@map("jobicy_sync_states")
+}

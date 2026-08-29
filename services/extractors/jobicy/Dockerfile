@@ -33,6 +33,8 @@ WORKDIR /app/services/extractors/jobicy
 COPY --from=builder /app/services/extractors/jobicy/package*.json ./
 COPY --from=builder /app/services/extractors/jobicy/node_modules ./node_modules
 COPY --from=builder /app/services/extractors/jobicy/dist ./dist
+COPY --from=builder /app/services/extractors/jobicy/src/generated ./src/generated
+COPY --from=builder /app/services/extractors/jobicy/src/generated ./dist/src/generated
 COPY --from=builder /app/services/extractors/jobicy/prisma ./prisma
 COPY --from=builder /app/services/extractors/jobicy/prisma.config.ts ./prisma.config.ts
 

@@ -31,6 +31,8 @@ WORKDIR /app/services/extractors/arbeitnow
 COPY --from=builder /app/services/extractors/arbeitnow/package*.json ./
 COPY --from=builder /app/services/extractors/arbeitnow/node_modules ./node_modules
 COPY --from=builder /app/services/extractors/arbeitnow/dist ./dist
+COPY --from=builder /app/services/extractors/arbeitnow/src/generated ./src/generated
+COPY --from=builder /app/services/extractors/arbeitnow/src/generated ./dist/src/generated
 COPY --from=builder /app/services/extractors/arbeitnow/prisma ./prisma
 COPY --from=builder /app/services/extractors/arbeitnow/prisma.config.ts ./prisma.config.ts
 
