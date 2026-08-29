@@ -49,4 +49,4 @@ COPY --from=builder /app/services/curriculum-worker/prisma ./prisma
 COPY --from=builder /app/services/curriculum-worker/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /app/services/curriculum-worker/src/templates ./dist/templates
 
-CMD ["node", "dist/main"]
+CMD ["node", "dist/src/main"]

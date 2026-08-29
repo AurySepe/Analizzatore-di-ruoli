@@ -14,8 +14,10 @@ resources:
   - backend.yaml
   - worker-curriculum.yaml
   - worker-evaluator.yaml
-  - worker-extractor.yaml
   - worker-extractor-arbeitnow.yaml
+  - worker-extractor-remotive.yaml
+  - worker-extractor-jobicy.yaml
+  - worker-extractor-weworkremotely.yaml
   - worker-ingestion.yaml
   - frontend.yaml
   - ingress.yaml

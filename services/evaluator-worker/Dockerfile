@@ -36,4 +36,4 @@ COPY --from=builder /app/services/evaluator-worker/dist ./dist
 COPY --from=builder /app/services/evaluator-worker/prisma ./prisma
 COPY --from=builder /app/services/evaluator-worker/prisma.config.ts ./prisma.config.ts
 
-CMD ["node", "dist/main"]
+CMD ["node", "dist/src/main"]
