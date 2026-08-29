@@ -20,7 +20,7 @@ export class JobCurriculumDto {
   @IsString()
   explanation: string;
 
-  @ApiProperty({ description: 'Titolo professionale personalizzato per l annuncio', required: false, nullable: true })
+  @ApiProperty({ type: 'string', description: 'Titolo professionale personalizzato per l annuncio', required: false, nullable: true })
   @IsOptional()
   @IsString()
   customLabel?: string | null;

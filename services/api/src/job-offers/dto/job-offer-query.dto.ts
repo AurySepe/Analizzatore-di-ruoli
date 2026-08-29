@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsString, IsNumber, IsEnum, IsBoolean } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
-import { JobSource } from '@prisma/client';
+import { JobSource } from '@analizzatore/database';
 import { QueryPaginationDto } from '../../commons/pagination/query-pagination.dto';
 import { RemoteTypeEnum, ApplicationStatusEnum, JobOfferFreshnessEnum } from './job-offer.dto';
 

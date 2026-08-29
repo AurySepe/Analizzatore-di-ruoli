@@ -35,32 +35,32 @@ export class JobEvaluationDto {
   @IsString()
   evaluatorModel: string;
 
-  @ApiProperty({ description: 'Sintesi/Riassunto dell annuncio di lavoro generato dall AI', nullable: true, required: false })
+  @ApiProperty({ type: 'string', description: 'Sintesi/Riassunto dell annuncio di lavoro generato dall AI', nullable: true, required: false })
   @IsString()
   @ValidateIf((_, val) => val !== null)
   @IsOptional()
   summary?: string | null;
 
-  @ApiProperty({ description: 'Spiegazione sintetica aderenza desiderata', nullable: true, required: false })
+  @ApiProperty({ type: 'string', description: 'Spiegazione sintetica aderenza desiderata', nullable: true, required: false })
   @IsString()
   @ValidateIf((_, val) => val !== null)
   @IsOptional()
   desireMatchReasoning: string | null;
 
-  @ApiProperty({ description: 'Valutazione delle competenze dell utente rispetto al ruolo' })
+  @ApiProperty({ type: 'string', description: 'Valutazione delle competenze dell utente rispetto al ruolo' })
   @IsString()
   competenceMatch: string;
 
-  @ApiProperty({ description: 'Spiegazione dettagliata dell AI in Markdown' })
+  @ApiProperty({ type: 'string', description: 'Spiegazione dettagliata dell AI in Markdown' })
   @IsString()
   detailedReasoning: string;
 
-  @ApiProperty({ type: [String], nullable: true, required: false })
+  @ApiProperty({ type: 'string', isArray: true, nullable: true, required: false })
   @IsArray()
   @IsOptional()
   pros: string[] | null;
 
-  @ApiProperty({ type: [String], nullable: true, required: false })
+  @ApiProperty({ type: 'string', isArray: true, nullable: true, required: false })
   @IsArray()
   @IsOptional()
   cons: string[] | null;

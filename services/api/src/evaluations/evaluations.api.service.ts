@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma, EvaluationPriority } from '@prisma/client';
+import { Prisma, EvaluationPriority } from '@analizzatore/database';
 import { PrismaService } from '../commons/prisma/prisma.service';
 import { userProfileConfig } from '../config/user-profile.config';
 import { QueryEvaluationDto } from './dto/job-evaluation.dto';

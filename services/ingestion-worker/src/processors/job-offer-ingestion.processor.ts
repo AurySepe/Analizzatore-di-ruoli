@@ -7,7 +7,7 @@ import {
   JOB_OFFER_SCRAPED_EVENT,
   ScrapedJobOfferEvent,
 } from '@analizzatore/contracts';
-import { JobSource, RemoteType } from '@prisma/client';
+import { JobSource, RemoteType } from '@analizzatore/database';
 
 @Processor(INGESTION_QUEUE_NAME)
 export class JobOfferIngestionProcessor extends WorkerHost {

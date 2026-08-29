@@ -11,31 +11,31 @@ export class CompanyDto {
   @IsString()
   name: string;
 
-  @ApiProperty({ nullable: true, required: false })
+  @ApiProperty({ type: 'string', nullable: true, required: false })
   @IsString()
   @ValidateIf((_, val) => val !== null)
   @IsOptional()
   websiteUrl: string | null;
 
-  @ApiProperty({ nullable: true, required: false })
+  @ApiProperty({ type: 'string', nullable: true, required: false })
   @IsString()
   @ValidateIf((_, val) => val !== null)
   @IsOptional()
   linkedinUrl: string | null;
 
-  @ApiProperty({ nullable: true, required: false })
+  @ApiProperty({ type: 'string', nullable: true, required: false })
   @IsString()
   @ValidateIf((_, val) => val !== null)
   @IsOptional()
   industry: string | null;
 
-  @ApiProperty({ nullable: true, required: false })
+  @ApiProperty({ type: 'string', nullable: true, required: false })
   @IsString()
   @ValidateIf((_, val) => val !== null)
   @IsOptional()
   fundingStage: string | null;
 
-  @ApiProperty({ nullable: true, required: false })
+  @ApiProperty({ type: 'string', nullable: true, required: false })
   @IsString()
   @ValidateIf((_, val) => val !== null)
   @IsOptional()

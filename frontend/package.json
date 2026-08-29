@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "typecheck": "tsc -p tsconfig.app.json --noEmit",
-    "openapi:generate": "npx openapi-typescript ../backend/openapi.json -o ./src/Core/OpenApi/schema.d.ts",
+    "openapi:generate": "npx openapi-typescript ../services/api/openapi.json -o ./src/Core/OpenApi/schema.d.ts",
     "lint": "oxlint",
     "preview": "vite preview"
   },

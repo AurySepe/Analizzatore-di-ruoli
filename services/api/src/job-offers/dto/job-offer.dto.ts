@@ -1,7 +1,7 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger';
 import { IsString, IsOptional, IsNumber, IsEnum, ValidateIf, IsArray } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
-import { JobSource } from '@prisma/client';
+import { JobSource } from '@analizzatore/database';
 import { CompanyDto, CreateCompanyDto } from './company.dto';
 import { JobEvaluationDto } from '../../evaluations/dto/job-evaluation.dto';
 import { JobCurriculumDto } from './job-curriculum.dto';
@@ -84,7 +84,7 @@ export class JobOfferDto {
   @IsString()
   id: string;
 
-  @ApiProperty({ nullable: true, required: false })
+  @ApiProperty({ type: 'string', nullable: true, required: false })
   @IsString()
   @ValidateIf((_, val) => val !== null)
   @IsOptional()
@@ -103,7 +103,7 @@ export class JobOfferDto {
   @IsString()
   title: string;
 
-  @ApiProperty({ nullable: true, required: false })
+  @ApiProperty({ type: 'string', nullable: true, required: false })
   @IsString()
   @ValidateIf((_, val) => val !== null)
   @IsOptional()
@@ -117,7 +117,7 @@ export class JobOfferDto {
   @IsString()
   rawDescription: string;
 
-  @ApiProperty({ nullable: true, required: false })
+  @ApiProperty({ type: 'string', nullable: true, required: false })
   @IsString()
   @ValidateIf((_, val) => val !== null)
   @IsOptional()
@@ -143,19 +143,19 @@ export class JobOfferDto {
   @IsOptional()
   salaryMax: number | null;
 
-  @ApiProperty({ nullable: true, required: false, default: 'EUR' })
+  @ApiProperty({ type: 'string', nullable: true, required: false, default: 'EUR' })
   @IsString()
   @ValidateIf((_, val) => val !== null)
   @IsOptional()
   currency: string | null;
 
-  @ApiProperty({ nullable: true, required: false })
+  @ApiProperty({ type: 'string', nullable: true, required: false })
   @IsString()
   @ValidateIf((_, val) => val !== null)
   @IsOptional()
   contractType: string | null;
 
-  @ApiProperty({ nullable: true, required: false })
+  @ApiProperty({ type: 'string', nullable: true, required: false })
   @IsString()
   @ValidateIf((_, val) => val !== null)
   @IsOptional()

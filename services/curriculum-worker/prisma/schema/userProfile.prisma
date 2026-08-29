@@ -1,7 +1,0 @@
-model UserProfile {
-  id                 String   @id @default("default")
-  resumeText         String?
-  searchCriteriaText String?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-}

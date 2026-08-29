@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Patch, Body, Param, Query, NotFoundException, Res } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiExtraModels, ApiProduces } from '@nestjs/swagger';
-import { ApplicationStatus } from '@prisma/client';
+import { ApplicationStatus } from '@analizzatore/database';
 import { Response } from 'express';
 import * as fs from 'fs';
 import * as path from 'path';

@@ -1,7 +1,0 @@
-model SyncState {
-  source             String   @id
-  lastSyncedAt       DateTime @default(now())
-  totalJobsExtracted Int      @default(0)
-  lastStatus         String   @default("SUCCESS")
-  updatedAt          DateTime @updatedAt
-}

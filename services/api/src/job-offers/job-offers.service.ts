@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma, ApplicationStatus, EvaluationPriority } from '@prisma/client';
+import { Prisma, ApplicationStatus, EvaluationPriority } from '@analizzatore/database';
 import * as path from 'path';
 import { PrismaService } from '../commons/prisma/prisma.service';
 import { S3StorageService } from '../commons/storage/s3-storage.service';

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../commons/prisma/prisma.service';
-import { ApplicationStatus, EvaluationPriority } from '@prisma/client';
+import { ApplicationStatus, EvaluationPriority } from '@analizzatore/database';
 
 @Injectable()
 export class CompaniesService {

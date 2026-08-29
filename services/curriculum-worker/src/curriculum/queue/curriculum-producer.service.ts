@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../commons/prisma/prisma.service';
 import { CurriculumQueueService } from './curriculum-queue.service';
-import { ApplicationStatus } from '@prisma/client';
+import { ApplicationStatus } from '@analizzatore/database';
 
 @Injectable()
 export class CurriculumProducerService {

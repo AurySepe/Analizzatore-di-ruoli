@@ -366,7 +366,7 @@ export const mapEvaluationDetail = (
     priorityTone: getPriorityTone(evaluation.priority),
     evaluatorModel: formatEvaluatorModel(evaluation.evaluatorModel),
     status: formatEvaluationStatus(evaluation.status),
-    summary: evaluation.summary?.trim() || null,
+    summary: evaluation.summary ?? null,
     competenceMatch: evaluation.competenceMatch,
     detailedReasoning: evaluation.detailedReasoning,
     pros: evaluation.pros ?? [],
