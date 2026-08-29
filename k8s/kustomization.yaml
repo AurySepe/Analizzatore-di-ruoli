@@ -9,10 +9,13 @@ resources:
   - configmap.yaml
   - secrets.yaml
   - postgres.yaml
+  - redis.yaml
   - minio.yaml
   - backend.yaml
   - worker-curriculum.yaml
   - worker-evaluator.yaml
   - worker-extractor.yaml
+  - worker-extractor-arbeitnow.yaml
+  - worker-ingestion.yaml
   - frontend.yaml
   - ingress.yaml

@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: extractor-arbeitnow
+  labels:
+    app: extractor-arbeitnow
+    app.kubernetes.io/name: extractor-arbeitnow
+    app.kubernetes.io/component: extractor
+    app.kubernetes.io/part-of: analizzatore-di-ruoli
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: extractor-arbeitnow
+  template:
+    metadata:
+      labels:
+        app: extractor-arbeitnow
+    spec:
+      containers:
+        - name: extractor-arbeitnow
+          image: analizzatore-registry.localhost:5000/extractor-arbeitnow:latest
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - secretRef:
+                name: app-secrets
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi

@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: backend-api
-          image: analizzatore-registry.localhost:5000/backend:latest
+          image: analizzatore-registry.localhost:5000/api:latest
           imagePullPolicy: Always
           ports:
             - name: http

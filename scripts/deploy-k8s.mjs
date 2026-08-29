@@ -55,7 +55,7 @@ run(
 if (!skipRestart) {
   if (!frontendOnly) {
     run(
-      'kubectl rollout restart deployment backend-api backend-curriculum backend-evaluator backend-extractor',
+      'kubectl rollout restart deployment backend-api backend-curriculum backend-evaluator backend-extractor extractor-arbeitnow worker-ingestion',
       'Kubernetes: Rollout restart di tutti i componenti backend e worker',
     );
   }

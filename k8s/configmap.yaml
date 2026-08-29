@@ -8,6 +8,9 @@ metadata:
 data:
   PORT: "3000"
   DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/analizzatore_ruoli?schema=public"
+  ARBEITNOW_DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/extractor_arbeitnow?schema=public"
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
   S3_ENDPOINT: "http://minio:9000"
   S3_BUCKET_NAME: "resumes"
   S3_REGION: "local"

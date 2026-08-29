@@ -17,14 +17,6 @@ export class ExtractorsService implements OnModuleInit {
     private readonly registry: ExtractorRegistry,
   ) {
     this.registry.register(
-      new ArbeitnowExtractor({
-        onlyTechAndProduct: true,
-        onlyEnglish: true,
-        onlyRemote: false,
-        onlyEurope: true,
-      }),
-    );
-    this.registry.register(
       new RemotiveExtractor({
         onlyTechAndProduct: true,
         onlyEnglish: true,

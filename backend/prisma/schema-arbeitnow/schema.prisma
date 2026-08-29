@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../node_modules/@prisma-arbeitnow/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum OutboxStatus {
+  PENDING
+  PUBLISHED
+  FAILED
+}
+
+enum ExtractionStatus {
+  IDLE
+  RUNNING
+  ERROR
+}
+
+model ArbeitnowScrapedJob {
+  id                  String       @id @default(uuid())
+  externalId          String       @unique
+  title               String
+  companyName         String
+  url                 String       @unique
+  location            String?
+  remoteType          String       @default("UNSPECIFIED")
+  salaryMin           Float?
+  salaryMax           Float?
+  currency            String?      @default("EUR")
+  contractType        String?
+  rawDescription      String
+  descriptionMarkdown String?
+  datePosted          DateTime?
+  tags                String?      // JSON array string
+
+  // Outbox Pattern Fields
+  outboxStatus        OutboxStatus @default(PENDING)
+  publishedAt         DateTime?
+  retryCount          Int          @default(0)
+  lastError           String?
+
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  @@index([outboxStatus])
+  @@index([createdAt])
+}
+
+model ArbeitnowSyncState {
+  id                String           @id @default("DEFAULT")
+  lastSyncTimestamp DateTime?
+  lastPage          Int              @default(1)
+  status            ExtractionStatus @default(IDLE)
+  lastRunAt         DateTime?
+  lastError         String?
+  updatedAt         DateTime         @updatedAt
+}
