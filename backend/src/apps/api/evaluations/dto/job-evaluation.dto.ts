@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsNumber, IsArray, ValidateIf } from 'class-validator';
+import { plainToInstance } from 'class-transformer';
+import { IsString, IsOptional, IsInt, IsArray, ValidateIf } from 'class-validator';
 
 export class JobEvaluationDto {
   @ApiProperty()
@@ -10,16 +11,16 @@ export class JobEvaluationDto {
   @IsString()
   jobOfferId: string;
 
-  @ApiProperty({ description: 'Punteggio di aderenza ai desiderata dell utente (0-100)' })
-  @IsNumber()
+  @ApiProperty({ type: 'integer', description: 'Punteggio di aderenza ai desiderata dell utente (0-100)' })
+  @IsInt()
   desireMatchScore: number;
 
-  @ApiProperty({ description: 'Punteggio di competenza tecnica (0-100)' })
-  @IsNumber()
+  @ApiProperty({ type: 'integer', description: 'Punteggio di competenza tecnica (0-100)' })
+  @IsInt()
   competenceScore: number;
 
-  @ApiProperty({ description: 'Punteggio globale bilanciato (0-100)' })
-  @IsNumber()
+  @ApiProperty({ type: 'integer', description: 'Punteggio globale bilanciato (0-100)' })
+  @IsInt()
   overallScore: number;
 
   @ApiProperty({ description: 'Livello di priorità: HIGH, MEDIUM, LOW, DISQUALIFIED' })
@@ -34,14 +35,13 @@ export class JobEvaluationDto {
   @IsString()
   evaluatorModel: string;
 
-
   @ApiProperty({ description: 'Sintesi/Riassunto dell annuncio di lavoro generato dall AI', nullable: true, required: false })
   @IsString()
   @ValidateIf((_, val) => val !== null)
   @IsOptional()
   summary?: string | null;
 
-  @ApiProperty({ description: 'Spiegazione sintetico aderenza desiderata', nullable: true, required: false })
+  @ApiProperty({ description: 'Spiegazione sintetica aderenza desiderata', nullable: true, required: false })
   @IsString()
   @ValidateIf((_, val) => val !== null)
   @IsOptional()
@@ -70,6 +70,10 @@ export class JobEvaluationDto {
 
   @ApiProperty()
   updatedAt: Date;
+
+  constructor(data: JobEvaluationDto) {
+    Object.assign(this, plainToInstance(JobEvaluationDto, data));
+  }
 }
 
 export class QueryEvaluationDto {
@@ -79,15 +83,21 @@ export class QueryEvaluationDto {
   @IsOptional()
   priority?: string | null;
 
-  @ApiProperty({ nullable: true, required: false, description: 'Filtra per punteggio minimo aderenza desiderata (0-100)' })
-  @IsNumber()
+  @ApiProperty({ type: 'integer', nullable: true, required: false, description: 'Filtra per punteggio minimo aderenza desiderata (0-100)' })
+  @IsInt()
   @ValidateIf((_, val) => val !== null)
   @IsOptional()
   minDesireScore?: number | null;
 
-  @ApiProperty({ nullable: true, required: false, description: 'Filtra per punteggio minimo globale (0-100)' })
-  @IsNumber()
+  @ApiProperty({ type: 'integer', nullable: true, required: false, description: 'Filtra per punteggio minimo globale (0-100)' })
+  @IsInt()
   @ValidateIf((_, val) => val !== null)
   @IsOptional()
   minScore?: number | null;
+
+  constructor(data?: Partial<QueryEvaluationDto>) {
+    if (data) {
+      Object.assign(this, plainToInstance(QueryEvaluationDto, data));
+    }
+  }
 }

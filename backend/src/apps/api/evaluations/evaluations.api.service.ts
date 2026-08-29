@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma, EvaluationPriority } from '@prisma/client';
 import { PrismaService } from '../../../commons/prisma/prisma.service';
 import { userProfileConfig } from '../../../config/user-profile.config';
 import { QueryEvaluationDto } from './dto/job-evaluation.dto';
@@ -34,9 +35,9 @@ export class EvaluationsApiService {
   }
 
   async findAllEvaluations(query: QueryEvaluationDto) {
-    const where: any = {};
+    const where: Prisma.JobEvaluationWhereInput = {};
     if (query.priority) {
-      where.priority = query.priority.toUpperCase();
+      where.priority = query.priority.toUpperCase() as EvaluationPriority;
     }
     if (query.minDesireScore !== undefined && query.minDesireScore !== null) {
       where.desireMatchScore = { gte: Number(query.minDesireScore) };
@@ -45,7 +46,7 @@ export class EvaluationsApiService {
       where.overallScore = { gte: Number(query.minScore) };
     }
 
-    const evaluations = await this.prisma.jobEvaluation.findMany({
+    return this.prisma.jobEvaluation.findMany({
       where,
       orderBy: [
         { priority: 'asc' },
@@ -54,12 +55,6 @@ export class EvaluationsApiService {
         { createdAt: 'desc' },
       ],
     });
-
-    return evaluations.map(e => ({
-      ...e,
-      pros: e.pros ? JSON.parse(e.pros) : [],
-      cons: e.cons ? JSON.parse(e.cons) : [],
-    }));
   }
 
   async findOneEvaluation(jobOfferId: string) {
@@ -71,10 +66,6 @@ export class EvaluationsApiService {
       throw new NotFoundException(`Valutazione per l offerta ${jobOfferId} non trovata.`);
     }
 
-    return {
-      ...evaluation,
-      pros: evaluation.pros ? JSON.parse(evaluation.pros) : [],
-      cons: evaluation.cons ? JSON.parse(evaluation.cons) : [],
-    };
+    return evaluation;
   }
 }

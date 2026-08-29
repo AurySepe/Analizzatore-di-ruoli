@@ -1,12 +1,13 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: postgres
   labels:
     app: postgres
-    app.kubernetes.io/name: postgres
 spec:
+  serviceName: postgres
   replicas: 1
+  podManagementPolicy: OrderedReady
   selector:
     matchLabels:
       app: postgres
@@ -15,20 +16,22 @@ spec:
       labels:
         app: postgres
     spec:
+      terminationGracePeriodSeconds: 60
       nodeSelector:
         node-role.kubernetes.io/control-plane: "true"
       containers:
         - name: postgres
           image: postgres:16-alpine
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "pg_ctl -D /var/lib/postgresql/data -m fast -w stop"]
           ports:
             - name: postgres
               containerPort: 5432
           envFrom:
             - secretRef:
                 name: app-secrets
-          volumeMounts:
-            - name: postgres-storage
-              mountPath: /var/lib/postgresql/data
           resources:
             requests:
               cpu: 100m
@@ -36,14 +39,27 @@ spec:
             limits:
               cpu: 500m
               memory: 512Mi
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
           readinessProbe:
             exec:
-              command: ["pg_isready", "-U", "postgres", "-d", "analizzatore_ruoli"]
+              command:
+                - pg_isready
+                - -U
+                - postgres
+                - -d
+                - analizzatore_ruoli
             initialDelaySeconds: 5
             periodSeconds: 5
           livenessProbe:
             exec:
-              command: ["pg_isready", "-U", "postgres", "-d", "analizzatore_ruoli"]
+              command:
+                - pg_isready
+                - -U
+                - postgres
+                - -d
+                - analizzatore_ruoli
             initialDelaySeconds: 15
             periodSeconds: 10
       volumes:
@@ -58,7 +74,6 @@ metadata:
   name: postgres
   labels:
     app: postgres
-    app.kubernetes.io/name: postgres
 spec:
   type: ClusterIP
   ports:

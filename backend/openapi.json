@@ -962,7 +962,14 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobOffersFunnelAnalyticsDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1017,14 +1024,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
+            "description": "File PDF del curriculum personalizzato"
           }
         },
         "tags": [
@@ -1121,7 +1121,14 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategorizationStatusDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1151,7 +1158,7 @@
             "description": "Filtra per punteggio minimo aderenza desiderata (0-100)",
             "schema": {
               "nullable": true,
-              "type": "number"
+              "type": "integer"
             }
           },
           {
@@ -1161,7 +1168,7 @@
             "description": "Filtra per punteggio minimo (0-100)",
             "schema": {
               "nullable": true,
-              "type": "number"
+              "type": "integer"
             }
           }
         ],
@@ -1173,7 +1180,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "object"
+                    "$ref": "#/components/schemas/JobEvaluationDto"
                   }
                 }
               }
@@ -1205,7 +1212,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/JobEvaluationDto"
                 }
               }
             }
@@ -1438,6 +1445,68 @@
             "description": "Spiegazione testuale delle motivazioni delle modifiche"
           }
         }
+      },
+      "FunnelConversionRatesDto": {
+        "type": "object",
+        "properties": {
+          "applicationToInterview": {
+            "type": "number",
+            "description": "Percentuale di conversione da candidatura a colloquio"
+          },
+          "interviewToOffer": {
+            "type": "number",
+            "description": "Percentuale di conversione da colloquio ad offerta"
+          },
+          "offerToAcceptance": {
+            "type": "number",
+            "description": "Percentuale di conversione da offerta ad accettazione"
+          },
+          "overallSuccessRate": {
+            "type": "number",
+            "description": "Percentuale di successo complessiva"
+          }
+        },
+        "required": [
+          "applicationToInterview",
+          "interviewToOffer",
+          "offerToAcceptance",
+          "overallSuccessRate"
+        ]
+      },
+      "JobOffersFunnelAnalyticsDto": {
+        "type": "object",
+        "properties": {
+          "statusCounts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "description": "Conteggio delle offerte per stato attuale"
+          },
+          "stageTransitions": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "description": "Numero di transizioni per fase"
+          },
+          "rejectionDropOffs": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "description": "Rifiuti suddivisi per fase di interruzione"
+          },
+          "conversionRates": {
+            "$ref": "#/components/schemas/FunnelConversionRatesDto"
+          }
+        },
+        "required": [
+          "statusCounts",
+          "stageTransitions",
+          "rejectionDropOffs",
+          "conversionRates"
+        ]
       },
       "JobStatusHistoryDto": {
         "type": "object",
@@ -1739,15 +1808,15 @@
             "type": "string"
           },
           "desireMatchScore": {
-            "type": "number",
+            "type": "integer",
             "description": "Punteggio di aderenza ai desiderata dell utente (0-100)"
           },
           "competenceScore": {
-            "type": "number",
+            "type": "integer",
             "description": "Punteggio di competenza tecnica (0-100)"
           },
           "overallScore": {
-            "type": "number",
+            "type": "integer",
             "description": "Punteggio globale bilanciato (0-100)"
           },
           "priority": {
@@ -1770,7 +1839,7 @@
           "desireMatchReasoning": {
             "type": "string",
             "nullable": true,
-            "description": "Spiegazione sintetico aderenza desiderata"
+            "description": "Spiegazione sintetica aderenza desiderata"
           },
           "competenceMatch": {
             "type": "string",
@@ -2034,6 +2103,43 @@
           "status"
         ]
       },
+      "CategorizationStatusDto": {
+        "type": "object",
+        "properties": {
+          "totalJobs": {
+            "type": "integer",
+            "description": "Numero totale di annunci nel database"
+          },
+          "evaluatedJobs": {
+            "type": "integer",
+            "description": "Numero di annunci già valutati con successo"
+          },
+          "pendingJobs": {
+            "type": "integer",
+            "description": "Numero di annunci in attesa di valutazione"
+          },
+          "isCategorizing": {
+            "type": "boolean",
+            "description": "Indica se il processo di categorizzazione è attualmente attivo"
+          },
+          "isProfileComplete": {
+            "type": "boolean",
+            "description": "Indica se il profilo utente è completo di CV e criteri"
+          },
+          "message": {
+            "type": "string",
+            "description": "Messaggio sintetico sullo stato"
+          }
+        },
+        "required": [
+          "totalJobs",
+          "evaluatedJobs",
+          "pendingJobs",
+          "isCategorizing",
+          "isProfileComplete",
+          "message"
+        ]
+      },
       "CompanySummaryDto": {
         "type": "object",
         "properties": {
@@ -2084,16 +2190,16 @@
             "nullable": true
           },
           "totalOffersCount": {
-            "type": "number",
+            "type": "integer",
             "description": "Numero totale di offerte collegate a questa azienda"
           },
           "pendingEvaluationCount": {
-            "type": "number",
-            "description": "Numero di offerte ancora da elaborare dall'AI"
+            "type": "integer",
+            "description": "Numero di offerte ancora da elaborare dall AI"
           },
           "disqualifiedCount": {
-            "type": "number",
-            "description": "Numero di offerte squalificate dall'AI"
+            "type": "integer",
+            "description": "Numero di offerte squalificate dall AI"
           }
         },
         "required": [
@@ -2104,6 +2210,48 @@
           "disqualifiedCount"
         ]
       },
+      "CompanyJobOffersCountsDto": {
+        "type": "object",
+        "properties": {
+          "totalOffers": {
+            "type": "integer",
+            "description": "Numero totale di offerte collegate all azienda"
+          },
+          "pendingEvaluationCount": {
+            "type": "integer",
+            "description": "Numero di offerte in attesa di valutazione AI"
+          },
+          "disqualifiedCount": {
+            "type": "integer",
+            "description": "Numero di offerte squalificate dall AI"
+          },
+          "eligibleOffersCount": {
+            "type": "integer",
+            "description": "Numero di offerte idonee"
+          },
+          "activeOffersCount": {
+            "type": "integer",
+            "description": "Numero di offerte attualmente attive"
+          },
+          "savedOrAppliedCount": {
+            "type": "integer",
+            "description": "Numero di offerte salvate o applicate"
+          },
+          "newOffersCount": {
+            "type": "integer",
+            "description": "Numero di offerte in stato NEW"
+          }
+        },
+        "required": [
+          "totalOffers",
+          "pendingEvaluationCount",
+          "disqualifiedCount",
+          "eligibleOffersCount",
+          "activeOffersCount",
+          "savedOrAppliedCount",
+          "newOffersCount"
+        ]
+      },
       "CompanyJobOffersBreakdownDto": {
         "type": "object",
         "properties": {
@@ -2111,37 +2259,7 @@
             "$ref": "#/components/schemas/CompanyDto"
           },
           "counts": {
-            "type": "object",
-            "properties": {
-              "totalOffers": {
-                "required": true,
-                "type": "number"
-              },
-              "pendingEvaluationCount": {
-                "required": true,
-                "type": "number"
-              },
-              "disqualifiedCount": {
-                "required": true,
-                "type": "number"
-              },
-              "eligibleOffersCount": {
-                "required": true,
-                "type": "number"
-              },
-              "activeOffersCount": {
-                "required": true,
-                "type": "number"
-              },
-              "savedOrAppliedCount": {
-                "required": true,
-                "type": "number"
-              },
-              "newOffersCount": {
-                "required": true,
-                "type": "number"
-              }
-            }
+            "$ref": "#/components/schemas/CompanyJobOffersCountsDto"
           },
           "offers": {
             "description": "Informazioni complete delle sole offerte idonee (escluse quelle squalificate ed in attesa di valutazione)",

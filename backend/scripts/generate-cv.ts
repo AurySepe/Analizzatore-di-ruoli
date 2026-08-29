@@ -1,6 +1,6 @@
-import { baseResumeData } from './apps/curriculum-worker/data/base-data';
-import { mergeResumeWithTailoring, ResumeTailoringSchema, FullResumeSchema } from './apps/curriculum-worker/curriculum/pdf/schema';
-import { generatePdfFromData } from './apps/curriculum-worker/curriculum/pdf/pdf-generator.service';
+import { baseResumeData } from '../src/apps/curriculum-worker/data/base-data';
+import { mergeResumeWithTailoring, ResumeTailoringSchema, FullResumeSchema } from '../src/apps/curriculum-worker/curriculum/pdf/schema';
+import { generatePdfFromData } from '../src/apps/curriculum-worker/curriculum/pdf/pdf-generator.service';
 import * as path from 'path';
 import * as fs from 'fs/promises';
 import * as fsSync from 'fs';
@@ -13,17 +13,17 @@ import * as fsSync from 'fs';
  * 2. JSON di Curriculum Completo (`FullResumeData`): viene renderizzato direttamente in PDF.
  * 
  * Uso:
- *   npx ts-node src/generate-cv.ts <path-to-json> [output-pdf-path]
+ *   npx tsx scripts/generate-cv.ts <path-to-json> [output-pdf-path]
  * 
  * Esempio:
- *   npx ts-node src/generate-cv.ts tailoring.json output.pdf
+ *   npx tsx scripts/generate-cv.ts tailoring.json output.pdf
  */
 async function generateCv() {
   const args = process.argv.slice(2);
 
   if (args.length === 0) {
     console.error('❌ Errore: Per favore specifica il percorso del file JSON in input.');
-    console.log('\nUso: npx ts-node src/generate-cv.ts <input-json-path> [output-pdf-path]\n');
+    console.log('\nUso: npx tsx scripts/generate-cv.ts <input-json-path> [output-pdf-path]\n');
     process.exit(1);
   }
 

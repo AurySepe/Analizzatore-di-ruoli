@@ -311,6 +311,31 @@ export interface components {
             /** @description Spiegazione testuale delle motivazioni delle modifiche */
             explanation?: string;
         };
+        FunnelConversionRatesDto: {
+            /** @description Percentuale di conversione da candidatura a colloquio */
+            applicationToInterview: number;
+            /** @description Percentuale di conversione da colloquio ad offerta */
+            interviewToOffer: number;
+            /** @description Percentuale di conversione da offerta ad accettazione */
+            offerToAcceptance: number;
+            /** @description Percentuale di successo complessiva */
+            overallSuccessRate: number;
+        };
+        JobOffersFunnelAnalyticsDto: {
+            /** @description Conteggio delle offerte per stato attuale */
+            statusCounts: {
+                [key: string]: number;
+            };
+            /** @description Numero di transizioni per fase */
+            stageTransitions: {
+                [key: string]: number;
+            };
+            /** @description Rifiuti suddivisi per fase di interruzione */
+            rejectionDropOffs: {
+                [key: string]: number;
+            };
+            conversionRates: components["schemas"]["FunnelConversionRatesDto"];
+        };
         JobStatusHistoryDto: {
             id: string;
             /** @enum {string|null} */
@@ -402,7 +427,7 @@ export interface components {
             evaluatorModel: string;
             /** @description Sintesi/Riassunto dell annuncio di lavoro generato dall AI */
             summary?: string | null;
-            /** @description Spiegazione sintetico aderenza desiderata */
+            /** @description Spiegazione sintetica aderenza desiderata */
             desireMatchReasoning?: string | null;
             /** @description Valutazione delle competenze dell utente rispetto al ruolo */
             competenceMatch: string;
@@ -477,6 +502,20 @@ export interface components {
              */
             status: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
         };
+        CategorizationStatusDto: {
+            /** @description Numero totale di annunci nel database */
+            totalJobs: number;
+            /** @description Numero di annunci già valutati con successo */
+            evaluatedJobs: number;
+            /** @description Numero di annunci in attesa di valutazione */
+            pendingJobs: number;
+            /** @description Indica se il processo di categorizzazione è attualmente attivo */
+            isCategorizing: boolean;
+            /** @description Indica se il profilo utente è completo di CV e criteri */
+            isProfileComplete: boolean;
+            /** @description Messaggio sintetico sullo stato */
+            message: string;
+        };
         CompanySummaryDto: {
             id: string;
             name: string;
@@ -492,22 +531,30 @@ export interface components {
             newOffersCount?: number | null;
             /** @description Numero totale di offerte collegate a questa azienda */
             totalOffersCount: number;
-            /** @description Numero di offerte ancora da elaborare dall'AI */
+            /** @description Numero di offerte ancora da elaborare dall AI */
             pendingEvaluationCount: number;
-            /** @description Numero di offerte squalificate dall'AI */
+            /** @description Numero di offerte squalificate dall AI */
             disqualifiedCount: number;
+        };
+        CompanyJobOffersCountsDto: {
+            /** @description Numero totale di offerte collegate all azienda */
+            totalOffers: number;
+            /** @description Numero di offerte in attesa di valutazione AI */
+            pendingEvaluationCount: number;
+            /** @description Numero di offerte squalificate dall AI */
+            disqualifiedCount: number;
+            /** @description Numero di offerte idonee */
+            eligibleOffersCount: number;
+            /** @description Numero di offerte attualmente attive */
+            activeOffersCount: number;
+            /** @description Numero di offerte salvate o applicate */
+            savedOrAppliedCount: number;
+            /** @description Numero di offerte in stato NEW */
+            newOffersCount: number;
         };
         CompanyJobOffersBreakdownDto: {
             company: components["schemas"]["CompanyDto"];
-            counts: {
-                totalOffers?: number;
-                pendingEvaluationCount?: number;
-                disqualifiedCount?: number;
-                eligibleOffersCount?: number;
-                activeOffersCount?: number;
-                savedOrAppliedCount?: number;
-                newOffersCount?: number;
-            };
+            counts: components["schemas"]["CompanyJobOffersCountsDto"];
             /** @description Informazioni complete delle sole offerte idonee (escluse quelle squalificate ed in attesa di valutazione) */
             offers: components["schemas"]["JobOfferDto"][];
         };
@@ -788,7 +835,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["JobOffersFunnelAnalyticsDto"];
+                };
             };
         };
     };
@@ -824,13 +873,12 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
+            /** @description File PDF del curriculum personalizzato */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": Record<string, never>;
-                };
+                content?: never;
             };
         };
     };
@@ -897,7 +945,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["CategorizationStatusDto"];
+                };
             };
         };
     };
@@ -922,7 +972,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": Record<string, never>[];
+                    "application/json": components["schemas"]["JobEvaluationDto"][];
                 };
             };
         };
@@ -943,7 +993,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": Record<string, never>;
+                    "application/json": components["schemas"]["JobEvaluationDto"];
                 };
             };
         };

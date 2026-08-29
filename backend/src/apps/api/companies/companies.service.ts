@@ -1,13 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../../commons/prisma/prisma.service';
 import { ApplicationStatus, EvaluationPriority } from '@prisma/client';
-import { CompanyJobOffersBreakdownDto, CompanySummaryDto } from './dto/company-job-offers.dto';
 
 @Injectable()
 export class CompaniesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAllCompanies(): Promise<CompanySummaryDto[]> {
+  async findAllCompanies() {
     const companies = await this.prisma.company.findMany({
       orderBy: { name: 'asc' },
       include: {
@@ -88,7 +87,7 @@ export class CompaniesService {
     });
   }
 
-  async getCompanyJobOffers(companyId: string): Promise<CompanyJobOffersBreakdownDto> {
+  async getCompanyJobOffers(companyId: string) {
     const company = await this.prisma.company.findUnique({
       where: { id: companyId },
     });
@@ -159,16 +158,7 @@ export class CompaniesService {
     });
 
     return {
-      company: {
-        id: company.id,
-        name: company.name,
-        websiteUrl: company.websiteUrl,
-        linkedinUrl: company.linkedinUrl,
-        industry: company.industry,
-        fundingStage: company.fundingStage,
-        companySizeRange: company.companySizeRange,
-        employeeCount: company.employeeCount,
-      },
+      company,
       counts: {
         totalOffers: allOffers.length,
         pendingEvaluationCount,
@@ -178,16 +168,7 @@ export class CompaniesService {
         savedOrAppliedCount,
         newOffersCount,
       },
-      offers: activeOffers.map((o) => ({
-        ...o,
-        company: {
-          ...o.company,
-          eligibleOffersCount,
-          activeOffersCount: activeOffers.length,
-          savedOrAppliedCount,
-          newOffersCount,
-        },
-      })) as any,
+      offers: activeOffers,
     };
   }
 }

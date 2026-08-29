@@ -14,7 +14,7 @@ spec:
       storage: 5Gi
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: minio
   labels:
@@ -22,7 +22,9 @@ metadata:
     app.kubernetes.io/name: minio
     app.kubernetes.io/component: storage
 spec:
+  serviceName: minio
   replicas: 1
+  podManagementPolicy: OrderedReady
   selector:
     matchLabels:
       app: minio
@@ -31,6 +33,7 @@ spec:
       labels:
         app: minio
     spec:
+      terminationGracePeriodSeconds: 30
       containers:
         - name: minio
           image: quay.io/minio/minio:latest

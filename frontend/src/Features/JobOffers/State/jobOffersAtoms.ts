@@ -17,30 +17,12 @@ export type JobOfferFreshness = JobOfferDto['freshness'];
 export type JobOffersSection = 'new' | 'active' | 'closed' | 'disqualified';
 export type JobOfferPriority = 'HIGH' | 'MEDIUM' | 'LOW' | 'DISQUALIFIED';
 
-export interface EvaluationProcessingStatusDto {
-  readonly totalJobs: number;
-  readonly evaluatedJobs: number;
-  readonly pendingJobs: number;
-  readonly isCategorizing: boolean;
-  readonly isProfileComplete: boolean;
-  readonly message: string;
-}
+export type EvaluationProcessingStatusDto = components['schemas']['CategorizationStatusDto'];
+export type JobOffersFunnelAnalyticsDto = components['schemas']['JobOffersFunnelAnalyticsDto'];
 
 export interface PaginatedJobOffersResponse {
   readonly data: readonly JobOfferDto[];
   readonly meta: PaginatedMetaDto;
-}
-
-export interface JobOffersFunnelAnalyticsDto {
-  readonly statusCounts: Readonly<Record<string, number>>;
-  readonly stageTransitions: Readonly<Record<string, number>>;
-  readonly rejectionDropOffs: Readonly<Record<string, number>>;
-  readonly conversionRates: {
-    readonly applicationToInterview: number;
-    readonly interviewToOffer: number;
-    readonly offerToAcceptance: number;
-    readonly overallSuccessRate: number;
-  };
 }
 
 export interface JobOffersFiltersData {
@@ -70,62 +52,6 @@ export const jobOffersPageAtom = atom<number>(1);
 export const jobOffersLimitAtom = atom<number>(10);
 export const jobOffersFiltersAtom = atom<JobOffersFiltersData>(initialFiltersState);
 export const selectedJobOfferIdAtom = atom<string | null>(null);
-
-const parseCountRecord = (value: unknown): Record<string, number> => {
-  if (!value || typeof value !== 'object') {
-    return {};
-  }
-
-  return Object.entries(value).reduce<Record<string, number>>((acc, [key, count]) => {
-    if (typeof count === 'number') {
-      acc[key] = count;
-    }
-    return acc;
-  }, {});
-};
-
-const parseEvaluationProcessingStatus = (payload: unknown): EvaluationProcessingStatusDto => {
-  const data = (payload && typeof payload === 'object' ? payload : {}) as Record<string, unknown>;
-
-  return {
-    totalJobs: typeof data.totalJobs === 'number' ? data.totalJobs : 0,
-    evaluatedJobs: typeof data.evaluatedJobs === 'number' ? data.evaluatedJobs : 0,
-    pendingJobs: typeof data.pendingJobs === 'number' ? data.pendingJobs : 0,
-    isCategorizing: Boolean(data.isCategorizing),
-    isProfileComplete: typeof data.isProfileComplete === 'boolean' ? data.isProfileComplete : true,
-    message: typeof data.message === 'string' ? data.message : 'Nessuna attività in corso.',
-  };
-};
-
-const parseJobOffersFunnelAnalytics = (payload: unknown): JobOffersFunnelAnalyticsDto => {
-  const data = (payload && typeof payload === 'object' ? payload : {}) as Record<string, unknown>;
-  const rawConversion = (data.conversionRates && typeof data.conversionRates === 'object'
-    ? data.conversionRates
-    : {}) as Record<string, unknown>;
-
-  const applicationToInterview =
-    typeof rawConversion.applicationToInterview === 'number'
-      ? rawConversion.applicationToInterview
-      : 0;
-  const interviewToOffer =
-    typeof rawConversion.interviewToOffer === 'number' ? rawConversion.interviewToOffer : 0;
-  const offerToAcceptance =
-    typeof rawConversion.offerToAcceptance === 'number' ? rawConversion.offerToAcceptance : 0;
-  const overallSuccessRate =
-    typeof rawConversion.overallSuccessRate === 'number' ? rawConversion.overallSuccessRate : 0;
-
-  return {
-    statusCounts: parseCountRecord(data.statusCounts),
-    stageTransitions: parseCountRecord(data.stageTransitions),
-    rejectionDropOffs: parseCountRecord(data.rejectionDropOffs),
-    conversionRates: {
-      applicationToInterview,
-      interviewToOffer,
-      offerToAcceptance,
-      overallSuccessRate,
-    },
-  };
-};
 
 const getJobOffersPath = (
   section: JobOffersSection,
@@ -204,7 +130,7 @@ export const jobOffersFunnelAnalyticsQueryAtom = atomWithQuery<JobOffersFunnelAn
         throw new Error('Impossibile recuperare il funnel analytics.');
       }
 
-      return parseJobOffersFunnelAnalytics(data);
+      return data;
     },
   };
 });
@@ -223,7 +149,7 @@ export const evaluationProcessingStatusQueryAtom = atomWithQuery<EvaluationProce
         throw new Error('Impossibile recuperare lo stato di elaborazione degli annunci.');
       }
 
-      return parseEvaluationProcessingStatus(data);
+      return data;
     },
   };
 });

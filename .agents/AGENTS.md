@@ -8,7 +8,7 @@
 
 ## Build, Sync & Kubernetes Deploy Guidelines
 - **Sync OpenAPI & Frontend Types**: Whenever backend DTOs, controllers, or Prisma schemas change, run `npm run sync:api` (or `npm --prefix backend run openapi:generate && npm --prefix frontend run openapi:generate`).
-- **All-in-one Kubernetes Deploy**: To build, containerize, push to the local k3d registry (`localhost:5001`), apply manifests, and rollout-restart all Kubernetes deployments, run:
+- **All-in-one Kubernetes Deploy**: To build, containerize, push to the local k3d registry (`localhost:5001`), apply declarative Kustomize manifests (`kubectl apply -k k8s/`), and rollout-restart all Kubernetes deployments, run:
   ```bash
   npm run k8s:deploy
   ```

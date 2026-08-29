@@ -35,7 +35,7 @@ interface ManualJobInput {
  * innescando l'elaborazione automatica del worker per la generazione del CV.
  *
  * Uso:
- *   npx ts-node src/add-manual-job.ts <path-to-json>
+ *   npx ts-node scripts/add-manual-job.ts <path-to-json>
  */
 async function main() {
   const args = process.argv.slice(2);
@@ -43,7 +43,7 @@ async function main() {
   if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
     console.log(`
 📌 USO SCRIPT INSERIMENTO MANUALE ANNUNCI:
-  npx ts-node src/add-manual-job.ts <percorso-file-json>
+  npx tsx scripts/add-manual-job.ts <percorso-file-json>
 
 Esempio JSON input (job_data.json):
 {

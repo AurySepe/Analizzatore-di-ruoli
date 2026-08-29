@@ -13,7 +13,7 @@ import type { UpdateCurriculumTailoringDto } from './dto/update-curriculum-tailo
 
 import { JobOffersAnalyticsService } from './job-offers-analytics.service';
 
-const defaultOfferInclude = {
+export const defaultOfferInclude = {
   company: true,
   evaluation: true,
   curriculum: {
@@ -25,6 +25,8 @@ const defaultOfferInclude = {
   },
   statusHistory: { orderBy: { createdAt: 'asc' as const } },
 };
+
+export type JobOfferWithRelations = Prisma.JobOfferGetPayload<{ include: typeof defaultOfferInclude }>;
 
 @Injectable()
 export class JobOffersService {
@@ -99,12 +101,11 @@ export class JobOffersService {
         experienceLevel: dto.experienceLevel ?? 'UNSPECIFIED',
         skills: skillsJson,
       },
-      include: {
-        company: true,
-      },
+      include: defaultOfferInclude,
     });
 
-    return offer;
+    const [offerWithCounts] = await this.attachCompanyActiveCounts([offer]);
+    return offerWithCounts;
   }
 
   async findAllPaginated(

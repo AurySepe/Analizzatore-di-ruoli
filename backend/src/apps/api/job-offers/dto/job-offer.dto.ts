@@ -48,6 +48,10 @@ export class JobStatusHistoryDto {
 
   @ApiProperty()
   createdAt: Date;
+
+  constructor(data: JobStatusHistoryDto) {
+    Object.assign(this, plainToInstance(JobStatusHistoryDto, data));
+  }
 }
 
 export enum JobOfferFreshnessEnum {

@@ -45,8 +45,11 @@ if (!backendOnly) {
   run('docker push localhost:5001/frontend:latest', 'Docker: Push immagine Frontend su registry k3d');
 }
 
-// 3. Applicazione Manifest Kubernetes
-run('kubectl apply -f k8s/', 'Kubernetes: Applicazione configurazioni e manifest k8s');
+// 3. Applicazione Manifest Kubernetes (Kustomize Declarative Sync con Pruning)
+run(
+  'kubectl apply -k k8s/ --prune -l app.kubernetes.io/managed-by=analizzatore-di-ruoli',
+  'Kubernetes: Applicazione dichiarativa e sincronizzazione Kustomize (--prune)',
+);
 
 // 4. Rollout Restart dei Deployment
 if (!skipRestart) {
