@@ -12,7 +12,10 @@ resources:
   - redis.yaml
   - minio.yaml
   - backend.yaml
+  - relay-curriculum.yaml
+  - relay-evaluation.yaml
   - worker-curriculum.yaml
+  - worker-pdf.yaml
   - worker-evaluator.yaml
   - worker-extractor-arbeitnow.yaml
   - worker-extractor-remotive.yaml

@@ -160,12 +160,13 @@ export const useCurriculumEditorController = (): CurriculumEditorController => {
           },
         });
         setPdfKey((k) => k + 1);
+        setIsEditing(false);
       } catch (err: unknown) {
         setSaveError(err instanceof Error ? err.message : 'Errore sconosciuto durante il salvataggio.');
         throw err;
       }
     },
-    [customLabel, explanation, projects, selectedPubs, setPdfKey, setSaveError, updateMutation, workEntries],
+    [customLabel, explanation, projects, selectedPubs, setIsEditing, setPdfKey, setSaveError, updateMutation, workEntries],
   );
 
   return {

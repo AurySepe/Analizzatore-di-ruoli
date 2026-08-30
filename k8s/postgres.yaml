@@ -22,10 +22,19 @@ spec:
       containers:
         - name: postgres
           image: postgres:16-alpine
-          lifecycle:
-            preStop:
-              exec:
-                command: ["/bin/sh", "-c", "pg_ctl -D /var/lib/postgresql/data -m fast -w stop"]
+          args:
+            - "-c"
+            - "wal_level=replica"
+            - "-c"
+            - "archive_mode=off"
+            - "-c"
+            - "max_wal_size=1GB"
+            - "-c"
+            - "min_wal_size=80MB"
+            - "-c"
+            - "checkpoint_completion_target=0.9"
+            - "-c"
+            - "checkpoint_timeout=15min"
           ports:
             - name: postgres
               containerPort: 5432

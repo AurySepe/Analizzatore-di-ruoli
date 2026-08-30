@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsOptional, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { WorkTailoringDto, ProjectTailoringDto } from './update-curriculum-tailoring.dto';
+import { JobCurriculumPdfStatus } from '@analizzatore/database';
 
 export class JobCurriculumDto {
   @ApiProperty()
@@ -12,9 +13,14 @@ export class JobCurriculumDto {
   @IsString()
   jobOfferId: string;
 
-  @ApiProperty({ description: 'Chiave di identificazione dell oggetto in S3/MinIO' })
+  @ApiProperty({ description: 'Chiave di identificazione dell oggetto in S3/MinIO', required: false, nullable: true })
+  @IsOptional()
   @IsString()
-  storageKey: string;
+  storageKey?: string | null;
+
+  @ApiProperty({ enum: JobCurriculumPdfStatus, description: 'Stato di compilazione del PDF' })
+  @IsString()
+  pdfStatus: JobCurriculumPdfStatus;
 
   @ApiProperty()
   @IsString()

@@ -36,6 +36,14 @@ export enum ApplicationStatusEnum {
   ARCHIVED = 'ARCHIVED',
 }
 
+export enum JobEvaluationProcessStatusEnum {
+  NOT_EVALUATED = 'NOT_EVALUATED',
+  PENDING = 'PENDING',
+  EVALUATING = 'EVALUATING',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+}
+
 export class JobStatusHistoryDto {
   @ApiProperty()
   id: string;
@@ -173,6 +181,10 @@ export class JobOfferDto {
   @ApiProperty({ enum: ApplicationStatusEnum, default: ApplicationStatusEnum.NEW })
   @IsEnum(ApplicationStatusEnum)
   status: ApplicationStatusEnum;
+
+  @ApiProperty({ enum: JobEvaluationProcessStatusEnum, default: JobEvaluationProcessStatusEnum.PENDING })
+  @IsEnum(JobEvaluationProcessStatusEnum)
+  evaluationProcessStatus: JobEvaluationProcessStatusEnum;
 
   @ApiProperty({ nullable: true, required: false })
   @IsString()

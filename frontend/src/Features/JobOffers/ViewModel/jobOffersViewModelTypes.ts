@@ -76,11 +76,14 @@ export interface JobCurriculumProjectViewModelDTO {
   readonly description: string;
 }
 
+export type JobCurriculumPdfStatus = 'PENDING' | 'GENERATING' | 'READY' | 'FAILED';
+
 export interface JobCurriculumViewModelDTO {
   readonly id: string;
   readonly jobOfferId: string;
   readonly storageKey: string;
   readonly pdfUrl: string;
+  readonly pdfStatus: JobCurriculumPdfStatus;
   readonly explanation: string;
   readonly customLabel?: string | null;
   readonly work: readonly JobCurriculumWorkViewModelDTO[];
@@ -137,15 +140,45 @@ export interface JobOffersStatsViewModelDTO {
   readonly totalPages: number;
 }
 
+export interface ActiveProcessingJobViewModelDTO {
+  readonly id: string;
+  readonly title: string;
+  readonly companyName: string;
+  readonly location: string;
+  readonly remoteType: string;
+  readonly source: string;
+  readonly isEvaluating: boolean;
+  readonly statusLabel: string;
+  readonly descriptionSnippet: string;
+  readonly salaryRange: string | null;
+  readonly createdAt: string;
+}
+
+export interface RecentEvaluatedJobViewModelDTO {
+  readonly id: string;
+  readonly jobOfferId: string;
+  readonly title: string;
+  readonly companyName: string;
+  readonly overallScore: number;
+  readonly priority: string;
+  readonly priorityTone: 'high' | 'medium' | 'low' | 'disqualified' | 'neutral';
+  readonly evaluatorModel: string;
+  readonly summary: string | null;
+  readonly evaluatedAt: string;
+}
+
 export interface EvaluationProcessingStatusViewModelDTO {
   readonly totalJobs: number;
   readonly evaluatedJobs: number;
   readonly pendingJobs: number;
+  readonly evaluatingCount: number;
   readonly evaluatedPercentage: number;
   readonly isCategorizing: boolean;
   readonly isProfileComplete: boolean;
   readonly message: string;
   readonly statusLabel: string;
+  readonly activeJobs: readonly ActiveProcessingJobViewModelDTO[];
+  readonly recentEvaluatedJobs: readonly RecentEvaluatedJobViewModelDTO[];
 }
 
 export interface JobOffersFiltersViewModelDTO {

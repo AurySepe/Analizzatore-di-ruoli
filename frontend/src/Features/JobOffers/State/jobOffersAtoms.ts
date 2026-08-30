@@ -141,7 +141,11 @@ export const evaluationProcessingStatusQueryAtom = atomWithQuery<EvaluationProce
   return {
     queryKey: ['evaluations', 'status'],
     queryClient,
-    refetchInterval: 5000,
+    refetchInterval: (query) => {
+      const data = query.state.data;
+      if (!data) return 3000;
+      return data.pendingJobs > 0 || (data.evaluatingCount ?? 0) > 0 ? 2000 : 10000;
+    },
     queryFn: async () => {
       const { data, error } = await openApiClient.GET('/api/evaluations/status');
 
@@ -190,6 +194,15 @@ export const selectedJobOfferQueryAtom = atomWithQuery<JobOfferDto | null>((get)
     queryKey: ['jobOffers', 'detail', selectedId],
     queryClient,
     enabled: selectedId !== null,
+    refetchInterval: (query) => {
+      const data = query.state.data;
+      if (!data) return false;
+      const status = data.curriculum?.pdfStatus;
+      if (status === 'PENDING' || status === 'GENERATING') {
+        return 1500;
+      }
+      return false;
+    },
     queryFn: async () => {
       if (selectedId === null) {
         return null;
@@ -234,9 +247,8 @@ export const updateCurriculumTailoringMutationAtom = atomWithMutation<JobOfferDt
 
       return data;
     },
-    onSuccess: (_data, variables) => {
-      void queryClient.invalidateQueries({ queryKey: ['jobOffers', 'detail', variables.id] });
-      void queryClient.invalidateQueries({ queryKey: ['jobOffers', 'active'] });
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['jobOffers'] });
     },
   };
 });

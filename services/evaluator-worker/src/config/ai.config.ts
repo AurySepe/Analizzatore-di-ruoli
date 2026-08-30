@@ -17,11 +17,6 @@ export interface AiConfig {
     model: string;
     timeoutMs: number;
   };
-  gemmaCloud: {
-    apiKey: string;
-    model: string;
-    timeoutMs: number;
-  };
   curriculum: {
     apiKey: string;
     model: string;
@@ -44,11 +39,6 @@ export const aiConfig: AiConfig = {
   gemini35: {
     apiKey: process.env.GEMINI_API_KEY || '',
     model: process.env.GEMINI_3_5_MODEL || 'gemini-3.5-flash-lite',
-    timeoutMs: 30000,
-  },
-  gemmaCloud: {
-    apiKey: process.env.GEMINI_API_KEY || '',
-    model: process.env.GEMMA_CLOUD_MODEL || 'gemma-4-26b-a4b-it',
     timeoutMs: 30000,
   },
   curriculum: {

@@ -56,5 +56,19 @@ enum JobSource {
   MANUAL
 }
 
+enum OutboxStatus {
+  PENDING
+  PUBLISHED
+  FAILED
+}
+
+enum JobEvaluationProcessStatus {
+  NOT_EVALUATED
+  PENDING
+  EVALUATING
+  COMPLETED
+  FAILED
+}
+
 
 

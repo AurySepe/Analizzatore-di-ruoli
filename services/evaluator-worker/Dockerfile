@@ -2,23 +2,35 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copia pacchetti condivisi
+# 1. Copia solo manifest per cache npm install
+COPY packages/contracts/package*.json ./packages/contracts/
+COPY packages/database/package*.json ./packages/database/
+COPY services/evaluator-worker/package*.json ./services/evaluator-worker/
+
+# 2. Installazione dipendenze con cache mount BuildKit
+RUN --mount=type=cache,target=/root/.npm \
+    cd packages/contracts && npm install
+
+RUN --mount=type=cache,target=/root/.npm \
+    cd packages/database && npm install
+
+WORKDIR /app/services/evaluator-worker
+RUN --mount=type=cache,target=/root/.npm \
+    npm install --legacy-peer-deps
+
+RUN npm link /app/packages/contracts /app/packages/database
+
+# 3. Copia codice sorgente e compilazione
+WORKDIR /app
 COPY packages/contracts ./packages/contracts
-RUN cd packages/contracts && npm install && npm run build
+RUN cd packages/contracts && npm run build
 
 COPY packages/database ./packages/database
-RUN cd packages/database && npm install && npm run prisma:generate && npm run build
+RUN --mount=type=cache,target=/root/.cache/prisma \
+    cd packages/database && npm run prisma:generate && npm run build
 
-# Copia servizio Evaluator Worker
 WORKDIR /app/services/evaluator-worker
-COPY services/evaluator-worker/package*.json ./
-
-RUN npm install --legacy-peer-deps
-RUN npm link /app/packages/contracts /app/packages/database
-
 COPY services/evaluator-worker ./
-
-RUN npm link /app/packages/contracts /app/packages/database
 RUN npm run build
 
 FROM node:20-alpine AS runner

@@ -7,6 +7,7 @@ const serviceArg = args.find((a) => a.startsWith('--service=') || a.startsWith('
 const frontendOnly = args.includes('--frontend-only') || args.includes('-f') || serviceArg === 'frontend';
 const skipBuild = args.includes('--skip-build');
 const skipRestart = args.includes('--skip-restart');
+const preflightOnly = args.includes('--preflight-only') || args.includes('-p');
 
 function run(command, description) {
   console.log(`\n\x1b[36m▶ ${description}...\x1b[0m`);
@@ -24,12 +25,34 @@ console.log('\x1b[1m\x1b[35m====================================================
 console.log('\x1b[1m\x1b[35m 🚀 Analizzatore di Ruoli: Build & Kubernetes Deploy\x1b[0m');
 console.log('\x1b[1m\x1b[35m====================================================\x1b[0m');
 
+// 0. Pre-Flight Checks (Shift-Left Validation)
+console.log('\n\x1b[34m🔍 [Pre-Flight] Validazione ambiente e schemi...\x1b[0m');
+try {
+  // 1. Verifica raggiungibilità registry k3d locale
+  execSync('curl.exe -s -m 2 http://localhost:5001/v2/', { stdio: 'ignore' });
+  console.log('  \x1b[32m✔ [OK]\x1b[0m Registry locale k3d raggiungibile (localhost:5001)');
+} catch {
+  console.warn('  \x1b[33m⚠ [WARN]\x1b[0m Registry localhost:5001 non risponde via HTTP diretto (verificare stato cluster k3d).');
+}
+
+// 2. Validazione sintassi schema Prisma
+run('npm --prefix packages/database run prisma:validate', 'Prisma: Validazione sintattica dello schema');
+
+if (preflightOnly) {
+  run('node scripts/typecheck.mjs', 'Typecheck: Validazione statica TypeScript del monorepo');
+  console.log('\n\x1b[32m🎉 Tutti i controlli Pre-Flight sono stati superati con successo!\x1b[0m\n');
+  process.exit(0);
+}
+
 // Microservizi isolati definiti nel monorepo
 const microservices = [
   { name: 'api', dockerfile: 'services/api/Dockerfile', image: 'localhost:5001/api:latest', deployment: 'backend-api' },
+  { name: 'relay-curriculum', dockerfile: 'services/curriculum-relay/Dockerfile', image: 'localhost:5001/relay-curriculum:latest', deployment: 'relay-curriculum' },
+  { name: 'relay-evaluation', dockerfile: 'services/evaluation-relay/Dockerfile', image: 'localhost:5001/relay-evaluation:latest', deployment: 'relay-evaluation' },
   { name: 'worker-ingestion', dockerfile: 'services/ingestion-worker/Dockerfile', image: 'localhost:5001/worker-ingestion:latest', deployment: 'worker-ingestion' },
   { name: 'worker-evaluator', dockerfile: 'services/evaluator-worker/Dockerfile', image: 'localhost:5001/worker-evaluator:latest', deployment: 'backend-evaluator' },
   { name: 'worker-curriculum', dockerfile: 'services/curriculum-worker/Dockerfile', image: 'localhost:5001/worker-curriculum:latest', deployment: 'backend-curriculum' },
+  { name: 'worker-pdf', dockerfile: 'services/pdf-worker/Dockerfile', image: 'localhost:5001/worker-pdf:latest', deployment: 'backend-pdf' },
   { name: 'extractor-arbeitnow', dockerfile: 'services/extractors/arbeitnow/Dockerfile', image: 'localhost:5001/extractor-arbeitnow:latest', deployment: 'extractor-arbeitnow' },
   { name: 'extractor-remotive', dockerfile: 'services/extractors/remotive/Dockerfile', image: 'localhost:5001/extractor-remotive:latest', deployment: 'extractor-remotive' },
   { name: 'extractor-jobicy', dockerfile: 'services/extractors/jobicy/Dockerfile', image: 'localhost:5001/extractor-jobicy:latest', deployment: 'extractor-jobicy' },
@@ -57,7 +80,7 @@ import { spawn } from 'child_process';
 function runAsync(command, description) {
   return new Promise((resolve, reject) => {
     console.log(`\n\x1b[36m▶ [START] ${description}...\x1b[0m`);
-    const child = spawn(command, { shell: true, stdio: 'inherit', env: process.env });
+    const child = spawn(command, { shell: true, stdio: 'inherit', env: { ...process.env, DOCKER_BUILDKIT: '1' } });
     child.on('close', (code) => {
       if (code === 0) {
         console.log(`\x1b[32m✔ [OK] ${description}\x1b[0m`);
@@ -114,7 +137,14 @@ run(
   'Kubernetes: Sincronizzazione dichiarativa Kustomize (--prune)',
 );
 
-// 4. Rollout Restart dei Deployments
+// 4. Esecuzione e Verifica Automatica delle Migrazioni Database (Job Gatekeeper)
+if (!frontendOnly) {
+  run('kubectl delete job db-migration-job --ignore-not-found=true', 'Kubernetes: Pulizia Job di migrazione precedente');
+  run('kubectl apply -f k8s/db-migration-job.yaml', 'Kubernetes: Lancio Job di migrazione database PostgreSQL');
+  run('kubectl wait --for=condition=complete job/db-migration-job --timeout=60s', 'Kubernetes: Attesa completamento migrazioni database');
+}
+
+// 5. Rollout Restart dei Deployments
 if (!skipRestart) {
   if (!frontendOnly) {
     const deploymentsToRestart = selectedServices.map((s) => s.deployment).join(' ');

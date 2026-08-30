@@ -42,17 +42,28 @@ export const JobOffersDecisionDeck: React.FC<{
   const [pendingEdgeSelection, setPendingEdgeSelection] = useState<'first' | 'last' | null>(null);
 
   useEffect(() => {
-    if (pendingEdgeSelection === null || jobOffersState.status !== 'success' || jobOffersState.data.length === 0) {
+    if (jobOffersState.status !== 'success' || jobOffersState.data.length === 0) {
       return;
     }
 
-    const nextOffer = pendingEdgeSelection === 'last'
-      ? jobOffersState.data[jobOffersState.data.length - 1]
-      : jobOffersState.data[0];
+    if (pendingEdgeSelection !== null) {
+      const nextOffer = pendingEdgeSelection === 'last'
+        ? jobOffersState.data[jobOffersState.data.length - 1]
+        : jobOffersState.data[0];
 
-    onSelectJobOffer(nextOffer.id);
-    setPendingEdgeSelection(null);
-  }, [jobOffersState, onSelectJobOffer, pendingEdgeSelection]);
+      onSelectJobOffer(nextOffer.id);
+      setPendingEdgeSelection(null);
+      return;
+    }
+
+    const isSelectedInQueue = selectedJobOfferState.status === 'success' &&
+      selectedJobOfferState.data !== null &&
+      jobOffersState.data.some((offer) => offer.id === selectedJobOfferState.data?.id);
+
+    if (!isSelectedInQueue && selectedJobOfferState.status !== 'loading') {
+      onSelectJobOffer(jobOffersState.data[0].id);
+    }
+  }, [jobOffersState, onSelectJobOffer, pendingEdgeSelection, selectedJobOfferState]);
 
   if (jobOffersState.status === 'loading') {
     return <DecisionDeckSkeleton />;

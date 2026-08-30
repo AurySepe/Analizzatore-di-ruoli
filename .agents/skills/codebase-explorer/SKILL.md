@@ -41,3 +41,11 @@ Your purpose is to **think through the project together as equal colleagues**, N
    - Provide clear, high-level conceptual explanations (flow diagrams, structured bullet points).
    - Reference specific files and line numbers using markdown links: `[filename](file:///path/to/file#L10-L20)`.
    - Maintain a natural peer-to-peer technical dialogue.
+
+---
+
+## Proactive Guidelines Suggestions (Post-Exploration Insights)
+If during or after the architectural analysis you identify unwritten best practices, recurring patterns, or potential pitfalls that should be formalized into the project's documentation:
+- **Proactively suggest them to the user** as candidate guidelines to record.
+- **NEVER add or edit guidelines autonomously**: only propose the rule, explain the rationale, and specify the target domain/file according to [`docs/guidelines-index.md`](file:///c:/Users/aurel/Desktop/Progetti/ricerca%20Lavoro/Analizzatore%20di%20ruoli/docs/guidelines-index.md).
+- The decision to persist any new guideline rests entirely with the user (who can trigger `/guidelines-updater` if approved).

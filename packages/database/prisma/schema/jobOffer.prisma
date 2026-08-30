@@ -29,18 +29,23 @@ model JobOffer {
   skills          String?           // JSON string array (e.g. '["TypeScript","Node.js"]')
 
   // Tracking
-  status          ApplicationStatus @default(NEW)
-  notes           String?
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  evaluation      JobEvaluation?
-  curriculum      JobCurriculum?
-  statusHistory   JobStatusHistory[]
+  status                  ApplicationStatus          @default(NEW)
+  evaluationProcessStatus JobEvaluationProcessStatus @default(PENDING)
+  notes                   String?
+  createdAt               DateTime                   @default(now())
+  updatedAt               DateTime                   @updatedAt
+  evaluation              JobEvaluation?
+  evaluationOutbox        JobEvaluationOutbox?
+  curriculum              JobCurriculum?
+  curriculumOutbox        JobCurriculumOutbox?
+  curriculumPdfOutbox     JobCurriculumPdfOutbox?
+  statusHistory           JobStatusHistory[]
 
   @@unique([source, externalId])
   @@index([companyId])
   @@index([source])
   @@index([status])
+  @@index([evaluationProcessStatus])
 }
 
 model JobStatusHistory {

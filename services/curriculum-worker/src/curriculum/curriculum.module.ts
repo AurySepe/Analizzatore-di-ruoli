@@ -1,20 +1,12 @@
 import { Module } from '@nestjs/common';
-import { CurriculumService } from './curriculum.service';
-import { CurriculumQueueService } from './queue/curriculum-queue.service';
-import { CurriculumProducerService } from './queue/curriculum-producer.service';
-import { CurriculumConsumerService } from './queue/curriculum-consumer.service';
-import { PdfGeneratorService } from './pdf/pdf-generator.service';
 import { CurriculumLlmService } from './services/curriculum-llm.service';
+import { CurriculumProcessor } from './processors/curriculum.processor';
 
 @Module({
   providers: [
-    CurriculumService,
-    CurriculumQueueService,
-    CurriculumProducerService,
-    CurriculumConsumerService,
-    PdfGeneratorService,
     CurriculumLlmService,
+    CurriculumProcessor,
   ],
-  exports: [CurriculumService, PdfGeneratorService, CurriculumLlmService],
+  exports: [CurriculumLlmService, CurriculumProcessor],
 })
 export class CurriculumModule {}

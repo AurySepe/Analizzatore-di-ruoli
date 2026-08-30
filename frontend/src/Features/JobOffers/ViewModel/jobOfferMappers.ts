@@ -273,11 +273,37 @@ export const mapProcessingStatus = (
   totalJobs: status.totalJobs,
   evaluatedJobs: status.evaluatedJobs,
   pendingJobs: status.pendingJobs,
+  evaluatingCount: status.evaluatingCount ?? 0,
   evaluatedPercentage: calculatePercentage(status.evaluatedJobs, status.totalJobs),
   isCategorizing: status.isCategorizing,
   isProfileComplete: status.isProfileComplete,
   message: status.message,
-  statusLabel: status.isCategorizing ? 'Elaborazione in corso' : 'Coda ferma',
+  statusLabel: status.isCategorizing ? 'Valutazione AI attiva' : 'Coda completata',
+  activeJobs: (status.activeJobs || []).map((j) => ({
+    id: j.id,
+    title: j.title,
+    companyName: j.companyName,
+    location: j.location || 'Non specificato',
+    remoteType: (remoteTypeLabels as any)[j.remoteType] ?? j.remoteType,
+    source: (sourceLabels as any)[j.source] ?? j.source,
+    isEvaluating: j.evaluationProcessStatus === 'EVALUATING',
+    statusLabel: j.evaluationProcessStatus === 'EVALUATING' ? 'In analisi da Gemini' : 'In attesa in coda',
+    descriptionSnippet: j.descriptionSnippet || 'Nessuna descrizione disponibile.',
+    salaryRange: j.salaryRange,
+    createdAt: formatDateTime(j.createdAt),
+  })),
+  recentEvaluatedJobs: (status.recentEvaluatedJobs || []).map((r) => ({
+    id: r.id,
+    jobOfferId: r.jobOfferId,
+    title: r.title,
+    companyName: r.companyName,
+    overallScore: r.overallScore,
+    priority: formatPriority(r.priority),
+    priorityTone: getPriorityTone(r.priority),
+    evaluatorModel: formatEvaluatorModel(r.evaluatorModel),
+    summary: r.summary,
+    evaluatedAt: formatDateTime(r.evaluatedAt),
+  })),
 });
 
 export const formatSalary = (offer: JobOfferDto): string => {
@@ -387,12 +413,14 @@ export const mapCurriculumDetail = (
   const rawBaseUrl = import.meta.env.VITE_API_BASE_URL ?? '/api';
   const normalizedBase = rawBaseUrl.replace(/\/$/, '');
   const apiBase = normalizedBase.endsWith('/api') ? normalizedBase : `${normalizedBase}/api`;
+  const updatedAtTime = curriculum.updatedAt ? new Date(curriculum.updatedAt).getTime() : Date.now();
 
   return {
     id: curriculum.id,
     jobOfferId: curriculum.jobOfferId,
     storageKey: curriculum.storageKey ?? '',
-    pdfUrl: `${apiBase}/job-offers/${jobOfferId}/curriculum/pdf`,
+    pdfUrl: `${apiBase}/job-offers/${jobOfferId}/curriculum/pdf?t=${updatedAtTime}`,
+    pdfStatus: (curriculum.pdfStatus as 'PENDING' | 'GENERATING' | 'READY' | 'FAILED') || 'PENDING',
     explanation: curriculum.explanation,
     customLabel: curriculum.customLabel ?? null,
     work: (curriculum.work || []).map((w) => ({

@@ -15,9 +15,9 @@ You must **NEVER** modify source code files or create implementation solutions u
 ## Mandatory Execution Workflow
 
 ### Step 1: Read Project Guidelines
-Before analyzing the specific task, you **MUST** read the project's development guidelines:
-- Read [guidelines/development-guidelines.md](file:///c:/Users/aurel/Desktop/Progetti/ricerca%20Lavoro/backend-challenge-typescript/guidelines/development-guidelines.md).
-- Ensure all planned patterns (e.g., prohibition of `any`, response mapping, Prisma querying rules) strictly adhere to these guidelines.
+Before analyzing the specific task, you **MUST** consult the central Guidelines Index:
+- Inspect [`docs/guidelines-index.md`](file:///c:/Users/aurel/Desktop/Progetti/ricerca%20Lavoro/Analizzatore%20di%20ruoli/docs/guidelines-index.md) and read the specific domain guideline files related to the task (e.g. `services/api/docs/guidelines.md`, `packages/database/docs/guidelines.md`, `frontend/docs/guidelines.md`).
+- Ensure all planned patterns strictly adhere to these domain guidelines.
 
 ### Step 2: Context Gathering
 Thoroughly research and inspect the codebase to understand the context of the requested change:
@@ -34,3 +34,10 @@ Construct a structured implementation plan that includes:
 
 ### Step 4: Request User Review & Stop
 Present the implementation plan clearly to the user and **STOP execution**. Wait for the user's explicit approval or feedback before proceeding to write any implementation code.
+
+---
+
+## Proactive Guidelines Suggestions (Post-Planning Insights)
+If during the research or planning phase you realize that a new pattern, decision, or architectural constraint should be permanently codified as a project guideline:
+- **Suggest it to the user** in the final section of your response or in the plan review.
+- **DO NOT add or update guidelines directly**: strictly limit yourself to proposing the suggestion and referencing the appropriate domain file from [`docs/guidelines-index.md`](file:///c:/Users/aurel/Desktop/Progetti/ricerca%20Lavoro/Analizzatore%20di%20ruoli/docs/guidelines-index.md). The user will decide whether to persist it via `/guidelines-updater`.

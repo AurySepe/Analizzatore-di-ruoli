@@ -2,23 +2,32 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copia pacchetto contracts condiviso
-COPY packages/contracts ./packages/contracts
-RUN cd packages/contracts && npm install && npm run build
+# 1. Copia solo manifest per cache npm install
+COPY packages/contracts/package*.json ./packages/contracts/
+COPY services/extractors/remotive/package*.json ./services/extractors/remotive/
+COPY services/extractors/remotive/prisma ./services/extractors/remotive/prisma/
+COPY services/extractors/remotive/prisma.config.ts ./services/extractors/remotive/
 
-# Copia servizio Remotive
+RUN --mount=type=cache,target=/root/.npm \
+    cd packages/contracts && npm install
+
 WORKDIR /app/services/extractors/remotive
-COPY services/extractors/remotive/package*.json ./
-COPY services/extractors/remotive/prisma ./prisma/
-COPY services/extractors/remotive/prisma.config.ts ./
+RUN --mount=type=cache,target=/root/.npm \
+    npm install --legacy-peer-deps
 
-RUN npm install --legacy-peer-deps
 RUN npm link /app/packages/contracts
 
+# 2. Copia sorgenti e build
+WORKDIR /app
+COPY packages/contracts ./packages/contracts
+RUN cd packages/contracts && npm run build
+
+WORKDIR /app/services/extractors/remotive
 COPY services/extractors/remotive ./
 
-RUN npm link /app/packages/contracts
-RUN npm run prisma:generate
+RUN --mount=type=cache,target=/root/.cache/prisma \
+    npm run prisma:generate
+
 RUN npm run build
 
 FROM node:20-alpine AS runner

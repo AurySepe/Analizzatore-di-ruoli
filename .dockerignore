@@ -1,0 +1,28 @@
+# Node dependencies and build output
+node_modules
+**/node_modules
+dist
+**/dist
+.next
+.turbo
+
+# Git and IDE
+.git
+.gitignore
+.agents
+.vscode
+.idea
+
+# Temporary files and logs
+*.log
+*.tmp
+dev.db
+dev.db-journal
+backup_postgres_safety.sql
+*.sql
+.env*
+!**/.env.example
+
+# OS files
+.DS_Store
+Thumbs.db

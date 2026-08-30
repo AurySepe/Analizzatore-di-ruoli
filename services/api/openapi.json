@@ -1344,7 +1344,18 @@
           },
           "storageKey": {
             "type": "string",
+            "nullable": true,
             "description": "Chiave di identificazione dell oggetto in S3/MinIO"
+          },
+          "pdfStatus": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "GENERATING",
+              "READY",
+              "FAILED"
+            ],
+            "description": "Stato di compilazione del PDF"
           },
           "explanation": {
             "type": "string"
@@ -1387,7 +1398,7 @@
         "required": [
           "id",
           "jobOfferId",
-          "storageKey",
+          "pdfStatus",
           "explanation",
           "work",
           "projects",
@@ -1694,6 +1705,17 @@
             "type": "string",
             "default": "NEW"
           },
+          "evaluationProcessStatus": {
+            "enum": [
+              "NOT_EVALUATED",
+              "PENDING",
+              "EVALUATING",
+              "COMPLETED",
+              "FAILED"
+            ],
+            "type": "string",
+            "default": "PENDING"
+          },
           "notes": {
             "type": "string",
             "nullable": true
@@ -1724,6 +1746,7 @@
           "rawDescription",
           "experienceLevel",
           "status",
+          "evaluationProcessStatus",
           "company"
         ]
       },
@@ -1981,6 +2004,17 @@
             "type": "string",
             "default": "NEW"
           },
+          "evaluationProcessStatus": {
+            "enum": [
+              "NOT_EVALUATED",
+              "PENDING",
+              "EVALUATING",
+              "COMPLETED",
+              "FAILED"
+            ],
+            "type": "string",
+            "default": "PENDING"
+          },
           "notes": {
             "type": "string",
             "nullable": true
@@ -2036,6 +2070,7 @@
           "company",
           "experienceLevel",
           "status",
+          "evaluationProcessStatus",
           "freshness",
           "createdAt",
           "updatedAt"
@@ -2087,6 +2122,119 @@
           "status"
         ]
       },
+      "ActiveProcessingJobDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID univoco dell annuncio"
+          },
+          "title": {
+            "type": "string",
+            "description": "Titolo della posizione lavorativa"
+          },
+          "companyName": {
+            "type": "string",
+            "description": "Nome dell azienda"
+          },
+          "location": {
+            "type": "string",
+            "nullable": true,
+            "description": "Luogo di lavoro"
+          },
+          "remoteType": {
+            "type": "string",
+            "description": "Modalità di lavoro: REMOTE | HYBRID | ON_SITE | UNSPECIFIED"
+          },
+          "source": {
+            "type": "string",
+            "description": "Fonte dell annuncio"
+          },
+          "evaluationProcessStatus": {
+            "type": "string",
+            "description": "Stato di avanzamento: PENDING | EVALUATING"
+          },
+          "descriptionSnippet": {
+            "type": "string",
+            "nullable": true,
+            "description": "Anteprima sintetica della descrizione"
+          },
+          "salaryRange": {
+            "type": "string",
+            "nullable": true,
+            "description": "Range salariale formattato"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "companyName",
+          "location",
+          "remoteType",
+          "source",
+          "evaluationProcessStatus",
+          "descriptionSnippet",
+          "salaryRange",
+          "createdAt"
+        ]
+      },
+      "RecentEvaluatedJobDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID della valutazione"
+          },
+          "jobOfferId": {
+            "type": "string",
+            "description": "ID dell annuncio correlato"
+          },
+          "title": {
+            "type": "string",
+            "description": "Titolo della posizione"
+          },
+          "companyName": {
+            "type": "string",
+            "description": "Nome azienda"
+          },
+          "overallScore": {
+            "type": "integer",
+            "description": "Punteggio globale assegnato da Gemini"
+          },
+          "priority": {
+            "type": "string",
+            "description": "Priorità assegnata"
+          },
+          "evaluatorModel": {
+            "type": "string",
+            "description": "Modello AI utilizzato"
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true,
+            "description": "Sintesi della valutazione"
+          },
+          "evaluatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "jobOfferId",
+          "title",
+          "companyName",
+          "overallScore",
+          "priority",
+          "evaluatorModel",
+          "summary",
+          "evaluatedAt"
+        ]
+      },
       "CategorizationStatusDto": {
         "type": "object",
         "properties": {
@@ -2100,7 +2248,11 @@
           },
           "pendingJobs": {
             "type": "integer",
-            "description": "Numero di annunci in attesa di valutazione"
+            "description": "Numero di annunci in coda o in lavorazione"
+          },
+          "evaluatingCount": {
+            "type": "integer",
+            "description": "Numero di annunci attualmente sotto elaborazione attiva con Gemini"
           },
           "isCategorizing": {
             "type": "boolean",
@@ -2113,15 +2265,32 @@
           "message": {
             "type": "string",
             "description": "Messaggio sintetico sullo stato"
+          },
+          "activeJobs": {
+            "description": "Lista dei job attualmente in elaborazione o in coda",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ActiveProcessingJobDto"
+            }
+          },
+          "recentEvaluatedJobs": {
+            "description": "Ultime valutazioni completate",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecentEvaluatedJobDto"
+            }
           }
         },
         "required": [
           "totalJobs",
           "evaluatedJobs",
           "pendingJobs",
+          "evaluatingCount",
           "isCategorizing",
           "isProfileComplete",
-          "message"
+          "message",
+          "activeJobs",
+          "recentEvaluatedJobs"
         ]
       },
       "CompanySummaryDto": {

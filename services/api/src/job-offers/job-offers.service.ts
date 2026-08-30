@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma, ApplicationStatus, EvaluationPriority } from '@analizzatore/database';
+import { Prisma, ApplicationStatus, EvaluationPriority, JobCurriculumPdfStatus } from '@analizzatore/database';
 import * as path from 'path';
 import { PrismaService } from '../commons/prisma/prisma.service';
 import { S3StorageService } from '../commons/storage/s3-storage.service';
@@ -37,7 +37,6 @@ export class JobOffersService {
     private readonly prisma: PrismaService,
     private readonly s3StorageService: S3StorageService,
     private readonly analyticsService: JobOffersAnalyticsService,
-    @InjectQueue(CURRICULUM_QUEUE_NAME) private readonly curriculumQueue: Queue,
   ) {}
 
   async saveOrUpdate(dto: CreateJobOfferDto) {
@@ -290,6 +289,23 @@ export class JobOffersService {
         },
       });
 
+      // Se l'annuncio passa a SAVED, creiamo o aggiorniamo il record Outbox PENDING
+      if (status === ApplicationStatus.SAVED) {
+        await tx.jobCurriculumOutbox.upsert({
+          where: { jobOfferId: id },
+          create: {
+            jobOfferId: id,
+            status: 'PENDING',
+            forceRegenerate: false,
+          },
+          update: {
+            status: 'PENDING',
+            attempts: 0,
+            lastError: null,
+          },
+        });
+      }
+
       if (updated) {
         await this.attachCompanyActiveCounts([updated]);
       }
@@ -498,20 +514,7 @@ export class JobOffersService {
       throw new NotFoundException(`Nessun curriculum trovato per l'annuncio con ID "${jobOfferId}"`);
     }
 
-    // Invia task per rigenerare il PDF al Curriculum Worker tramite BullMQ
-    const payload: GenerateCurriculumTaskEvent = {
-      jobOfferId,
-      forceRegenerate: true,
-    };
-
-    await this.curriculumQueue.add(GENERATE_CURRICULUM_EVENT, payload, {
-      jobId: `cv-gen-${jobOfferId}-${Date.now()}`,
-      attempts: 3,
-      backoff: { type: 'exponential', delay: 2000 },
-      removeOnComplete: true,
-    });
-
-    // Aggiornamento del record nel DB con transazione relazionale
+    // Aggiornamento del record nel DB e scrittura atomica Outbox con transazione relazionale
     await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       if (dto.work) {
         await tx.jobCurriculumWork.deleteMany({ where: { curriculumId: curriculum.id } });
@@ -526,6 +529,7 @@ export class JobOffersService {
       await tx.jobCurriculum.update({
         where: { id: curriculum.id },
         data: {
+          pdfStatus: JobCurriculumPdfStatus.PENDING,
           explanation: dto.explanation ?? curriculum.explanation,
           customLabel: dto.customLabel !== undefined ? dto.customLabel : curriculum.customLabel,
           work: dto.work
@@ -556,6 +560,22 @@ export class JobOffersService {
                 })),
               }
             : undefined,
+        },
+      });
+
+      // Creazione/Aggiornamento Outbox PENDING per rigenerare il PDF con le nuove modifiche senza ri-eseguire l'AI
+      await tx.jobCurriculumPdfOutbox.upsert({
+        where: { jobOfferId },
+        create: {
+          jobOfferId,
+          status: 'PENDING',
+          forceRegenerate: true,
+        },
+        update: {
+          status: 'PENDING',
+          forceRegenerate: true,
+          attempts: 0,
+          lastError: null,
         },
       });
     });

@@ -16,6 +16,12 @@ import { INGESTION_QUEUE_NAME } from '@analizzatore/contracts';
     }),
     BullModule.registerQueue({
       name: INGESTION_QUEUE_NAME,
+      defaultJobOptions: {
+        attempts: 3,
+        backoff: { type: 'exponential', delay: 3000 },
+        removeOnComplete: true,
+        removeOnFail: false,
+      },
     }),
   ],
   providers: [PrismaService, JobOfferIngestionProcessor],

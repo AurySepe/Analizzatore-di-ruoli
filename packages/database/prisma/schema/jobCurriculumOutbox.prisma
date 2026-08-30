@@ -1,0 +1,14 @@
+model JobCurriculumOutbox {
+  id              String       @id @default(uuid())
+  jobOfferId      String       @unique
+  jobOffer        JobOffer     @relation(fields: [jobOfferId], references: [id], onDelete: Cascade)
+  status          OutboxStatus @default(PENDING)
+  forceRegenerate Boolean      @default(false)
+  attempts        Int          @default(0)
+  lastError       String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}

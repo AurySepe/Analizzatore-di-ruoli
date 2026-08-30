@@ -39,10 +39,25 @@ export type JobCurriculumProject = $Result.DefaultSelection<Prisma.$JobCurriculu
  */
 export type JobCurriculumPublication = $Result.DefaultSelection<Prisma.$JobCurriculumPublicationPayload>
 /**
+ * Model JobCurriculumOutbox
+ * 
+ */
+export type JobCurriculumOutbox = $Result.DefaultSelection<Prisma.$JobCurriculumOutboxPayload>
+/**
+ * Model JobCurriculumPdfOutbox
+ * 
+ */
+export type JobCurriculumPdfOutbox = $Result.DefaultSelection<Prisma.$JobCurriculumPdfOutboxPayload>
+/**
  * Model JobEvaluation
  * 
  */
 export type JobEvaluation = $Result.DefaultSelection<Prisma.$JobEvaluationPayload>
+/**
+ * Model JobEvaluationOutbox
+ * 
+ */
+export type JobEvaluationOutbox = $Result.DefaultSelection<Prisma.$JobEvaluationOutboxPayload>
 /**
  * Model JobOffer
  * 
@@ -145,6 +160,36 @@ export const JobSource: {
 
 export type JobSource = (typeof JobSource)[keyof typeof JobSource]
 
+
+export const OutboxStatus: {
+  PENDING: 'PENDING',
+  PUBLISHED: 'PUBLISHED',
+  FAILED: 'FAILED'
+};
+
+export type OutboxStatus = (typeof OutboxStatus)[keyof typeof OutboxStatus]
+
+
+export const JobEvaluationProcessStatus: {
+  NOT_EVALUATED: 'NOT_EVALUATED',
+  PENDING: 'PENDING',
+  EVALUATING: 'EVALUATING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED'
+};
+
+export type JobEvaluationProcessStatus = (typeof JobEvaluationProcessStatus)[keyof typeof JobEvaluationProcessStatus]
+
+
+export const JobCurriculumPdfStatus: {
+  PENDING: 'PENDING',
+  GENERATING: 'GENERATING',
+  READY: 'READY',
+  FAILED: 'FAILED'
+};
+
+export type JobCurriculumPdfStatus = (typeof JobCurriculumPdfStatus)[keyof typeof JobCurriculumPdfStatus]
+
 }
 
 export type RemoteType = $Enums.RemoteType
@@ -174,6 +219,18 @@ export const EvaluationPriority: typeof $Enums.EvaluationPriority
 export type JobSource = $Enums.JobSource
 
 export const JobSource: typeof $Enums.JobSource
+
+export type OutboxStatus = $Enums.OutboxStatus
+
+export const OutboxStatus: typeof $Enums.OutboxStatus
+
+export type JobEvaluationProcessStatus = $Enums.JobEvaluationProcessStatus
+
+export const JobEvaluationProcessStatus: typeof $Enums.JobEvaluationProcessStatus
+
+export type JobCurriculumPdfStatus = $Enums.JobCurriculumPdfStatus
+
+export const JobCurriculumPdfStatus: typeof $Enums.JobCurriculumPdfStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -347,6 +404,26 @@ export class PrismaClient<
   get jobCurriculumPublication(): Prisma.JobCurriculumPublicationDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.jobCurriculumOutbox`: Exposes CRUD operations for the **JobCurriculumOutbox** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more JobCurriculumOutboxes
+    * const jobCurriculumOutboxes = await prisma.jobCurriculumOutbox.findMany()
+    * ```
+    */
+  get jobCurriculumOutbox(): Prisma.JobCurriculumOutboxDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.jobCurriculumPdfOutbox`: Exposes CRUD operations for the **JobCurriculumPdfOutbox** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more JobCurriculumPdfOutboxes
+    * const jobCurriculumPdfOutboxes = await prisma.jobCurriculumPdfOutbox.findMany()
+    * ```
+    */
+  get jobCurriculumPdfOutbox(): Prisma.JobCurriculumPdfOutboxDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.jobEvaluation`: Exposes CRUD operations for the **JobEvaluation** model.
     * Example usage:
     * ```ts
@@ -355,6 +432,16 @@ export class PrismaClient<
     * ```
     */
   get jobEvaluation(): Prisma.JobEvaluationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.jobEvaluationOutbox`: Exposes CRUD operations for the **JobEvaluationOutbox** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more JobEvaluationOutboxes
+    * const jobEvaluationOutboxes = await prisma.jobEvaluationOutbox.findMany()
+    * ```
+    */
+  get jobEvaluationOutbox(): Prisma.JobEvaluationOutboxDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.jobOffer`: Exposes CRUD operations for the **JobOffer** model.
@@ -847,7 +934,10 @@ export namespace Prisma {
     JobCurriculumWork: 'JobCurriculumWork',
     JobCurriculumProject: 'JobCurriculumProject',
     JobCurriculumPublication: 'JobCurriculumPublication',
+    JobCurriculumOutbox: 'JobCurriculumOutbox',
+    JobCurriculumPdfOutbox: 'JobCurriculumPdfOutbox',
     JobEvaluation: 'JobEvaluation',
+    JobEvaluationOutbox: 'JobEvaluationOutbox',
     JobOffer: 'JobOffer',
     JobStatusHistory: 'JobStatusHistory',
     SyncState: 'SyncState',
@@ -867,7 +957,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "company" | "jobCurriculum" | "jobCurriculumWork" | "jobCurriculumProject" | "jobCurriculumPublication" | "jobEvaluation" | "jobOffer" | "jobStatusHistory" | "syncState" | "userProfile"
+      modelProps: "company" | "jobCurriculum" | "jobCurriculumWork" | "jobCurriculumProject" | "jobCurriculumPublication" | "jobCurriculumOutbox" | "jobCurriculumPdfOutbox" | "jobEvaluation" | "jobEvaluationOutbox" | "jobOffer" | "jobStatusHistory" | "syncState" | "userProfile"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1241,6 +1331,154 @@ export namespace Prisma {
           }
         }
       }
+      JobCurriculumOutbox: {
+        payload: Prisma.$JobCurriculumOutboxPayload<ExtArgs>
+        fields: Prisma.JobCurriculumOutboxFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.JobCurriculumOutboxFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCurriculumOutboxPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.JobCurriculumOutboxFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCurriculumOutboxPayload>
+          }
+          findFirst: {
+            args: Prisma.JobCurriculumOutboxFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCurriculumOutboxPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.JobCurriculumOutboxFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCurriculumOutboxPayload>
+          }
+          findMany: {
+            args: Prisma.JobCurriculumOutboxFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCurriculumOutboxPayload>[]
+          }
+          create: {
+            args: Prisma.JobCurriculumOutboxCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCurriculumOutboxPayload>
+          }
+          createMany: {
+            args: Prisma.JobCurriculumOutboxCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.JobCurriculumOutboxCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCurriculumOutboxPayload>[]
+          }
+          delete: {
+            args: Prisma.JobCurriculumOutboxDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCurriculumOutboxPayload>
+          }
+          update: {
+            args: Prisma.JobCurriculumOutboxUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCurriculumOutboxPayload>
+          }
+          deleteMany: {
+            args: Prisma.JobCurriculumOutboxDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.JobCurriculumOutboxUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.JobCurriculumOutboxUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCurriculumOutboxPayload>[]
+          }
+          upsert: {
+            args: Prisma.JobCurriculumOutboxUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCurriculumOutboxPayload>
+          }
+          aggregate: {
+            args: Prisma.JobCurriculumOutboxAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateJobCurriculumOutbox>
+          }
+          groupBy: {
+            args: Prisma.JobCurriculumOutboxGroupByArgs<ExtArgs>
+            result: $Utils.Optional<JobCurriculumOutboxGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.JobCurriculumOutboxCountArgs<ExtArgs>
+            result: $Utils.Optional<JobCurriculumOutboxCountAggregateOutputType> | number
+          }
+        }
+      }
+      JobCurriculumPdfOutbox: {
+        payload: Prisma.$JobCurriculumPdfOutboxPayload<ExtArgs>
+        fields: Prisma.JobCurriculumPdfOutboxFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.JobCurriculumPdfOutboxFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCurriculumPdfOutboxPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.JobCurriculumPdfOutboxFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCurriculumPdfOutboxPayload>
+          }
+          findFirst: {
+            args: Prisma.JobCurriculumPdfOutboxFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCurriculumPdfOutboxPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.JobCurriculumPdfOutboxFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCurriculumPdfOutboxPayload>
+          }
+          findMany: {
+            args: Prisma.JobCurriculumPdfOutboxFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCurriculumPdfOutboxPayload>[]
+          }
+          create: {
+            args: Prisma.JobCurriculumPdfOutboxCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCurriculumPdfOutboxPayload>
+          }
+          createMany: {
+            args: Prisma.JobCurriculumPdfOutboxCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.JobCurriculumPdfOutboxCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCurriculumPdfOutboxPayload>[]
+          }
+          delete: {
+            args: Prisma.JobCurriculumPdfOutboxDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCurriculumPdfOutboxPayload>
+          }
+          update: {
+            args: Prisma.JobCurriculumPdfOutboxUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCurriculumPdfOutboxPayload>
+          }
+          deleteMany: {
+            args: Prisma.JobCurriculumPdfOutboxDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.JobCurriculumPdfOutboxUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.JobCurriculumPdfOutboxUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCurriculumPdfOutboxPayload>[]
+          }
+          upsert: {
+            args: Prisma.JobCurriculumPdfOutboxUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCurriculumPdfOutboxPayload>
+          }
+          aggregate: {
+            args: Prisma.JobCurriculumPdfOutboxAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateJobCurriculumPdfOutbox>
+          }
+          groupBy: {
+            args: Prisma.JobCurriculumPdfOutboxGroupByArgs<ExtArgs>
+            result: $Utils.Optional<JobCurriculumPdfOutboxGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.JobCurriculumPdfOutboxCountArgs<ExtArgs>
+            result: $Utils.Optional<JobCurriculumPdfOutboxCountAggregateOutputType> | number
+          }
+        }
+      }
       JobEvaluation: {
         payload: Prisma.$JobEvaluationPayload<ExtArgs>
         fields: Prisma.JobEvaluationFieldRefs
@@ -1312,6 +1550,80 @@ export namespace Prisma {
           count: {
             args: Prisma.JobEvaluationCountArgs<ExtArgs>
             result: $Utils.Optional<JobEvaluationCountAggregateOutputType> | number
+          }
+        }
+      }
+      JobEvaluationOutbox: {
+        payload: Prisma.$JobEvaluationOutboxPayload<ExtArgs>
+        fields: Prisma.JobEvaluationOutboxFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.JobEvaluationOutboxFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobEvaluationOutboxPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.JobEvaluationOutboxFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobEvaluationOutboxPayload>
+          }
+          findFirst: {
+            args: Prisma.JobEvaluationOutboxFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobEvaluationOutboxPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.JobEvaluationOutboxFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobEvaluationOutboxPayload>
+          }
+          findMany: {
+            args: Prisma.JobEvaluationOutboxFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobEvaluationOutboxPayload>[]
+          }
+          create: {
+            args: Prisma.JobEvaluationOutboxCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobEvaluationOutboxPayload>
+          }
+          createMany: {
+            args: Prisma.JobEvaluationOutboxCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.JobEvaluationOutboxCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobEvaluationOutboxPayload>[]
+          }
+          delete: {
+            args: Prisma.JobEvaluationOutboxDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobEvaluationOutboxPayload>
+          }
+          update: {
+            args: Prisma.JobEvaluationOutboxUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobEvaluationOutboxPayload>
+          }
+          deleteMany: {
+            args: Prisma.JobEvaluationOutboxDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.JobEvaluationOutboxUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.JobEvaluationOutboxUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobEvaluationOutboxPayload>[]
+          }
+          upsert: {
+            args: Prisma.JobEvaluationOutboxUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobEvaluationOutboxPayload>
+          }
+          aggregate: {
+            args: Prisma.JobEvaluationOutboxAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateJobEvaluationOutbox>
+          }
+          groupBy: {
+            args: Prisma.JobEvaluationOutboxGroupByArgs<ExtArgs>
+            result: $Utils.Optional<JobEvaluationOutboxGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.JobEvaluationOutboxCountArgs<ExtArgs>
+            result: $Utils.Optional<JobEvaluationOutboxCountAggregateOutputType> | number
           }
         }
       }
@@ -1739,7 +2051,10 @@ export namespace Prisma {
     jobCurriculumWork?: JobCurriculumWorkOmit
     jobCurriculumProject?: JobCurriculumProjectOmit
     jobCurriculumPublication?: JobCurriculumPublicationOmit
+    jobCurriculumOutbox?: JobCurriculumOutboxOmit
+    jobCurriculumPdfOutbox?: JobCurriculumPdfOutboxOmit
     jobEvaluation?: JobEvaluationOmit
+    jobEvaluationOutbox?: JobEvaluationOutboxOmit
     jobOffer?: JobOfferOmit
     jobStatusHistory?: JobStatusHistoryOmit
     syncState?: SyncStateOmit
@@ -3122,6 +3437,7 @@ export namespace Prisma {
     id: string | null
     jobOfferId: string | null
     storageKey: string | null
+    pdfStatus: $Enums.JobCurriculumPdfStatus | null
     explanation: string | null
     customLabel: string | null
     createdAt: Date | null
@@ -3132,6 +3448,7 @@ export namespace Prisma {
     id: string | null
     jobOfferId: string | null
     storageKey: string | null
+    pdfStatus: $Enums.JobCurriculumPdfStatus | null
     explanation: string | null
     customLabel: string | null
     createdAt: Date | null
@@ -3142,6 +3459,7 @@ export namespace Prisma {
     id: number
     jobOfferId: number
     storageKey: number
+    pdfStatus: number
     explanation: number
     customLabel: number
     createdAt: number
@@ -3154,6 +3472,7 @@ export namespace Prisma {
     id?: true
     jobOfferId?: true
     storageKey?: true
+    pdfStatus?: true
     explanation?: true
     customLabel?: true
     createdAt?: true
@@ -3164,6 +3483,7 @@ export namespace Prisma {
     id?: true
     jobOfferId?: true
     storageKey?: true
+    pdfStatus?: true
     explanation?: true
     customLabel?: true
     createdAt?: true
@@ -3174,6 +3494,7 @@ export namespace Prisma {
     id?: true
     jobOfferId?: true
     storageKey?: true
+    pdfStatus?: true
     explanation?: true
     customLabel?: true
     createdAt?: true
@@ -3256,7 +3577,8 @@ export namespace Prisma {
   export type JobCurriculumGroupByOutputType = {
     id: string
     jobOfferId: string
-    storageKey: string
+    storageKey: string | null
+    pdfStatus: $Enums.JobCurriculumPdfStatus
     explanation: string
     customLabel: string | null
     createdAt: Date
@@ -3284,6 +3606,7 @@ export namespace Prisma {
     id?: boolean
     jobOfferId?: boolean
     storageKey?: boolean
+    pdfStatus?: boolean
     explanation?: boolean
     customLabel?: boolean
     createdAt?: boolean
@@ -3299,6 +3622,7 @@ export namespace Prisma {
     id?: boolean
     jobOfferId?: boolean
     storageKey?: boolean
+    pdfStatus?: boolean
     explanation?: boolean
     customLabel?: boolean
     createdAt?: boolean
@@ -3310,6 +3634,7 @@ export namespace Prisma {
     id?: boolean
     jobOfferId?: boolean
     storageKey?: boolean
+    pdfStatus?: boolean
     explanation?: boolean
     customLabel?: boolean
     createdAt?: boolean
@@ -3321,13 +3646,14 @@ export namespace Prisma {
     id?: boolean
     jobOfferId?: boolean
     storageKey?: boolean
+    pdfStatus?: boolean
     explanation?: boolean
     customLabel?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type JobCurriculumOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "jobOfferId" | "storageKey" | "explanation" | "customLabel" | "createdAt" | "updatedAt", ExtArgs["result"]["jobCurriculum"]>
+  export type JobCurriculumOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "jobOfferId" | "storageKey" | "pdfStatus" | "explanation" | "customLabel" | "createdAt" | "updatedAt", ExtArgs["result"]["jobCurriculum"]>
   export type JobCurriculumInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
     work?: boolean | JobCurriculum$workArgs<ExtArgs>
@@ -3353,7 +3679,8 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       jobOfferId: string
-      storageKey: string
+      storageKey: string | null
+      pdfStatus: $Enums.JobCurriculumPdfStatus
       explanation: string
       customLabel: string | null
       createdAt: Date
@@ -3788,6 +4115,7 @@ export namespace Prisma {
     readonly id: FieldRef<"JobCurriculum", 'String'>
     readonly jobOfferId: FieldRef<"JobCurriculum", 'String'>
     readonly storageKey: FieldRef<"JobCurriculum", 'String'>
+    readonly pdfStatus: FieldRef<"JobCurriculum", 'JobCurriculumPdfStatus'>
     readonly explanation: FieldRef<"JobCurriculum", 'String'>
     readonly customLabel: FieldRef<"JobCurriculum", 'String'>
     readonly createdAt: FieldRef<"JobCurriculum", 'DateTime'>
@@ -7666,6 +7994,2291 @@ export namespace Prisma {
 
 
   /**
+   * Model JobCurriculumOutbox
+   */
+
+  export type AggregateJobCurriculumOutbox = {
+    _count: JobCurriculumOutboxCountAggregateOutputType | null
+    _avg: JobCurriculumOutboxAvgAggregateOutputType | null
+    _sum: JobCurriculumOutboxSumAggregateOutputType | null
+    _min: JobCurriculumOutboxMinAggregateOutputType | null
+    _max: JobCurriculumOutboxMaxAggregateOutputType | null
+  }
+
+  export type JobCurriculumOutboxAvgAggregateOutputType = {
+    attempts: number | null
+  }
+
+  export type JobCurriculumOutboxSumAggregateOutputType = {
+    attempts: number | null
+  }
+
+  export type JobCurriculumOutboxMinAggregateOutputType = {
+    id: string | null
+    jobOfferId: string | null
+    status: $Enums.OutboxStatus | null
+    forceRegenerate: boolean | null
+    attempts: number | null
+    lastError: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type JobCurriculumOutboxMaxAggregateOutputType = {
+    id: string | null
+    jobOfferId: string | null
+    status: $Enums.OutboxStatus | null
+    forceRegenerate: boolean | null
+    attempts: number | null
+    lastError: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type JobCurriculumOutboxCountAggregateOutputType = {
+    id: number
+    jobOfferId: number
+    status: number
+    forceRegenerate: number
+    attempts: number
+    lastError: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type JobCurriculumOutboxAvgAggregateInputType = {
+    attempts?: true
+  }
+
+  export type JobCurriculumOutboxSumAggregateInputType = {
+    attempts?: true
+  }
+
+  export type JobCurriculumOutboxMinAggregateInputType = {
+    id?: true
+    jobOfferId?: true
+    status?: true
+    forceRegenerate?: true
+    attempts?: true
+    lastError?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type JobCurriculumOutboxMaxAggregateInputType = {
+    id?: true
+    jobOfferId?: true
+    status?: true
+    forceRegenerate?: true
+    attempts?: true
+    lastError?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type JobCurriculumOutboxCountAggregateInputType = {
+    id?: true
+    jobOfferId?: true
+    status?: true
+    forceRegenerate?: true
+    attempts?: true
+    lastError?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type JobCurriculumOutboxAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which JobCurriculumOutbox to aggregate.
+     */
+    where?: JobCurriculumOutboxWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of JobCurriculumOutboxes to fetch.
+     */
+    orderBy?: JobCurriculumOutboxOrderByWithRelationInput | JobCurriculumOutboxOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: JobCurriculumOutboxWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` JobCurriculumOutboxes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` JobCurriculumOutboxes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned JobCurriculumOutboxes
+    **/
+    _count?: true | JobCurriculumOutboxCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: JobCurriculumOutboxAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: JobCurriculumOutboxSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: JobCurriculumOutboxMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: JobCurriculumOutboxMaxAggregateInputType
+  }
+
+  export type GetJobCurriculumOutboxAggregateType<T extends JobCurriculumOutboxAggregateArgs> = {
+        [P in keyof T & keyof AggregateJobCurriculumOutbox]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateJobCurriculumOutbox[P]>
+      : GetScalarType<T[P], AggregateJobCurriculumOutbox[P]>
+  }
+
+
+
+
+  export type JobCurriculumOutboxGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: JobCurriculumOutboxWhereInput
+    orderBy?: JobCurriculumOutboxOrderByWithAggregationInput | JobCurriculumOutboxOrderByWithAggregationInput[]
+    by: JobCurriculumOutboxScalarFieldEnum[] | JobCurriculumOutboxScalarFieldEnum
+    having?: JobCurriculumOutboxScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: JobCurriculumOutboxCountAggregateInputType | true
+    _avg?: JobCurriculumOutboxAvgAggregateInputType
+    _sum?: JobCurriculumOutboxSumAggregateInputType
+    _min?: JobCurriculumOutboxMinAggregateInputType
+    _max?: JobCurriculumOutboxMaxAggregateInputType
+  }
+
+  export type JobCurriculumOutboxGroupByOutputType = {
+    id: string
+    jobOfferId: string
+    status: $Enums.OutboxStatus
+    forceRegenerate: boolean
+    attempts: number
+    lastError: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: JobCurriculumOutboxCountAggregateOutputType | null
+    _avg: JobCurriculumOutboxAvgAggregateOutputType | null
+    _sum: JobCurriculumOutboxSumAggregateOutputType | null
+    _min: JobCurriculumOutboxMinAggregateOutputType | null
+    _max: JobCurriculumOutboxMaxAggregateOutputType | null
+  }
+
+  type GetJobCurriculumOutboxGroupByPayload<T extends JobCurriculumOutboxGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<JobCurriculumOutboxGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof JobCurriculumOutboxGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], JobCurriculumOutboxGroupByOutputType[P]>
+            : GetScalarType<T[P], JobCurriculumOutboxGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type JobCurriculumOutboxSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    jobOfferId?: boolean
+    status?: boolean
+    forceRegenerate?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["jobCurriculumOutbox"]>
+
+  export type JobCurriculumOutboxSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    jobOfferId?: boolean
+    status?: boolean
+    forceRegenerate?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["jobCurriculumOutbox"]>
+
+  export type JobCurriculumOutboxSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    jobOfferId?: boolean
+    status?: boolean
+    forceRegenerate?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["jobCurriculumOutbox"]>
+
+  export type JobCurriculumOutboxSelectScalar = {
+    id?: boolean
+    jobOfferId?: boolean
+    status?: boolean
+    forceRegenerate?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type JobCurriculumOutboxOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "jobOfferId" | "status" | "forceRegenerate" | "attempts" | "lastError" | "createdAt" | "updatedAt", ExtArgs["result"]["jobCurriculumOutbox"]>
+  export type JobCurriculumOutboxInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }
+  export type JobCurriculumOutboxIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }
+  export type JobCurriculumOutboxIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }
+
+  export type $JobCurriculumOutboxPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "JobCurriculumOutbox"
+    objects: {
+      jobOffer: Prisma.$JobOfferPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      jobOfferId: string
+      status: $Enums.OutboxStatus
+      forceRegenerate: boolean
+      attempts: number
+      lastError: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["jobCurriculumOutbox"]>
+    composites: {}
+  }
+
+  type JobCurriculumOutboxGetPayload<S extends boolean | null | undefined | JobCurriculumOutboxDefaultArgs> = $Result.GetResult<Prisma.$JobCurriculumOutboxPayload, S>
+
+  type JobCurriculumOutboxCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<JobCurriculumOutboxFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: JobCurriculumOutboxCountAggregateInputType | true
+    }
+
+  export interface JobCurriculumOutboxDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['JobCurriculumOutbox'], meta: { name: 'JobCurriculumOutbox' } }
+    /**
+     * Find zero or one JobCurriculumOutbox that matches the filter.
+     * @param {JobCurriculumOutboxFindUniqueArgs} args - Arguments to find a JobCurriculumOutbox
+     * @example
+     * // Get one JobCurriculumOutbox
+     * const jobCurriculumOutbox = await prisma.jobCurriculumOutbox.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends JobCurriculumOutboxFindUniqueArgs>(args: SelectSubset<T, JobCurriculumOutboxFindUniqueArgs<ExtArgs>>): Prisma__JobCurriculumOutboxClient<$Result.GetResult<Prisma.$JobCurriculumOutboxPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one JobCurriculumOutbox that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {JobCurriculumOutboxFindUniqueOrThrowArgs} args - Arguments to find a JobCurriculumOutbox
+     * @example
+     * // Get one JobCurriculumOutbox
+     * const jobCurriculumOutbox = await prisma.jobCurriculumOutbox.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends JobCurriculumOutboxFindUniqueOrThrowArgs>(args: SelectSubset<T, JobCurriculumOutboxFindUniqueOrThrowArgs<ExtArgs>>): Prisma__JobCurriculumOutboxClient<$Result.GetResult<Prisma.$JobCurriculumOutboxPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first JobCurriculumOutbox that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCurriculumOutboxFindFirstArgs} args - Arguments to find a JobCurriculumOutbox
+     * @example
+     * // Get one JobCurriculumOutbox
+     * const jobCurriculumOutbox = await prisma.jobCurriculumOutbox.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends JobCurriculumOutboxFindFirstArgs>(args?: SelectSubset<T, JobCurriculumOutboxFindFirstArgs<ExtArgs>>): Prisma__JobCurriculumOutboxClient<$Result.GetResult<Prisma.$JobCurriculumOutboxPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first JobCurriculumOutbox that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCurriculumOutboxFindFirstOrThrowArgs} args - Arguments to find a JobCurriculumOutbox
+     * @example
+     * // Get one JobCurriculumOutbox
+     * const jobCurriculumOutbox = await prisma.jobCurriculumOutbox.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends JobCurriculumOutboxFindFirstOrThrowArgs>(args?: SelectSubset<T, JobCurriculumOutboxFindFirstOrThrowArgs<ExtArgs>>): Prisma__JobCurriculumOutboxClient<$Result.GetResult<Prisma.$JobCurriculumOutboxPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more JobCurriculumOutboxes that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCurriculumOutboxFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all JobCurriculumOutboxes
+     * const jobCurriculumOutboxes = await prisma.jobCurriculumOutbox.findMany()
+     * 
+     * // Get first 10 JobCurriculumOutboxes
+     * const jobCurriculumOutboxes = await prisma.jobCurriculumOutbox.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const jobCurriculumOutboxWithIdOnly = await prisma.jobCurriculumOutbox.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends JobCurriculumOutboxFindManyArgs>(args?: SelectSubset<T, JobCurriculumOutboxFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobCurriculumOutboxPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a JobCurriculumOutbox.
+     * @param {JobCurriculumOutboxCreateArgs} args - Arguments to create a JobCurriculumOutbox.
+     * @example
+     * // Create one JobCurriculumOutbox
+     * const JobCurriculumOutbox = await prisma.jobCurriculumOutbox.create({
+     *   data: {
+     *     // ... data to create a JobCurriculumOutbox
+     *   }
+     * })
+     * 
+     */
+    create<T extends JobCurriculumOutboxCreateArgs>(args: SelectSubset<T, JobCurriculumOutboxCreateArgs<ExtArgs>>): Prisma__JobCurriculumOutboxClient<$Result.GetResult<Prisma.$JobCurriculumOutboxPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many JobCurriculumOutboxes.
+     * @param {JobCurriculumOutboxCreateManyArgs} args - Arguments to create many JobCurriculumOutboxes.
+     * @example
+     * // Create many JobCurriculumOutboxes
+     * const jobCurriculumOutbox = await prisma.jobCurriculumOutbox.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends JobCurriculumOutboxCreateManyArgs>(args?: SelectSubset<T, JobCurriculumOutboxCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many JobCurriculumOutboxes and returns the data saved in the database.
+     * @param {JobCurriculumOutboxCreateManyAndReturnArgs} args - Arguments to create many JobCurriculumOutboxes.
+     * @example
+     * // Create many JobCurriculumOutboxes
+     * const jobCurriculumOutbox = await prisma.jobCurriculumOutbox.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many JobCurriculumOutboxes and only return the `id`
+     * const jobCurriculumOutboxWithIdOnly = await prisma.jobCurriculumOutbox.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends JobCurriculumOutboxCreateManyAndReturnArgs>(args?: SelectSubset<T, JobCurriculumOutboxCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobCurriculumOutboxPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a JobCurriculumOutbox.
+     * @param {JobCurriculumOutboxDeleteArgs} args - Arguments to delete one JobCurriculumOutbox.
+     * @example
+     * // Delete one JobCurriculumOutbox
+     * const JobCurriculumOutbox = await prisma.jobCurriculumOutbox.delete({
+     *   where: {
+     *     // ... filter to delete one JobCurriculumOutbox
+     *   }
+     * })
+     * 
+     */
+    delete<T extends JobCurriculumOutboxDeleteArgs>(args: SelectSubset<T, JobCurriculumOutboxDeleteArgs<ExtArgs>>): Prisma__JobCurriculumOutboxClient<$Result.GetResult<Prisma.$JobCurriculumOutboxPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one JobCurriculumOutbox.
+     * @param {JobCurriculumOutboxUpdateArgs} args - Arguments to update one JobCurriculumOutbox.
+     * @example
+     * // Update one JobCurriculumOutbox
+     * const jobCurriculumOutbox = await prisma.jobCurriculumOutbox.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends JobCurriculumOutboxUpdateArgs>(args: SelectSubset<T, JobCurriculumOutboxUpdateArgs<ExtArgs>>): Prisma__JobCurriculumOutboxClient<$Result.GetResult<Prisma.$JobCurriculumOutboxPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more JobCurriculumOutboxes.
+     * @param {JobCurriculumOutboxDeleteManyArgs} args - Arguments to filter JobCurriculumOutboxes to delete.
+     * @example
+     * // Delete a few JobCurriculumOutboxes
+     * const { count } = await prisma.jobCurriculumOutbox.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends JobCurriculumOutboxDeleteManyArgs>(args?: SelectSubset<T, JobCurriculumOutboxDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more JobCurriculumOutboxes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCurriculumOutboxUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many JobCurriculumOutboxes
+     * const jobCurriculumOutbox = await prisma.jobCurriculumOutbox.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends JobCurriculumOutboxUpdateManyArgs>(args: SelectSubset<T, JobCurriculumOutboxUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more JobCurriculumOutboxes and returns the data updated in the database.
+     * @param {JobCurriculumOutboxUpdateManyAndReturnArgs} args - Arguments to update many JobCurriculumOutboxes.
+     * @example
+     * // Update many JobCurriculumOutboxes
+     * const jobCurriculumOutbox = await prisma.jobCurriculumOutbox.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more JobCurriculumOutboxes and only return the `id`
+     * const jobCurriculumOutboxWithIdOnly = await prisma.jobCurriculumOutbox.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends JobCurriculumOutboxUpdateManyAndReturnArgs>(args: SelectSubset<T, JobCurriculumOutboxUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobCurriculumOutboxPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one JobCurriculumOutbox.
+     * @param {JobCurriculumOutboxUpsertArgs} args - Arguments to update or create a JobCurriculumOutbox.
+     * @example
+     * // Update or create a JobCurriculumOutbox
+     * const jobCurriculumOutbox = await prisma.jobCurriculumOutbox.upsert({
+     *   create: {
+     *     // ... data to create a JobCurriculumOutbox
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the JobCurriculumOutbox we want to update
+     *   }
+     * })
+     */
+    upsert<T extends JobCurriculumOutboxUpsertArgs>(args: SelectSubset<T, JobCurriculumOutboxUpsertArgs<ExtArgs>>): Prisma__JobCurriculumOutboxClient<$Result.GetResult<Prisma.$JobCurriculumOutboxPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of JobCurriculumOutboxes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCurriculumOutboxCountArgs} args - Arguments to filter JobCurriculumOutboxes to count.
+     * @example
+     * // Count the number of JobCurriculumOutboxes
+     * const count = await prisma.jobCurriculumOutbox.count({
+     *   where: {
+     *     // ... the filter for the JobCurriculumOutboxes we want to count
+     *   }
+     * })
+    **/
+    count<T extends JobCurriculumOutboxCountArgs>(
+      args?: Subset<T, JobCurriculumOutboxCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], JobCurriculumOutboxCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a JobCurriculumOutbox.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCurriculumOutboxAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends JobCurriculumOutboxAggregateArgs>(args: Subset<T, JobCurriculumOutboxAggregateArgs>): Prisma.PrismaPromise<GetJobCurriculumOutboxAggregateType<T>>
+
+    /**
+     * Group by JobCurriculumOutbox.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCurriculumOutboxGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends JobCurriculumOutboxGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: JobCurriculumOutboxGroupByArgs['orderBy'] }
+        : { orderBy?: JobCurriculumOutboxGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, JobCurriculumOutboxGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetJobCurriculumOutboxGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the JobCurriculumOutbox model
+   */
+  readonly fields: JobCurriculumOutboxFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for JobCurriculumOutbox.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__JobCurriculumOutboxClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    jobOffer<T extends JobOfferDefaultArgs<ExtArgs> = {}>(args?: Subset<T, JobOfferDefaultArgs<ExtArgs>>): Prisma__JobOfferClient<$Result.GetResult<Prisma.$JobOfferPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the JobCurriculumOutbox model
+   */
+  interface JobCurriculumOutboxFieldRefs {
+    readonly id: FieldRef<"JobCurriculumOutbox", 'String'>
+    readonly jobOfferId: FieldRef<"JobCurriculumOutbox", 'String'>
+    readonly status: FieldRef<"JobCurriculumOutbox", 'OutboxStatus'>
+    readonly forceRegenerate: FieldRef<"JobCurriculumOutbox", 'Boolean'>
+    readonly attempts: FieldRef<"JobCurriculumOutbox", 'Int'>
+    readonly lastError: FieldRef<"JobCurriculumOutbox", 'String'>
+    readonly createdAt: FieldRef<"JobCurriculumOutbox", 'DateTime'>
+    readonly updatedAt: FieldRef<"JobCurriculumOutbox", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * JobCurriculumOutbox findUnique
+   */
+  export type JobCurriculumOutboxFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumOutbox
+     */
+    select?: JobCurriculumOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumOutbox
+     */
+    omit?: JobCurriculumOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumOutboxInclude<ExtArgs> | null
+    /**
+     * Filter, which JobCurriculumOutbox to fetch.
+     */
+    where: JobCurriculumOutboxWhereUniqueInput
+  }
+
+  /**
+   * JobCurriculumOutbox findUniqueOrThrow
+   */
+  export type JobCurriculumOutboxFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumOutbox
+     */
+    select?: JobCurriculumOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumOutbox
+     */
+    omit?: JobCurriculumOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumOutboxInclude<ExtArgs> | null
+    /**
+     * Filter, which JobCurriculumOutbox to fetch.
+     */
+    where: JobCurriculumOutboxWhereUniqueInput
+  }
+
+  /**
+   * JobCurriculumOutbox findFirst
+   */
+  export type JobCurriculumOutboxFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumOutbox
+     */
+    select?: JobCurriculumOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumOutbox
+     */
+    omit?: JobCurriculumOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumOutboxInclude<ExtArgs> | null
+    /**
+     * Filter, which JobCurriculumOutbox to fetch.
+     */
+    where?: JobCurriculumOutboxWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of JobCurriculumOutboxes to fetch.
+     */
+    orderBy?: JobCurriculumOutboxOrderByWithRelationInput | JobCurriculumOutboxOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for JobCurriculumOutboxes.
+     */
+    cursor?: JobCurriculumOutboxWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` JobCurriculumOutboxes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` JobCurriculumOutboxes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of JobCurriculumOutboxes.
+     */
+    distinct?: JobCurriculumOutboxScalarFieldEnum | JobCurriculumOutboxScalarFieldEnum[]
+  }
+
+  /**
+   * JobCurriculumOutbox findFirstOrThrow
+   */
+  export type JobCurriculumOutboxFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumOutbox
+     */
+    select?: JobCurriculumOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumOutbox
+     */
+    omit?: JobCurriculumOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumOutboxInclude<ExtArgs> | null
+    /**
+     * Filter, which JobCurriculumOutbox to fetch.
+     */
+    where?: JobCurriculumOutboxWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of JobCurriculumOutboxes to fetch.
+     */
+    orderBy?: JobCurriculumOutboxOrderByWithRelationInput | JobCurriculumOutboxOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for JobCurriculumOutboxes.
+     */
+    cursor?: JobCurriculumOutboxWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` JobCurriculumOutboxes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` JobCurriculumOutboxes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of JobCurriculumOutboxes.
+     */
+    distinct?: JobCurriculumOutboxScalarFieldEnum | JobCurriculumOutboxScalarFieldEnum[]
+  }
+
+  /**
+   * JobCurriculumOutbox findMany
+   */
+  export type JobCurriculumOutboxFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumOutbox
+     */
+    select?: JobCurriculumOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumOutbox
+     */
+    omit?: JobCurriculumOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumOutboxInclude<ExtArgs> | null
+    /**
+     * Filter, which JobCurriculumOutboxes to fetch.
+     */
+    where?: JobCurriculumOutboxWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of JobCurriculumOutboxes to fetch.
+     */
+    orderBy?: JobCurriculumOutboxOrderByWithRelationInput | JobCurriculumOutboxOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing JobCurriculumOutboxes.
+     */
+    cursor?: JobCurriculumOutboxWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` JobCurriculumOutboxes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` JobCurriculumOutboxes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of JobCurriculumOutboxes.
+     */
+    distinct?: JobCurriculumOutboxScalarFieldEnum | JobCurriculumOutboxScalarFieldEnum[]
+  }
+
+  /**
+   * JobCurriculumOutbox create
+   */
+  export type JobCurriculumOutboxCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumOutbox
+     */
+    select?: JobCurriculumOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumOutbox
+     */
+    omit?: JobCurriculumOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumOutboxInclude<ExtArgs> | null
+    /**
+     * The data needed to create a JobCurriculumOutbox.
+     */
+    data: XOR<JobCurriculumOutboxCreateInput, JobCurriculumOutboxUncheckedCreateInput>
+  }
+
+  /**
+   * JobCurriculumOutbox createMany
+   */
+  export type JobCurriculumOutboxCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many JobCurriculumOutboxes.
+     */
+    data: JobCurriculumOutboxCreateManyInput | JobCurriculumOutboxCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * JobCurriculumOutbox createManyAndReturn
+   */
+  export type JobCurriculumOutboxCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumOutbox
+     */
+    select?: JobCurriculumOutboxSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumOutbox
+     */
+    omit?: JobCurriculumOutboxOmit<ExtArgs> | null
+    /**
+     * The data used to create many JobCurriculumOutboxes.
+     */
+    data: JobCurriculumOutboxCreateManyInput | JobCurriculumOutboxCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumOutboxIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * JobCurriculumOutbox update
+   */
+  export type JobCurriculumOutboxUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumOutbox
+     */
+    select?: JobCurriculumOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumOutbox
+     */
+    omit?: JobCurriculumOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumOutboxInclude<ExtArgs> | null
+    /**
+     * The data needed to update a JobCurriculumOutbox.
+     */
+    data: XOR<JobCurriculumOutboxUpdateInput, JobCurriculumOutboxUncheckedUpdateInput>
+    /**
+     * Choose, which JobCurriculumOutbox to update.
+     */
+    where: JobCurriculumOutboxWhereUniqueInput
+  }
+
+  /**
+   * JobCurriculumOutbox updateMany
+   */
+  export type JobCurriculumOutboxUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update JobCurriculumOutboxes.
+     */
+    data: XOR<JobCurriculumOutboxUpdateManyMutationInput, JobCurriculumOutboxUncheckedUpdateManyInput>
+    /**
+     * Filter which JobCurriculumOutboxes to update
+     */
+    where?: JobCurriculumOutboxWhereInput
+    /**
+     * Limit how many JobCurriculumOutboxes to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * JobCurriculumOutbox updateManyAndReturn
+   */
+  export type JobCurriculumOutboxUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumOutbox
+     */
+    select?: JobCurriculumOutboxSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumOutbox
+     */
+    omit?: JobCurriculumOutboxOmit<ExtArgs> | null
+    /**
+     * The data used to update JobCurriculumOutboxes.
+     */
+    data: XOR<JobCurriculumOutboxUpdateManyMutationInput, JobCurriculumOutboxUncheckedUpdateManyInput>
+    /**
+     * Filter which JobCurriculumOutboxes to update
+     */
+    where?: JobCurriculumOutboxWhereInput
+    /**
+     * Limit how many JobCurriculumOutboxes to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumOutboxIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * JobCurriculumOutbox upsert
+   */
+  export type JobCurriculumOutboxUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumOutbox
+     */
+    select?: JobCurriculumOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumOutbox
+     */
+    omit?: JobCurriculumOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumOutboxInclude<ExtArgs> | null
+    /**
+     * The filter to search for the JobCurriculumOutbox to update in case it exists.
+     */
+    where: JobCurriculumOutboxWhereUniqueInput
+    /**
+     * In case the JobCurriculumOutbox found by the `where` argument doesn't exist, create a new JobCurriculumOutbox with this data.
+     */
+    create: XOR<JobCurriculumOutboxCreateInput, JobCurriculumOutboxUncheckedCreateInput>
+    /**
+     * In case the JobCurriculumOutbox was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<JobCurriculumOutboxUpdateInput, JobCurriculumOutboxUncheckedUpdateInput>
+  }
+
+  /**
+   * JobCurriculumOutbox delete
+   */
+  export type JobCurriculumOutboxDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumOutbox
+     */
+    select?: JobCurriculumOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumOutbox
+     */
+    omit?: JobCurriculumOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumOutboxInclude<ExtArgs> | null
+    /**
+     * Filter which JobCurriculumOutbox to delete.
+     */
+    where: JobCurriculumOutboxWhereUniqueInput
+  }
+
+  /**
+   * JobCurriculumOutbox deleteMany
+   */
+  export type JobCurriculumOutboxDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which JobCurriculumOutboxes to delete
+     */
+    where?: JobCurriculumOutboxWhereInput
+    /**
+     * Limit how many JobCurriculumOutboxes to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * JobCurriculumOutbox without action
+   */
+  export type JobCurriculumOutboxDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumOutbox
+     */
+    select?: JobCurriculumOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumOutbox
+     */
+    omit?: JobCurriculumOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumOutboxInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model JobCurriculumPdfOutbox
+   */
+
+  export type AggregateJobCurriculumPdfOutbox = {
+    _count: JobCurriculumPdfOutboxCountAggregateOutputType | null
+    _avg: JobCurriculumPdfOutboxAvgAggregateOutputType | null
+    _sum: JobCurriculumPdfOutboxSumAggregateOutputType | null
+    _min: JobCurriculumPdfOutboxMinAggregateOutputType | null
+    _max: JobCurriculumPdfOutboxMaxAggregateOutputType | null
+  }
+
+  export type JobCurriculumPdfOutboxAvgAggregateOutputType = {
+    attempts: number | null
+  }
+
+  export type JobCurriculumPdfOutboxSumAggregateOutputType = {
+    attempts: number | null
+  }
+
+  export type JobCurriculumPdfOutboxMinAggregateOutputType = {
+    id: string | null
+    jobOfferId: string | null
+    status: $Enums.OutboxStatus | null
+    templateName: string | null
+    forceRegenerate: boolean | null
+    attempts: number | null
+    lastError: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type JobCurriculumPdfOutboxMaxAggregateOutputType = {
+    id: string | null
+    jobOfferId: string | null
+    status: $Enums.OutboxStatus | null
+    templateName: string | null
+    forceRegenerate: boolean | null
+    attempts: number | null
+    lastError: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type JobCurriculumPdfOutboxCountAggregateOutputType = {
+    id: number
+    jobOfferId: number
+    status: number
+    templateName: number
+    forceRegenerate: number
+    attempts: number
+    lastError: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type JobCurriculumPdfOutboxAvgAggregateInputType = {
+    attempts?: true
+  }
+
+  export type JobCurriculumPdfOutboxSumAggregateInputType = {
+    attempts?: true
+  }
+
+  export type JobCurriculumPdfOutboxMinAggregateInputType = {
+    id?: true
+    jobOfferId?: true
+    status?: true
+    templateName?: true
+    forceRegenerate?: true
+    attempts?: true
+    lastError?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type JobCurriculumPdfOutboxMaxAggregateInputType = {
+    id?: true
+    jobOfferId?: true
+    status?: true
+    templateName?: true
+    forceRegenerate?: true
+    attempts?: true
+    lastError?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type JobCurriculumPdfOutboxCountAggregateInputType = {
+    id?: true
+    jobOfferId?: true
+    status?: true
+    templateName?: true
+    forceRegenerate?: true
+    attempts?: true
+    lastError?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type JobCurriculumPdfOutboxAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which JobCurriculumPdfOutbox to aggregate.
+     */
+    where?: JobCurriculumPdfOutboxWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of JobCurriculumPdfOutboxes to fetch.
+     */
+    orderBy?: JobCurriculumPdfOutboxOrderByWithRelationInput | JobCurriculumPdfOutboxOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: JobCurriculumPdfOutboxWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` JobCurriculumPdfOutboxes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` JobCurriculumPdfOutboxes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned JobCurriculumPdfOutboxes
+    **/
+    _count?: true | JobCurriculumPdfOutboxCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: JobCurriculumPdfOutboxAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: JobCurriculumPdfOutboxSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: JobCurriculumPdfOutboxMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: JobCurriculumPdfOutboxMaxAggregateInputType
+  }
+
+  export type GetJobCurriculumPdfOutboxAggregateType<T extends JobCurriculumPdfOutboxAggregateArgs> = {
+        [P in keyof T & keyof AggregateJobCurriculumPdfOutbox]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateJobCurriculumPdfOutbox[P]>
+      : GetScalarType<T[P], AggregateJobCurriculumPdfOutbox[P]>
+  }
+
+
+
+
+  export type JobCurriculumPdfOutboxGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: JobCurriculumPdfOutboxWhereInput
+    orderBy?: JobCurriculumPdfOutboxOrderByWithAggregationInput | JobCurriculumPdfOutboxOrderByWithAggregationInput[]
+    by: JobCurriculumPdfOutboxScalarFieldEnum[] | JobCurriculumPdfOutboxScalarFieldEnum
+    having?: JobCurriculumPdfOutboxScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: JobCurriculumPdfOutboxCountAggregateInputType | true
+    _avg?: JobCurriculumPdfOutboxAvgAggregateInputType
+    _sum?: JobCurriculumPdfOutboxSumAggregateInputType
+    _min?: JobCurriculumPdfOutboxMinAggregateInputType
+    _max?: JobCurriculumPdfOutboxMaxAggregateInputType
+  }
+
+  export type JobCurriculumPdfOutboxGroupByOutputType = {
+    id: string
+    jobOfferId: string
+    status: $Enums.OutboxStatus
+    templateName: string | null
+    forceRegenerate: boolean
+    attempts: number
+    lastError: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: JobCurriculumPdfOutboxCountAggregateOutputType | null
+    _avg: JobCurriculumPdfOutboxAvgAggregateOutputType | null
+    _sum: JobCurriculumPdfOutboxSumAggregateOutputType | null
+    _min: JobCurriculumPdfOutboxMinAggregateOutputType | null
+    _max: JobCurriculumPdfOutboxMaxAggregateOutputType | null
+  }
+
+  type GetJobCurriculumPdfOutboxGroupByPayload<T extends JobCurriculumPdfOutboxGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<JobCurriculumPdfOutboxGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof JobCurriculumPdfOutboxGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], JobCurriculumPdfOutboxGroupByOutputType[P]>
+            : GetScalarType<T[P], JobCurriculumPdfOutboxGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type JobCurriculumPdfOutboxSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    jobOfferId?: boolean
+    status?: boolean
+    templateName?: boolean
+    forceRegenerate?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["jobCurriculumPdfOutbox"]>
+
+  export type JobCurriculumPdfOutboxSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    jobOfferId?: boolean
+    status?: boolean
+    templateName?: boolean
+    forceRegenerate?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["jobCurriculumPdfOutbox"]>
+
+  export type JobCurriculumPdfOutboxSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    jobOfferId?: boolean
+    status?: boolean
+    templateName?: boolean
+    forceRegenerate?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["jobCurriculumPdfOutbox"]>
+
+  export type JobCurriculumPdfOutboxSelectScalar = {
+    id?: boolean
+    jobOfferId?: boolean
+    status?: boolean
+    templateName?: boolean
+    forceRegenerate?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type JobCurriculumPdfOutboxOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "jobOfferId" | "status" | "templateName" | "forceRegenerate" | "attempts" | "lastError" | "createdAt" | "updatedAt", ExtArgs["result"]["jobCurriculumPdfOutbox"]>
+  export type JobCurriculumPdfOutboxInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }
+  export type JobCurriculumPdfOutboxIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }
+  export type JobCurriculumPdfOutboxIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }
+
+  export type $JobCurriculumPdfOutboxPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "JobCurriculumPdfOutbox"
+    objects: {
+      jobOffer: Prisma.$JobOfferPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      jobOfferId: string
+      status: $Enums.OutboxStatus
+      templateName: string | null
+      forceRegenerate: boolean
+      attempts: number
+      lastError: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["jobCurriculumPdfOutbox"]>
+    composites: {}
+  }
+
+  type JobCurriculumPdfOutboxGetPayload<S extends boolean | null | undefined | JobCurriculumPdfOutboxDefaultArgs> = $Result.GetResult<Prisma.$JobCurriculumPdfOutboxPayload, S>
+
+  type JobCurriculumPdfOutboxCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<JobCurriculumPdfOutboxFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: JobCurriculumPdfOutboxCountAggregateInputType | true
+    }
+
+  export interface JobCurriculumPdfOutboxDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['JobCurriculumPdfOutbox'], meta: { name: 'JobCurriculumPdfOutbox' } }
+    /**
+     * Find zero or one JobCurriculumPdfOutbox that matches the filter.
+     * @param {JobCurriculumPdfOutboxFindUniqueArgs} args - Arguments to find a JobCurriculumPdfOutbox
+     * @example
+     * // Get one JobCurriculumPdfOutbox
+     * const jobCurriculumPdfOutbox = await prisma.jobCurriculumPdfOutbox.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends JobCurriculumPdfOutboxFindUniqueArgs>(args: SelectSubset<T, JobCurriculumPdfOutboxFindUniqueArgs<ExtArgs>>): Prisma__JobCurriculumPdfOutboxClient<$Result.GetResult<Prisma.$JobCurriculumPdfOutboxPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one JobCurriculumPdfOutbox that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {JobCurriculumPdfOutboxFindUniqueOrThrowArgs} args - Arguments to find a JobCurriculumPdfOutbox
+     * @example
+     * // Get one JobCurriculumPdfOutbox
+     * const jobCurriculumPdfOutbox = await prisma.jobCurriculumPdfOutbox.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends JobCurriculumPdfOutboxFindUniqueOrThrowArgs>(args: SelectSubset<T, JobCurriculumPdfOutboxFindUniqueOrThrowArgs<ExtArgs>>): Prisma__JobCurriculumPdfOutboxClient<$Result.GetResult<Prisma.$JobCurriculumPdfOutboxPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first JobCurriculumPdfOutbox that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCurriculumPdfOutboxFindFirstArgs} args - Arguments to find a JobCurriculumPdfOutbox
+     * @example
+     * // Get one JobCurriculumPdfOutbox
+     * const jobCurriculumPdfOutbox = await prisma.jobCurriculumPdfOutbox.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends JobCurriculumPdfOutboxFindFirstArgs>(args?: SelectSubset<T, JobCurriculumPdfOutboxFindFirstArgs<ExtArgs>>): Prisma__JobCurriculumPdfOutboxClient<$Result.GetResult<Prisma.$JobCurriculumPdfOutboxPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first JobCurriculumPdfOutbox that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCurriculumPdfOutboxFindFirstOrThrowArgs} args - Arguments to find a JobCurriculumPdfOutbox
+     * @example
+     * // Get one JobCurriculumPdfOutbox
+     * const jobCurriculumPdfOutbox = await prisma.jobCurriculumPdfOutbox.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends JobCurriculumPdfOutboxFindFirstOrThrowArgs>(args?: SelectSubset<T, JobCurriculumPdfOutboxFindFirstOrThrowArgs<ExtArgs>>): Prisma__JobCurriculumPdfOutboxClient<$Result.GetResult<Prisma.$JobCurriculumPdfOutboxPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more JobCurriculumPdfOutboxes that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCurriculumPdfOutboxFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all JobCurriculumPdfOutboxes
+     * const jobCurriculumPdfOutboxes = await prisma.jobCurriculumPdfOutbox.findMany()
+     * 
+     * // Get first 10 JobCurriculumPdfOutboxes
+     * const jobCurriculumPdfOutboxes = await prisma.jobCurriculumPdfOutbox.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const jobCurriculumPdfOutboxWithIdOnly = await prisma.jobCurriculumPdfOutbox.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends JobCurriculumPdfOutboxFindManyArgs>(args?: SelectSubset<T, JobCurriculumPdfOutboxFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobCurriculumPdfOutboxPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a JobCurriculumPdfOutbox.
+     * @param {JobCurriculumPdfOutboxCreateArgs} args - Arguments to create a JobCurriculumPdfOutbox.
+     * @example
+     * // Create one JobCurriculumPdfOutbox
+     * const JobCurriculumPdfOutbox = await prisma.jobCurriculumPdfOutbox.create({
+     *   data: {
+     *     // ... data to create a JobCurriculumPdfOutbox
+     *   }
+     * })
+     * 
+     */
+    create<T extends JobCurriculumPdfOutboxCreateArgs>(args: SelectSubset<T, JobCurriculumPdfOutboxCreateArgs<ExtArgs>>): Prisma__JobCurriculumPdfOutboxClient<$Result.GetResult<Prisma.$JobCurriculumPdfOutboxPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many JobCurriculumPdfOutboxes.
+     * @param {JobCurriculumPdfOutboxCreateManyArgs} args - Arguments to create many JobCurriculumPdfOutboxes.
+     * @example
+     * // Create many JobCurriculumPdfOutboxes
+     * const jobCurriculumPdfOutbox = await prisma.jobCurriculumPdfOutbox.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends JobCurriculumPdfOutboxCreateManyArgs>(args?: SelectSubset<T, JobCurriculumPdfOutboxCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many JobCurriculumPdfOutboxes and returns the data saved in the database.
+     * @param {JobCurriculumPdfOutboxCreateManyAndReturnArgs} args - Arguments to create many JobCurriculumPdfOutboxes.
+     * @example
+     * // Create many JobCurriculumPdfOutboxes
+     * const jobCurriculumPdfOutbox = await prisma.jobCurriculumPdfOutbox.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many JobCurriculumPdfOutboxes and only return the `id`
+     * const jobCurriculumPdfOutboxWithIdOnly = await prisma.jobCurriculumPdfOutbox.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends JobCurriculumPdfOutboxCreateManyAndReturnArgs>(args?: SelectSubset<T, JobCurriculumPdfOutboxCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobCurriculumPdfOutboxPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a JobCurriculumPdfOutbox.
+     * @param {JobCurriculumPdfOutboxDeleteArgs} args - Arguments to delete one JobCurriculumPdfOutbox.
+     * @example
+     * // Delete one JobCurriculumPdfOutbox
+     * const JobCurriculumPdfOutbox = await prisma.jobCurriculumPdfOutbox.delete({
+     *   where: {
+     *     // ... filter to delete one JobCurriculumPdfOutbox
+     *   }
+     * })
+     * 
+     */
+    delete<T extends JobCurriculumPdfOutboxDeleteArgs>(args: SelectSubset<T, JobCurriculumPdfOutboxDeleteArgs<ExtArgs>>): Prisma__JobCurriculumPdfOutboxClient<$Result.GetResult<Prisma.$JobCurriculumPdfOutboxPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one JobCurriculumPdfOutbox.
+     * @param {JobCurriculumPdfOutboxUpdateArgs} args - Arguments to update one JobCurriculumPdfOutbox.
+     * @example
+     * // Update one JobCurriculumPdfOutbox
+     * const jobCurriculumPdfOutbox = await prisma.jobCurriculumPdfOutbox.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends JobCurriculumPdfOutboxUpdateArgs>(args: SelectSubset<T, JobCurriculumPdfOutboxUpdateArgs<ExtArgs>>): Prisma__JobCurriculumPdfOutboxClient<$Result.GetResult<Prisma.$JobCurriculumPdfOutboxPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more JobCurriculumPdfOutboxes.
+     * @param {JobCurriculumPdfOutboxDeleteManyArgs} args - Arguments to filter JobCurriculumPdfOutboxes to delete.
+     * @example
+     * // Delete a few JobCurriculumPdfOutboxes
+     * const { count } = await prisma.jobCurriculumPdfOutbox.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends JobCurriculumPdfOutboxDeleteManyArgs>(args?: SelectSubset<T, JobCurriculumPdfOutboxDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more JobCurriculumPdfOutboxes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCurriculumPdfOutboxUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many JobCurriculumPdfOutboxes
+     * const jobCurriculumPdfOutbox = await prisma.jobCurriculumPdfOutbox.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends JobCurriculumPdfOutboxUpdateManyArgs>(args: SelectSubset<T, JobCurriculumPdfOutboxUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more JobCurriculumPdfOutboxes and returns the data updated in the database.
+     * @param {JobCurriculumPdfOutboxUpdateManyAndReturnArgs} args - Arguments to update many JobCurriculumPdfOutboxes.
+     * @example
+     * // Update many JobCurriculumPdfOutboxes
+     * const jobCurriculumPdfOutbox = await prisma.jobCurriculumPdfOutbox.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more JobCurriculumPdfOutboxes and only return the `id`
+     * const jobCurriculumPdfOutboxWithIdOnly = await prisma.jobCurriculumPdfOutbox.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends JobCurriculumPdfOutboxUpdateManyAndReturnArgs>(args: SelectSubset<T, JobCurriculumPdfOutboxUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobCurriculumPdfOutboxPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one JobCurriculumPdfOutbox.
+     * @param {JobCurriculumPdfOutboxUpsertArgs} args - Arguments to update or create a JobCurriculumPdfOutbox.
+     * @example
+     * // Update or create a JobCurriculumPdfOutbox
+     * const jobCurriculumPdfOutbox = await prisma.jobCurriculumPdfOutbox.upsert({
+     *   create: {
+     *     // ... data to create a JobCurriculumPdfOutbox
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the JobCurriculumPdfOutbox we want to update
+     *   }
+     * })
+     */
+    upsert<T extends JobCurriculumPdfOutboxUpsertArgs>(args: SelectSubset<T, JobCurriculumPdfOutboxUpsertArgs<ExtArgs>>): Prisma__JobCurriculumPdfOutboxClient<$Result.GetResult<Prisma.$JobCurriculumPdfOutboxPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of JobCurriculumPdfOutboxes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCurriculumPdfOutboxCountArgs} args - Arguments to filter JobCurriculumPdfOutboxes to count.
+     * @example
+     * // Count the number of JobCurriculumPdfOutboxes
+     * const count = await prisma.jobCurriculumPdfOutbox.count({
+     *   where: {
+     *     // ... the filter for the JobCurriculumPdfOutboxes we want to count
+     *   }
+     * })
+    **/
+    count<T extends JobCurriculumPdfOutboxCountArgs>(
+      args?: Subset<T, JobCurriculumPdfOutboxCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], JobCurriculumPdfOutboxCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a JobCurriculumPdfOutbox.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCurriculumPdfOutboxAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends JobCurriculumPdfOutboxAggregateArgs>(args: Subset<T, JobCurriculumPdfOutboxAggregateArgs>): Prisma.PrismaPromise<GetJobCurriculumPdfOutboxAggregateType<T>>
+
+    /**
+     * Group by JobCurriculumPdfOutbox.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCurriculumPdfOutboxGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends JobCurriculumPdfOutboxGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: JobCurriculumPdfOutboxGroupByArgs['orderBy'] }
+        : { orderBy?: JobCurriculumPdfOutboxGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, JobCurriculumPdfOutboxGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetJobCurriculumPdfOutboxGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the JobCurriculumPdfOutbox model
+   */
+  readonly fields: JobCurriculumPdfOutboxFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for JobCurriculumPdfOutbox.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__JobCurriculumPdfOutboxClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    jobOffer<T extends JobOfferDefaultArgs<ExtArgs> = {}>(args?: Subset<T, JobOfferDefaultArgs<ExtArgs>>): Prisma__JobOfferClient<$Result.GetResult<Prisma.$JobOfferPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the JobCurriculumPdfOutbox model
+   */
+  interface JobCurriculumPdfOutboxFieldRefs {
+    readonly id: FieldRef<"JobCurriculumPdfOutbox", 'String'>
+    readonly jobOfferId: FieldRef<"JobCurriculumPdfOutbox", 'String'>
+    readonly status: FieldRef<"JobCurriculumPdfOutbox", 'OutboxStatus'>
+    readonly templateName: FieldRef<"JobCurriculumPdfOutbox", 'String'>
+    readonly forceRegenerate: FieldRef<"JobCurriculumPdfOutbox", 'Boolean'>
+    readonly attempts: FieldRef<"JobCurriculumPdfOutbox", 'Int'>
+    readonly lastError: FieldRef<"JobCurriculumPdfOutbox", 'String'>
+    readonly createdAt: FieldRef<"JobCurriculumPdfOutbox", 'DateTime'>
+    readonly updatedAt: FieldRef<"JobCurriculumPdfOutbox", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * JobCurriculumPdfOutbox findUnique
+   */
+  export type JobCurriculumPdfOutboxFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumPdfOutbox
+     */
+    select?: JobCurriculumPdfOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumPdfOutbox
+     */
+    omit?: JobCurriculumPdfOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumPdfOutboxInclude<ExtArgs> | null
+    /**
+     * Filter, which JobCurriculumPdfOutbox to fetch.
+     */
+    where: JobCurriculumPdfOutboxWhereUniqueInput
+  }
+
+  /**
+   * JobCurriculumPdfOutbox findUniqueOrThrow
+   */
+  export type JobCurriculumPdfOutboxFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumPdfOutbox
+     */
+    select?: JobCurriculumPdfOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumPdfOutbox
+     */
+    omit?: JobCurriculumPdfOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumPdfOutboxInclude<ExtArgs> | null
+    /**
+     * Filter, which JobCurriculumPdfOutbox to fetch.
+     */
+    where: JobCurriculumPdfOutboxWhereUniqueInput
+  }
+
+  /**
+   * JobCurriculumPdfOutbox findFirst
+   */
+  export type JobCurriculumPdfOutboxFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumPdfOutbox
+     */
+    select?: JobCurriculumPdfOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumPdfOutbox
+     */
+    omit?: JobCurriculumPdfOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumPdfOutboxInclude<ExtArgs> | null
+    /**
+     * Filter, which JobCurriculumPdfOutbox to fetch.
+     */
+    where?: JobCurriculumPdfOutboxWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of JobCurriculumPdfOutboxes to fetch.
+     */
+    orderBy?: JobCurriculumPdfOutboxOrderByWithRelationInput | JobCurriculumPdfOutboxOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for JobCurriculumPdfOutboxes.
+     */
+    cursor?: JobCurriculumPdfOutboxWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` JobCurriculumPdfOutboxes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` JobCurriculumPdfOutboxes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of JobCurriculumPdfOutboxes.
+     */
+    distinct?: JobCurriculumPdfOutboxScalarFieldEnum | JobCurriculumPdfOutboxScalarFieldEnum[]
+  }
+
+  /**
+   * JobCurriculumPdfOutbox findFirstOrThrow
+   */
+  export type JobCurriculumPdfOutboxFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumPdfOutbox
+     */
+    select?: JobCurriculumPdfOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumPdfOutbox
+     */
+    omit?: JobCurriculumPdfOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumPdfOutboxInclude<ExtArgs> | null
+    /**
+     * Filter, which JobCurriculumPdfOutbox to fetch.
+     */
+    where?: JobCurriculumPdfOutboxWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of JobCurriculumPdfOutboxes to fetch.
+     */
+    orderBy?: JobCurriculumPdfOutboxOrderByWithRelationInput | JobCurriculumPdfOutboxOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for JobCurriculumPdfOutboxes.
+     */
+    cursor?: JobCurriculumPdfOutboxWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` JobCurriculumPdfOutboxes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` JobCurriculumPdfOutboxes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of JobCurriculumPdfOutboxes.
+     */
+    distinct?: JobCurriculumPdfOutboxScalarFieldEnum | JobCurriculumPdfOutboxScalarFieldEnum[]
+  }
+
+  /**
+   * JobCurriculumPdfOutbox findMany
+   */
+  export type JobCurriculumPdfOutboxFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumPdfOutbox
+     */
+    select?: JobCurriculumPdfOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumPdfOutbox
+     */
+    omit?: JobCurriculumPdfOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumPdfOutboxInclude<ExtArgs> | null
+    /**
+     * Filter, which JobCurriculumPdfOutboxes to fetch.
+     */
+    where?: JobCurriculumPdfOutboxWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of JobCurriculumPdfOutboxes to fetch.
+     */
+    orderBy?: JobCurriculumPdfOutboxOrderByWithRelationInput | JobCurriculumPdfOutboxOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing JobCurriculumPdfOutboxes.
+     */
+    cursor?: JobCurriculumPdfOutboxWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` JobCurriculumPdfOutboxes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` JobCurriculumPdfOutboxes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of JobCurriculumPdfOutboxes.
+     */
+    distinct?: JobCurriculumPdfOutboxScalarFieldEnum | JobCurriculumPdfOutboxScalarFieldEnum[]
+  }
+
+  /**
+   * JobCurriculumPdfOutbox create
+   */
+  export type JobCurriculumPdfOutboxCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumPdfOutbox
+     */
+    select?: JobCurriculumPdfOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumPdfOutbox
+     */
+    omit?: JobCurriculumPdfOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumPdfOutboxInclude<ExtArgs> | null
+    /**
+     * The data needed to create a JobCurriculumPdfOutbox.
+     */
+    data: XOR<JobCurriculumPdfOutboxCreateInput, JobCurriculumPdfOutboxUncheckedCreateInput>
+  }
+
+  /**
+   * JobCurriculumPdfOutbox createMany
+   */
+  export type JobCurriculumPdfOutboxCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many JobCurriculumPdfOutboxes.
+     */
+    data: JobCurriculumPdfOutboxCreateManyInput | JobCurriculumPdfOutboxCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * JobCurriculumPdfOutbox createManyAndReturn
+   */
+  export type JobCurriculumPdfOutboxCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumPdfOutbox
+     */
+    select?: JobCurriculumPdfOutboxSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumPdfOutbox
+     */
+    omit?: JobCurriculumPdfOutboxOmit<ExtArgs> | null
+    /**
+     * The data used to create many JobCurriculumPdfOutboxes.
+     */
+    data: JobCurriculumPdfOutboxCreateManyInput | JobCurriculumPdfOutboxCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumPdfOutboxIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * JobCurriculumPdfOutbox update
+   */
+  export type JobCurriculumPdfOutboxUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumPdfOutbox
+     */
+    select?: JobCurriculumPdfOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumPdfOutbox
+     */
+    omit?: JobCurriculumPdfOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumPdfOutboxInclude<ExtArgs> | null
+    /**
+     * The data needed to update a JobCurriculumPdfOutbox.
+     */
+    data: XOR<JobCurriculumPdfOutboxUpdateInput, JobCurriculumPdfOutboxUncheckedUpdateInput>
+    /**
+     * Choose, which JobCurriculumPdfOutbox to update.
+     */
+    where: JobCurriculumPdfOutboxWhereUniqueInput
+  }
+
+  /**
+   * JobCurriculumPdfOutbox updateMany
+   */
+  export type JobCurriculumPdfOutboxUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update JobCurriculumPdfOutboxes.
+     */
+    data: XOR<JobCurriculumPdfOutboxUpdateManyMutationInput, JobCurriculumPdfOutboxUncheckedUpdateManyInput>
+    /**
+     * Filter which JobCurriculumPdfOutboxes to update
+     */
+    where?: JobCurriculumPdfOutboxWhereInput
+    /**
+     * Limit how many JobCurriculumPdfOutboxes to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * JobCurriculumPdfOutbox updateManyAndReturn
+   */
+  export type JobCurriculumPdfOutboxUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumPdfOutbox
+     */
+    select?: JobCurriculumPdfOutboxSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumPdfOutbox
+     */
+    omit?: JobCurriculumPdfOutboxOmit<ExtArgs> | null
+    /**
+     * The data used to update JobCurriculumPdfOutboxes.
+     */
+    data: XOR<JobCurriculumPdfOutboxUpdateManyMutationInput, JobCurriculumPdfOutboxUncheckedUpdateManyInput>
+    /**
+     * Filter which JobCurriculumPdfOutboxes to update
+     */
+    where?: JobCurriculumPdfOutboxWhereInput
+    /**
+     * Limit how many JobCurriculumPdfOutboxes to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumPdfOutboxIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * JobCurriculumPdfOutbox upsert
+   */
+  export type JobCurriculumPdfOutboxUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumPdfOutbox
+     */
+    select?: JobCurriculumPdfOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumPdfOutbox
+     */
+    omit?: JobCurriculumPdfOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumPdfOutboxInclude<ExtArgs> | null
+    /**
+     * The filter to search for the JobCurriculumPdfOutbox to update in case it exists.
+     */
+    where: JobCurriculumPdfOutboxWhereUniqueInput
+    /**
+     * In case the JobCurriculumPdfOutbox found by the `where` argument doesn't exist, create a new JobCurriculumPdfOutbox with this data.
+     */
+    create: XOR<JobCurriculumPdfOutboxCreateInput, JobCurriculumPdfOutboxUncheckedCreateInput>
+    /**
+     * In case the JobCurriculumPdfOutbox was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<JobCurriculumPdfOutboxUpdateInput, JobCurriculumPdfOutboxUncheckedUpdateInput>
+  }
+
+  /**
+   * JobCurriculumPdfOutbox delete
+   */
+  export type JobCurriculumPdfOutboxDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumPdfOutbox
+     */
+    select?: JobCurriculumPdfOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumPdfOutbox
+     */
+    omit?: JobCurriculumPdfOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumPdfOutboxInclude<ExtArgs> | null
+    /**
+     * Filter which JobCurriculumPdfOutbox to delete.
+     */
+    where: JobCurriculumPdfOutboxWhereUniqueInput
+  }
+
+  /**
+   * JobCurriculumPdfOutbox deleteMany
+   */
+  export type JobCurriculumPdfOutboxDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which JobCurriculumPdfOutboxes to delete
+     */
+    where?: JobCurriculumPdfOutboxWhereInput
+    /**
+     * Limit how many JobCurriculumPdfOutboxes to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * JobCurriculumPdfOutbox without action
+   */
+  export type JobCurriculumPdfOutboxDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumPdfOutbox
+     */
+    select?: JobCurriculumPdfOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumPdfOutbox
+     */
+    omit?: JobCurriculumPdfOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumPdfOutboxInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model JobEvaluation
    */
 
@@ -8914,6 +11527,1129 @@ export namespace Prisma {
 
 
   /**
+   * Model JobEvaluationOutbox
+   */
+
+  export type AggregateJobEvaluationOutbox = {
+    _count: JobEvaluationOutboxCountAggregateOutputType | null
+    _avg: JobEvaluationOutboxAvgAggregateOutputType | null
+    _sum: JobEvaluationOutboxSumAggregateOutputType | null
+    _min: JobEvaluationOutboxMinAggregateOutputType | null
+    _max: JobEvaluationOutboxMaxAggregateOutputType | null
+  }
+
+  export type JobEvaluationOutboxAvgAggregateOutputType = {
+    attempts: number | null
+  }
+
+  export type JobEvaluationOutboxSumAggregateOutputType = {
+    attempts: number | null
+  }
+
+  export type JobEvaluationOutboxMinAggregateOutputType = {
+    id: string | null
+    jobOfferId: string | null
+    status: $Enums.OutboxStatus | null
+    attempts: number | null
+    lastError: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type JobEvaluationOutboxMaxAggregateOutputType = {
+    id: string | null
+    jobOfferId: string | null
+    status: $Enums.OutboxStatus | null
+    attempts: number | null
+    lastError: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type JobEvaluationOutboxCountAggregateOutputType = {
+    id: number
+    jobOfferId: number
+    status: number
+    attempts: number
+    lastError: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type JobEvaluationOutboxAvgAggregateInputType = {
+    attempts?: true
+  }
+
+  export type JobEvaluationOutboxSumAggregateInputType = {
+    attempts?: true
+  }
+
+  export type JobEvaluationOutboxMinAggregateInputType = {
+    id?: true
+    jobOfferId?: true
+    status?: true
+    attempts?: true
+    lastError?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type JobEvaluationOutboxMaxAggregateInputType = {
+    id?: true
+    jobOfferId?: true
+    status?: true
+    attempts?: true
+    lastError?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type JobEvaluationOutboxCountAggregateInputType = {
+    id?: true
+    jobOfferId?: true
+    status?: true
+    attempts?: true
+    lastError?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type JobEvaluationOutboxAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which JobEvaluationOutbox to aggregate.
+     */
+    where?: JobEvaluationOutboxWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of JobEvaluationOutboxes to fetch.
+     */
+    orderBy?: JobEvaluationOutboxOrderByWithRelationInput | JobEvaluationOutboxOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: JobEvaluationOutboxWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` JobEvaluationOutboxes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` JobEvaluationOutboxes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned JobEvaluationOutboxes
+    **/
+    _count?: true | JobEvaluationOutboxCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: JobEvaluationOutboxAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: JobEvaluationOutboxSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: JobEvaluationOutboxMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: JobEvaluationOutboxMaxAggregateInputType
+  }
+
+  export type GetJobEvaluationOutboxAggregateType<T extends JobEvaluationOutboxAggregateArgs> = {
+        [P in keyof T & keyof AggregateJobEvaluationOutbox]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateJobEvaluationOutbox[P]>
+      : GetScalarType<T[P], AggregateJobEvaluationOutbox[P]>
+  }
+
+
+
+
+  export type JobEvaluationOutboxGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: JobEvaluationOutboxWhereInput
+    orderBy?: JobEvaluationOutboxOrderByWithAggregationInput | JobEvaluationOutboxOrderByWithAggregationInput[]
+    by: JobEvaluationOutboxScalarFieldEnum[] | JobEvaluationOutboxScalarFieldEnum
+    having?: JobEvaluationOutboxScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: JobEvaluationOutboxCountAggregateInputType | true
+    _avg?: JobEvaluationOutboxAvgAggregateInputType
+    _sum?: JobEvaluationOutboxSumAggregateInputType
+    _min?: JobEvaluationOutboxMinAggregateInputType
+    _max?: JobEvaluationOutboxMaxAggregateInputType
+  }
+
+  export type JobEvaluationOutboxGroupByOutputType = {
+    id: string
+    jobOfferId: string
+    status: $Enums.OutboxStatus
+    attempts: number
+    lastError: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: JobEvaluationOutboxCountAggregateOutputType | null
+    _avg: JobEvaluationOutboxAvgAggregateOutputType | null
+    _sum: JobEvaluationOutboxSumAggregateOutputType | null
+    _min: JobEvaluationOutboxMinAggregateOutputType | null
+    _max: JobEvaluationOutboxMaxAggregateOutputType | null
+  }
+
+  type GetJobEvaluationOutboxGroupByPayload<T extends JobEvaluationOutboxGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<JobEvaluationOutboxGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof JobEvaluationOutboxGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], JobEvaluationOutboxGroupByOutputType[P]>
+            : GetScalarType<T[P], JobEvaluationOutboxGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type JobEvaluationOutboxSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    jobOfferId?: boolean
+    status?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["jobEvaluationOutbox"]>
+
+  export type JobEvaluationOutboxSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    jobOfferId?: boolean
+    status?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["jobEvaluationOutbox"]>
+
+  export type JobEvaluationOutboxSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    jobOfferId?: boolean
+    status?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["jobEvaluationOutbox"]>
+
+  export type JobEvaluationOutboxSelectScalar = {
+    id?: boolean
+    jobOfferId?: boolean
+    status?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type JobEvaluationOutboxOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "jobOfferId" | "status" | "attempts" | "lastError" | "createdAt" | "updatedAt", ExtArgs["result"]["jobEvaluationOutbox"]>
+  export type JobEvaluationOutboxInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }
+  export type JobEvaluationOutboxIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }
+  export type JobEvaluationOutboxIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }
+
+  export type $JobEvaluationOutboxPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "JobEvaluationOutbox"
+    objects: {
+      jobOffer: Prisma.$JobOfferPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      jobOfferId: string
+      status: $Enums.OutboxStatus
+      attempts: number
+      lastError: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["jobEvaluationOutbox"]>
+    composites: {}
+  }
+
+  type JobEvaluationOutboxGetPayload<S extends boolean | null | undefined | JobEvaluationOutboxDefaultArgs> = $Result.GetResult<Prisma.$JobEvaluationOutboxPayload, S>
+
+  type JobEvaluationOutboxCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<JobEvaluationOutboxFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: JobEvaluationOutboxCountAggregateInputType | true
+    }
+
+  export interface JobEvaluationOutboxDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['JobEvaluationOutbox'], meta: { name: 'JobEvaluationOutbox' } }
+    /**
+     * Find zero or one JobEvaluationOutbox that matches the filter.
+     * @param {JobEvaluationOutboxFindUniqueArgs} args - Arguments to find a JobEvaluationOutbox
+     * @example
+     * // Get one JobEvaluationOutbox
+     * const jobEvaluationOutbox = await prisma.jobEvaluationOutbox.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends JobEvaluationOutboxFindUniqueArgs>(args: SelectSubset<T, JobEvaluationOutboxFindUniqueArgs<ExtArgs>>): Prisma__JobEvaluationOutboxClient<$Result.GetResult<Prisma.$JobEvaluationOutboxPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one JobEvaluationOutbox that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {JobEvaluationOutboxFindUniqueOrThrowArgs} args - Arguments to find a JobEvaluationOutbox
+     * @example
+     * // Get one JobEvaluationOutbox
+     * const jobEvaluationOutbox = await prisma.jobEvaluationOutbox.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends JobEvaluationOutboxFindUniqueOrThrowArgs>(args: SelectSubset<T, JobEvaluationOutboxFindUniqueOrThrowArgs<ExtArgs>>): Prisma__JobEvaluationOutboxClient<$Result.GetResult<Prisma.$JobEvaluationOutboxPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first JobEvaluationOutbox that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobEvaluationOutboxFindFirstArgs} args - Arguments to find a JobEvaluationOutbox
+     * @example
+     * // Get one JobEvaluationOutbox
+     * const jobEvaluationOutbox = await prisma.jobEvaluationOutbox.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends JobEvaluationOutboxFindFirstArgs>(args?: SelectSubset<T, JobEvaluationOutboxFindFirstArgs<ExtArgs>>): Prisma__JobEvaluationOutboxClient<$Result.GetResult<Prisma.$JobEvaluationOutboxPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first JobEvaluationOutbox that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobEvaluationOutboxFindFirstOrThrowArgs} args - Arguments to find a JobEvaluationOutbox
+     * @example
+     * // Get one JobEvaluationOutbox
+     * const jobEvaluationOutbox = await prisma.jobEvaluationOutbox.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends JobEvaluationOutboxFindFirstOrThrowArgs>(args?: SelectSubset<T, JobEvaluationOutboxFindFirstOrThrowArgs<ExtArgs>>): Prisma__JobEvaluationOutboxClient<$Result.GetResult<Prisma.$JobEvaluationOutboxPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more JobEvaluationOutboxes that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobEvaluationOutboxFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all JobEvaluationOutboxes
+     * const jobEvaluationOutboxes = await prisma.jobEvaluationOutbox.findMany()
+     * 
+     * // Get first 10 JobEvaluationOutboxes
+     * const jobEvaluationOutboxes = await prisma.jobEvaluationOutbox.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const jobEvaluationOutboxWithIdOnly = await prisma.jobEvaluationOutbox.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends JobEvaluationOutboxFindManyArgs>(args?: SelectSubset<T, JobEvaluationOutboxFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobEvaluationOutboxPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a JobEvaluationOutbox.
+     * @param {JobEvaluationOutboxCreateArgs} args - Arguments to create a JobEvaluationOutbox.
+     * @example
+     * // Create one JobEvaluationOutbox
+     * const JobEvaluationOutbox = await prisma.jobEvaluationOutbox.create({
+     *   data: {
+     *     // ... data to create a JobEvaluationOutbox
+     *   }
+     * })
+     * 
+     */
+    create<T extends JobEvaluationOutboxCreateArgs>(args: SelectSubset<T, JobEvaluationOutboxCreateArgs<ExtArgs>>): Prisma__JobEvaluationOutboxClient<$Result.GetResult<Prisma.$JobEvaluationOutboxPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many JobEvaluationOutboxes.
+     * @param {JobEvaluationOutboxCreateManyArgs} args - Arguments to create many JobEvaluationOutboxes.
+     * @example
+     * // Create many JobEvaluationOutboxes
+     * const jobEvaluationOutbox = await prisma.jobEvaluationOutbox.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends JobEvaluationOutboxCreateManyArgs>(args?: SelectSubset<T, JobEvaluationOutboxCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many JobEvaluationOutboxes and returns the data saved in the database.
+     * @param {JobEvaluationOutboxCreateManyAndReturnArgs} args - Arguments to create many JobEvaluationOutboxes.
+     * @example
+     * // Create many JobEvaluationOutboxes
+     * const jobEvaluationOutbox = await prisma.jobEvaluationOutbox.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many JobEvaluationOutboxes and only return the `id`
+     * const jobEvaluationOutboxWithIdOnly = await prisma.jobEvaluationOutbox.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends JobEvaluationOutboxCreateManyAndReturnArgs>(args?: SelectSubset<T, JobEvaluationOutboxCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobEvaluationOutboxPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a JobEvaluationOutbox.
+     * @param {JobEvaluationOutboxDeleteArgs} args - Arguments to delete one JobEvaluationOutbox.
+     * @example
+     * // Delete one JobEvaluationOutbox
+     * const JobEvaluationOutbox = await prisma.jobEvaluationOutbox.delete({
+     *   where: {
+     *     // ... filter to delete one JobEvaluationOutbox
+     *   }
+     * })
+     * 
+     */
+    delete<T extends JobEvaluationOutboxDeleteArgs>(args: SelectSubset<T, JobEvaluationOutboxDeleteArgs<ExtArgs>>): Prisma__JobEvaluationOutboxClient<$Result.GetResult<Prisma.$JobEvaluationOutboxPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one JobEvaluationOutbox.
+     * @param {JobEvaluationOutboxUpdateArgs} args - Arguments to update one JobEvaluationOutbox.
+     * @example
+     * // Update one JobEvaluationOutbox
+     * const jobEvaluationOutbox = await prisma.jobEvaluationOutbox.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends JobEvaluationOutboxUpdateArgs>(args: SelectSubset<T, JobEvaluationOutboxUpdateArgs<ExtArgs>>): Prisma__JobEvaluationOutboxClient<$Result.GetResult<Prisma.$JobEvaluationOutboxPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more JobEvaluationOutboxes.
+     * @param {JobEvaluationOutboxDeleteManyArgs} args - Arguments to filter JobEvaluationOutboxes to delete.
+     * @example
+     * // Delete a few JobEvaluationOutboxes
+     * const { count } = await prisma.jobEvaluationOutbox.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends JobEvaluationOutboxDeleteManyArgs>(args?: SelectSubset<T, JobEvaluationOutboxDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more JobEvaluationOutboxes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobEvaluationOutboxUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many JobEvaluationOutboxes
+     * const jobEvaluationOutbox = await prisma.jobEvaluationOutbox.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends JobEvaluationOutboxUpdateManyArgs>(args: SelectSubset<T, JobEvaluationOutboxUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more JobEvaluationOutboxes and returns the data updated in the database.
+     * @param {JobEvaluationOutboxUpdateManyAndReturnArgs} args - Arguments to update many JobEvaluationOutboxes.
+     * @example
+     * // Update many JobEvaluationOutboxes
+     * const jobEvaluationOutbox = await prisma.jobEvaluationOutbox.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more JobEvaluationOutboxes and only return the `id`
+     * const jobEvaluationOutboxWithIdOnly = await prisma.jobEvaluationOutbox.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends JobEvaluationOutboxUpdateManyAndReturnArgs>(args: SelectSubset<T, JobEvaluationOutboxUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobEvaluationOutboxPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one JobEvaluationOutbox.
+     * @param {JobEvaluationOutboxUpsertArgs} args - Arguments to update or create a JobEvaluationOutbox.
+     * @example
+     * // Update or create a JobEvaluationOutbox
+     * const jobEvaluationOutbox = await prisma.jobEvaluationOutbox.upsert({
+     *   create: {
+     *     // ... data to create a JobEvaluationOutbox
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the JobEvaluationOutbox we want to update
+     *   }
+     * })
+     */
+    upsert<T extends JobEvaluationOutboxUpsertArgs>(args: SelectSubset<T, JobEvaluationOutboxUpsertArgs<ExtArgs>>): Prisma__JobEvaluationOutboxClient<$Result.GetResult<Prisma.$JobEvaluationOutboxPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of JobEvaluationOutboxes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobEvaluationOutboxCountArgs} args - Arguments to filter JobEvaluationOutboxes to count.
+     * @example
+     * // Count the number of JobEvaluationOutboxes
+     * const count = await prisma.jobEvaluationOutbox.count({
+     *   where: {
+     *     // ... the filter for the JobEvaluationOutboxes we want to count
+     *   }
+     * })
+    **/
+    count<T extends JobEvaluationOutboxCountArgs>(
+      args?: Subset<T, JobEvaluationOutboxCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], JobEvaluationOutboxCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a JobEvaluationOutbox.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobEvaluationOutboxAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends JobEvaluationOutboxAggregateArgs>(args: Subset<T, JobEvaluationOutboxAggregateArgs>): Prisma.PrismaPromise<GetJobEvaluationOutboxAggregateType<T>>
+
+    /**
+     * Group by JobEvaluationOutbox.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobEvaluationOutboxGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends JobEvaluationOutboxGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: JobEvaluationOutboxGroupByArgs['orderBy'] }
+        : { orderBy?: JobEvaluationOutboxGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, JobEvaluationOutboxGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetJobEvaluationOutboxGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the JobEvaluationOutbox model
+   */
+  readonly fields: JobEvaluationOutboxFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for JobEvaluationOutbox.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__JobEvaluationOutboxClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    jobOffer<T extends JobOfferDefaultArgs<ExtArgs> = {}>(args?: Subset<T, JobOfferDefaultArgs<ExtArgs>>): Prisma__JobOfferClient<$Result.GetResult<Prisma.$JobOfferPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the JobEvaluationOutbox model
+   */
+  interface JobEvaluationOutboxFieldRefs {
+    readonly id: FieldRef<"JobEvaluationOutbox", 'String'>
+    readonly jobOfferId: FieldRef<"JobEvaluationOutbox", 'String'>
+    readonly status: FieldRef<"JobEvaluationOutbox", 'OutboxStatus'>
+    readonly attempts: FieldRef<"JobEvaluationOutbox", 'Int'>
+    readonly lastError: FieldRef<"JobEvaluationOutbox", 'String'>
+    readonly createdAt: FieldRef<"JobEvaluationOutbox", 'DateTime'>
+    readonly updatedAt: FieldRef<"JobEvaluationOutbox", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * JobEvaluationOutbox findUnique
+   */
+  export type JobEvaluationOutboxFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobEvaluationOutbox
+     */
+    select?: JobEvaluationOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobEvaluationOutbox
+     */
+    omit?: JobEvaluationOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobEvaluationOutboxInclude<ExtArgs> | null
+    /**
+     * Filter, which JobEvaluationOutbox to fetch.
+     */
+    where: JobEvaluationOutboxWhereUniqueInput
+  }
+
+  /**
+   * JobEvaluationOutbox findUniqueOrThrow
+   */
+  export type JobEvaluationOutboxFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobEvaluationOutbox
+     */
+    select?: JobEvaluationOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobEvaluationOutbox
+     */
+    omit?: JobEvaluationOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobEvaluationOutboxInclude<ExtArgs> | null
+    /**
+     * Filter, which JobEvaluationOutbox to fetch.
+     */
+    where: JobEvaluationOutboxWhereUniqueInput
+  }
+
+  /**
+   * JobEvaluationOutbox findFirst
+   */
+  export type JobEvaluationOutboxFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobEvaluationOutbox
+     */
+    select?: JobEvaluationOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobEvaluationOutbox
+     */
+    omit?: JobEvaluationOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobEvaluationOutboxInclude<ExtArgs> | null
+    /**
+     * Filter, which JobEvaluationOutbox to fetch.
+     */
+    where?: JobEvaluationOutboxWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of JobEvaluationOutboxes to fetch.
+     */
+    orderBy?: JobEvaluationOutboxOrderByWithRelationInput | JobEvaluationOutboxOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for JobEvaluationOutboxes.
+     */
+    cursor?: JobEvaluationOutboxWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` JobEvaluationOutboxes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` JobEvaluationOutboxes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of JobEvaluationOutboxes.
+     */
+    distinct?: JobEvaluationOutboxScalarFieldEnum | JobEvaluationOutboxScalarFieldEnum[]
+  }
+
+  /**
+   * JobEvaluationOutbox findFirstOrThrow
+   */
+  export type JobEvaluationOutboxFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobEvaluationOutbox
+     */
+    select?: JobEvaluationOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobEvaluationOutbox
+     */
+    omit?: JobEvaluationOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobEvaluationOutboxInclude<ExtArgs> | null
+    /**
+     * Filter, which JobEvaluationOutbox to fetch.
+     */
+    where?: JobEvaluationOutboxWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of JobEvaluationOutboxes to fetch.
+     */
+    orderBy?: JobEvaluationOutboxOrderByWithRelationInput | JobEvaluationOutboxOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for JobEvaluationOutboxes.
+     */
+    cursor?: JobEvaluationOutboxWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` JobEvaluationOutboxes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` JobEvaluationOutboxes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of JobEvaluationOutboxes.
+     */
+    distinct?: JobEvaluationOutboxScalarFieldEnum | JobEvaluationOutboxScalarFieldEnum[]
+  }
+
+  /**
+   * JobEvaluationOutbox findMany
+   */
+  export type JobEvaluationOutboxFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobEvaluationOutbox
+     */
+    select?: JobEvaluationOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobEvaluationOutbox
+     */
+    omit?: JobEvaluationOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobEvaluationOutboxInclude<ExtArgs> | null
+    /**
+     * Filter, which JobEvaluationOutboxes to fetch.
+     */
+    where?: JobEvaluationOutboxWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of JobEvaluationOutboxes to fetch.
+     */
+    orderBy?: JobEvaluationOutboxOrderByWithRelationInput | JobEvaluationOutboxOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing JobEvaluationOutboxes.
+     */
+    cursor?: JobEvaluationOutboxWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` JobEvaluationOutboxes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` JobEvaluationOutboxes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of JobEvaluationOutboxes.
+     */
+    distinct?: JobEvaluationOutboxScalarFieldEnum | JobEvaluationOutboxScalarFieldEnum[]
+  }
+
+  /**
+   * JobEvaluationOutbox create
+   */
+  export type JobEvaluationOutboxCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobEvaluationOutbox
+     */
+    select?: JobEvaluationOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobEvaluationOutbox
+     */
+    omit?: JobEvaluationOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobEvaluationOutboxInclude<ExtArgs> | null
+    /**
+     * The data needed to create a JobEvaluationOutbox.
+     */
+    data: XOR<JobEvaluationOutboxCreateInput, JobEvaluationOutboxUncheckedCreateInput>
+  }
+
+  /**
+   * JobEvaluationOutbox createMany
+   */
+  export type JobEvaluationOutboxCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many JobEvaluationOutboxes.
+     */
+    data: JobEvaluationOutboxCreateManyInput | JobEvaluationOutboxCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * JobEvaluationOutbox createManyAndReturn
+   */
+  export type JobEvaluationOutboxCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobEvaluationOutbox
+     */
+    select?: JobEvaluationOutboxSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobEvaluationOutbox
+     */
+    omit?: JobEvaluationOutboxOmit<ExtArgs> | null
+    /**
+     * The data used to create many JobEvaluationOutboxes.
+     */
+    data: JobEvaluationOutboxCreateManyInput | JobEvaluationOutboxCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobEvaluationOutboxIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * JobEvaluationOutbox update
+   */
+  export type JobEvaluationOutboxUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobEvaluationOutbox
+     */
+    select?: JobEvaluationOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobEvaluationOutbox
+     */
+    omit?: JobEvaluationOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobEvaluationOutboxInclude<ExtArgs> | null
+    /**
+     * The data needed to update a JobEvaluationOutbox.
+     */
+    data: XOR<JobEvaluationOutboxUpdateInput, JobEvaluationOutboxUncheckedUpdateInput>
+    /**
+     * Choose, which JobEvaluationOutbox to update.
+     */
+    where: JobEvaluationOutboxWhereUniqueInput
+  }
+
+  /**
+   * JobEvaluationOutbox updateMany
+   */
+  export type JobEvaluationOutboxUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update JobEvaluationOutboxes.
+     */
+    data: XOR<JobEvaluationOutboxUpdateManyMutationInput, JobEvaluationOutboxUncheckedUpdateManyInput>
+    /**
+     * Filter which JobEvaluationOutboxes to update
+     */
+    where?: JobEvaluationOutboxWhereInput
+    /**
+     * Limit how many JobEvaluationOutboxes to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * JobEvaluationOutbox updateManyAndReturn
+   */
+  export type JobEvaluationOutboxUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobEvaluationOutbox
+     */
+    select?: JobEvaluationOutboxSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobEvaluationOutbox
+     */
+    omit?: JobEvaluationOutboxOmit<ExtArgs> | null
+    /**
+     * The data used to update JobEvaluationOutboxes.
+     */
+    data: XOR<JobEvaluationOutboxUpdateManyMutationInput, JobEvaluationOutboxUncheckedUpdateManyInput>
+    /**
+     * Filter which JobEvaluationOutboxes to update
+     */
+    where?: JobEvaluationOutboxWhereInput
+    /**
+     * Limit how many JobEvaluationOutboxes to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobEvaluationOutboxIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * JobEvaluationOutbox upsert
+   */
+  export type JobEvaluationOutboxUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobEvaluationOutbox
+     */
+    select?: JobEvaluationOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobEvaluationOutbox
+     */
+    omit?: JobEvaluationOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobEvaluationOutboxInclude<ExtArgs> | null
+    /**
+     * The filter to search for the JobEvaluationOutbox to update in case it exists.
+     */
+    where: JobEvaluationOutboxWhereUniqueInput
+    /**
+     * In case the JobEvaluationOutbox found by the `where` argument doesn't exist, create a new JobEvaluationOutbox with this data.
+     */
+    create: XOR<JobEvaluationOutboxCreateInput, JobEvaluationOutboxUncheckedCreateInput>
+    /**
+     * In case the JobEvaluationOutbox was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<JobEvaluationOutboxUpdateInput, JobEvaluationOutboxUncheckedUpdateInput>
+  }
+
+  /**
+   * JobEvaluationOutbox delete
+   */
+  export type JobEvaluationOutboxDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobEvaluationOutbox
+     */
+    select?: JobEvaluationOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobEvaluationOutbox
+     */
+    omit?: JobEvaluationOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobEvaluationOutboxInclude<ExtArgs> | null
+    /**
+     * Filter which JobEvaluationOutbox to delete.
+     */
+    where: JobEvaluationOutboxWhereUniqueInput
+  }
+
+  /**
+   * JobEvaluationOutbox deleteMany
+   */
+  export type JobEvaluationOutboxDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which JobEvaluationOutboxes to delete
+     */
+    where?: JobEvaluationOutboxWhereInput
+    /**
+     * Limit how many JobEvaluationOutboxes to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * JobEvaluationOutbox without action
+   */
+  export type JobEvaluationOutboxDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobEvaluationOutbox
+     */
+    select?: JobEvaluationOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobEvaluationOutbox
+     */
+    omit?: JobEvaluationOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobEvaluationOutboxInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model JobOffer
    */
 
@@ -8955,6 +12691,7 @@ export namespace Prisma {
     experienceLevel: $Enums.ExperienceLevel | null
     skills: string | null
     status: $Enums.ApplicationStatus | null
+    evaluationProcessStatus: $Enums.JobEvaluationProcessStatus | null
     notes: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -8980,6 +12717,7 @@ export namespace Prisma {
     experienceLevel: $Enums.ExperienceLevel | null
     skills: string | null
     status: $Enums.ApplicationStatus | null
+    evaluationProcessStatus: $Enums.JobEvaluationProcessStatus | null
     notes: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -9005,6 +12743,7 @@ export namespace Prisma {
     experienceLevel: number
     skills: number
     status: number
+    evaluationProcessStatus: number
     notes: number
     createdAt: number
     updatedAt: number
@@ -9042,6 +12781,7 @@ export namespace Prisma {
     experienceLevel?: true
     skills?: true
     status?: true
+    evaluationProcessStatus?: true
     notes?: true
     createdAt?: true
     updatedAt?: true
@@ -9067,6 +12807,7 @@ export namespace Prisma {
     experienceLevel?: true
     skills?: true
     status?: true
+    evaluationProcessStatus?: true
     notes?: true
     createdAt?: true
     updatedAt?: true
@@ -9092,6 +12833,7 @@ export namespace Prisma {
     experienceLevel?: true
     skills?: true
     status?: true
+    evaluationProcessStatus?: true
     notes?: true
     createdAt?: true
     updatedAt?: true
@@ -9204,6 +12946,7 @@ export namespace Prisma {
     experienceLevel: $Enums.ExperienceLevel
     skills: string | null
     status: $Enums.ApplicationStatus
+    evaluationProcessStatus: $Enums.JobEvaluationProcessStatus
     notes: string | null
     createdAt: Date
     updatedAt: Date
@@ -9248,12 +12991,16 @@ export namespace Prisma {
     experienceLevel?: boolean
     skills?: boolean
     status?: boolean
+    evaluationProcessStatus?: boolean
     notes?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     company?: boolean | CompanyDefaultArgs<ExtArgs>
     evaluation?: boolean | JobOffer$evaluationArgs<ExtArgs>
+    evaluationOutbox?: boolean | JobOffer$evaluationOutboxArgs<ExtArgs>
     curriculum?: boolean | JobOffer$curriculumArgs<ExtArgs>
+    curriculumOutbox?: boolean | JobOffer$curriculumOutboxArgs<ExtArgs>
+    curriculumPdfOutbox?: boolean | JobOffer$curriculumPdfOutboxArgs<ExtArgs>
     statusHistory?: boolean | JobOffer$statusHistoryArgs<ExtArgs>
     _count?: boolean | JobOfferCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["jobOffer"]>
@@ -9278,6 +13025,7 @@ export namespace Prisma {
     experienceLevel?: boolean
     skills?: boolean
     status?: boolean
+    evaluationProcessStatus?: boolean
     notes?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -9304,6 +13052,7 @@ export namespace Prisma {
     experienceLevel?: boolean
     skills?: boolean
     status?: boolean
+    evaluationProcessStatus?: boolean
     notes?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -9330,16 +13079,20 @@ export namespace Prisma {
     experienceLevel?: boolean
     skills?: boolean
     status?: boolean
+    evaluationProcessStatus?: boolean
     notes?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type JobOfferOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "externalId" | "source" | "url" | "title" | "location" | "remoteType" | "rawDescription" | "descriptionMarkdown" | "datePosted" | "companyId" | "salaryMin" | "salaryMax" | "currency" | "contractType" | "roleCategory" | "experienceLevel" | "skills" | "status" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["jobOffer"]>
+  export type JobOfferOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "externalId" | "source" | "url" | "title" | "location" | "remoteType" | "rawDescription" | "descriptionMarkdown" | "datePosted" | "companyId" | "salaryMin" | "salaryMax" | "currency" | "contractType" | "roleCategory" | "experienceLevel" | "skills" | "status" | "evaluationProcessStatus" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["jobOffer"]>
   export type JobOfferInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     company?: boolean | CompanyDefaultArgs<ExtArgs>
     evaluation?: boolean | JobOffer$evaluationArgs<ExtArgs>
+    evaluationOutbox?: boolean | JobOffer$evaluationOutboxArgs<ExtArgs>
     curriculum?: boolean | JobOffer$curriculumArgs<ExtArgs>
+    curriculumOutbox?: boolean | JobOffer$curriculumOutboxArgs<ExtArgs>
+    curriculumPdfOutbox?: boolean | JobOffer$curriculumPdfOutboxArgs<ExtArgs>
     statusHistory?: boolean | JobOffer$statusHistoryArgs<ExtArgs>
     _count?: boolean | JobOfferCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -9355,7 +13108,10 @@ export namespace Prisma {
     objects: {
       company: Prisma.$CompanyPayload<ExtArgs>
       evaluation: Prisma.$JobEvaluationPayload<ExtArgs> | null
+      evaluationOutbox: Prisma.$JobEvaluationOutboxPayload<ExtArgs> | null
       curriculum: Prisma.$JobCurriculumPayload<ExtArgs> | null
+      curriculumOutbox: Prisma.$JobCurriculumOutboxPayload<ExtArgs> | null
+      curriculumPdfOutbox: Prisma.$JobCurriculumPdfOutboxPayload<ExtArgs> | null
       statusHistory: Prisma.$JobStatusHistoryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -9378,6 +13134,7 @@ export namespace Prisma {
       experienceLevel: $Enums.ExperienceLevel
       skills: string | null
       status: $Enums.ApplicationStatus
+      evaluationProcessStatus: $Enums.JobEvaluationProcessStatus
       notes: string | null
       createdAt: Date
       updatedAt: Date
@@ -9777,7 +13534,10 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     company<T extends CompanyDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CompanyDefaultArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     evaluation<T extends JobOffer$evaluationArgs<ExtArgs> = {}>(args?: Subset<T, JobOffer$evaluationArgs<ExtArgs>>): Prisma__JobEvaluationClient<$Result.GetResult<Prisma.$JobEvaluationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    evaluationOutbox<T extends JobOffer$evaluationOutboxArgs<ExtArgs> = {}>(args?: Subset<T, JobOffer$evaluationOutboxArgs<ExtArgs>>): Prisma__JobEvaluationOutboxClient<$Result.GetResult<Prisma.$JobEvaluationOutboxPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     curriculum<T extends JobOffer$curriculumArgs<ExtArgs> = {}>(args?: Subset<T, JobOffer$curriculumArgs<ExtArgs>>): Prisma__JobCurriculumClient<$Result.GetResult<Prisma.$JobCurriculumPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    curriculumOutbox<T extends JobOffer$curriculumOutboxArgs<ExtArgs> = {}>(args?: Subset<T, JobOffer$curriculumOutboxArgs<ExtArgs>>): Prisma__JobCurriculumOutboxClient<$Result.GetResult<Prisma.$JobCurriculumOutboxPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    curriculumPdfOutbox<T extends JobOffer$curriculumPdfOutboxArgs<ExtArgs> = {}>(args?: Subset<T, JobOffer$curriculumPdfOutboxArgs<ExtArgs>>): Prisma__JobCurriculumPdfOutboxClient<$Result.GetResult<Prisma.$JobCurriculumPdfOutboxPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     statusHistory<T extends JobOffer$statusHistoryArgs<ExtArgs> = {}>(args?: Subset<T, JobOffer$statusHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobStatusHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -9827,6 +13587,7 @@ export namespace Prisma {
     readonly experienceLevel: FieldRef<"JobOffer", 'ExperienceLevel'>
     readonly skills: FieldRef<"JobOffer", 'String'>
     readonly status: FieldRef<"JobOffer", 'ApplicationStatus'>
+    readonly evaluationProcessStatus: FieldRef<"JobOffer", 'JobEvaluationProcessStatus'>
     readonly notes: FieldRef<"JobOffer", 'String'>
     readonly createdAt: FieldRef<"JobOffer", 'DateTime'>
     readonly updatedAt: FieldRef<"JobOffer", 'DateTime'>
@@ -10250,6 +14011,25 @@ export namespace Prisma {
   }
 
   /**
+   * JobOffer.evaluationOutbox
+   */
+  export type JobOffer$evaluationOutboxArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobEvaluationOutbox
+     */
+    select?: JobEvaluationOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobEvaluationOutbox
+     */
+    omit?: JobEvaluationOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobEvaluationOutboxInclude<ExtArgs> | null
+    where?: JobEvaluationOutboxWhereInput
+  }
+
+  /**
    * JobOffer.curriculum
    */
   export type JobOffer$curriculumArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10266,6 +14046,44 @@ export namespace Prisma {
      */
     include?: JobCurriculumInclude<ExtArgs> | null
     where?: JobCurriculumWhereInput
+  }
+
+  /**
+   * JobOffer.curriculumOutbox
+   */
+  export type JobOffer$curriculumOutboxArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumOutbox
+     */
+    select?: JobCurriculumOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumOutbox
+     */
+    omit?: JobCurriculumOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumOutboxInclude<ExtArgs> | null
+    where?: JobCurriculumOutboxWhereInput
+  }
+
+  /**
+   * JobOffer.curriculumPdfOutbox
+   */
+  export type JobOffer$curriculumPdfOutboxArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCurriculumPdfOutbox
+     */
+    select?: JobCurriculumPdfOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCurriculumPdfOutbox
+     */
+    omit?: JobCurriculumPdfOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCurriculumPdfOutboxInclude<ExtArgs> | null
+    where?: JobCurriculumPdfOutboxWhereInput
   }
 
   /**
@@ -13442,6 +17260,7 @@ export namespace Prisma {
     id: 'id',
     jobOfferId: 'jobOfferId',
     storageKey: 'storageKey',
+    pdfStatus: 'pdfStatus',
     explanation: 'explanation',
     customLabel: 'customLabel',
     createdAt: 'createdAt',
@@ -13491,6 +17310,35 @@ export namespace Prisma {
   export type JobCurriculumPublicationScalarFieldEnum = (typeof JobCurriculumPublicationScalarFieldEnum)[keyof typeof JobCurriculumPublicationScalarFieldEnum]
 
 
+  export const JobCurriculumOutboxScalarFieldEnum: {
+    id: 'id',
+    jobOfferId: 'jobOfferId',
+    status: 'status',
+    forceRegenerate: 'forceRegenerate',
+    attempts: 'attempts',
+    lastError: 'lastError',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type JobCurriculumOutboxScalarFieldEnum = (typeof JobCurriculumOutboxScalarFieldEnum)[keyof typeof JobCurriculumOutboxScalarFieldEnum]
+
+
+  export const JobCurriculumPdfOutboxScalarFieldEnum: {
+    id: 'id',
+    jobOfferId: 'jobOfferId',
+    status: 'status',
+    templateName: 'templateName',
+    forceRegenerate: 'forceRegenerate',
+    attempts: 'attempts',
+    lastError: 'lastError',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type JobCurriculumPdfOutboxScalarFieldEnum = (typeof JobCurriculumPdfOutboxScalarFieldEnum)[keyof typeof JobCurriculumPdfOutboxScalarFieldEnum]
+
+
   export const JobEvaluationScalarFieldEnum: {
     id: 'id',
     jobOfferId: 'jobOfferId',
@@ -13513,6 +17361,19 @@ export namespace Prisma {
   export type JobEvaluationScalarFieldEnum = (typeof JobEvaluationScalarFieldEnum)[keyof typeof JobEvaluationScalarFieldEnum]
 
 
+  export const JobEvaluationOutboxScalarFieldEnum: {
+    id: 'id',
+    jobOfferId: 'jobOfferId',
+    status: 'status',
+    attempts: 'attempts',
+    lastError: 'lastError',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type JobEvaluationOutboxScalarFieldEnum = (typeof JobEvaluationOutboxScalarFieldEnum)[keyof typeof JobEvaluationOutboxScalarFieldEnum]
+
+
   export const JobOfferScalarFieldEnum: {
     id: 'id',
     externalId: 'externalId',
@@ -13533,6 +17394,7 @@ export namespace Prisma {
     experienceLevel: 'experienceLevel',
     skills: 'skills',
     status: 'status',
+    evaluationProcessStatus: 'evaluationProcessStatus',
     notes: 'notes',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -13646,9 +17508,37 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'JobCurriculumPdfStatus'
+   */
+  export type EnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'JobCurriculumPdfStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'JobCurriculumPdfStatus[]'
+   */
+  export type ListEnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'JobCurriculumPdfStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
+   * Reference to a field of type 'OutboxStatus'
+   */
+  export type EnumOutboxStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OutboxStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'OutboxStatus[]'
+   */
+  export type ListEnumOutboxStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OutboxStatus[]'>
     
 
 
@@ -13762,6 +17652,20 @@ export namespace Prisma {
    */
   export type ListEnumApplicationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ApplicationStatus[]'>
     
+
+
+  /**
+   * Reference to a field of type 'JobEvaluationProcessStatus'
+   */
+  export type EnumJobEvaluationProcessStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'JobEvaluationProcessStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'JobEvaluationProcessStatus[]'
+   */
+  export type ListEnumJobEvaluationProcessStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'JobEvaluationProcessStatus[]'>
+    
   /**
    * Deep Input Types
    */
@@ -13855,7 +17759,8 @@ export namespace Prisma {
     NOT?: JobCurriculumWhereInput | JobCurriculumWhereInput[]
     id?: StringFilter<"JobCurriculum"> | string
     jobOfferId?: StringFilter<"JobCurriculum"> | string
-    storageKey?: StringFilter<"JobCurriculum"> | string
+    storageKey?: StringNullableFilter<"JobCurriculum"> | string | null
+    pdfStatus?: EnumJobCurriculumPdfStatusFilter<"JobCurriculum"> | $Enums.JobCurriculumPdfStatus
     explanation?: StringFilter<"JobCurriculum"> | string
     customLabel?: StringNullableFilter<"JobCurriculum"> | string | null
     createdAt?: DateTimeFilter<"JobCurriculum"> | Date | string
@@ -13869,7 +17774,8 @@ export namespace Prisma {
   export type JobCurriculumOrderByWithRelationInput = {
     id?: SortOrder
     jobOfferId?: SortOrder
-    storageKey?: SortOrder
+    storageKey?: SortOrderInput | SortOrder
+    pdfStatus?: SortOrder
     explanation?: SortOrder
     customLabel?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -13886,7 +17792,8 @@ export namespace Prisma {
     AND?: JobCurriculumWhereInput | JobCurriculumWhereInput[]
     OR?: JobCurriculumWhereInput[]
     NOT?: JobCurriculumWhereInput | JobCurriculumWhereInput[]
-    storageKey?: StringFilter<"JobCurriculum"> | string
+    storageKey?: StringNullableFilter<"JobCurriculum"> | string | null
+    pdfStatus?: EnumJobCurriculumPdfStatusFilter<"JobCurriculum"> | $Enums.JobCurriculumPdfStatus
     explanation?: StringFilter<"JobCurriculum"> | string
     customLabel?: StringNullableFilter<"JobCurriculum"> | string | null
     createdAt?: DateTimeFilter<"JobCurriculum"> | Date | string
@@ -13900,7 +17807,8 @@ export namespace Prisma {
   export type JobCurriculumOrderByWithAggregationInput = {
     id?: SortOrder
     jobOfferId?: SortOrder
-    storageKey?: SortOrder
+    storageKey?: SortOrderInput | SortOrder
+    pdfStatus?: SortOrder
     explanation?: SortOrder
     customLabel?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -13916,7 +17824,8 @@ export namespace Prisma {
     NOT?: JobCurriculumScalarWhereWithAggregatesInput | JobCurriculumScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"JobCurriculum"> | string
     jobOfferId?: StringWithAggregatesFilter<"JobCurriculum"> | string
-    storageKey?: StringWithAggregatesFilter<"JobCurriculum"> | string
+    storageKey?: StringNullableWithAggregatesFilter<"JobCurriculum"> | string | null
+    pdfStatus?: EnumJobCurriculumPdfStatusWithAggregatesFilter<"JobCurriculum"> | $Enums.JobCurriculumPdfStatus
     explanation?: StringWithAggregatesFilter<"JobCurriculum"> | string
     customLabel?: StringNullableWithAggregatesFilter<"JobCurriculum"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"JobCurriculum"> | Date | string
@@ -14129,6 +18038,155 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"JobCurriculumPublication"> | Date | string
   }
 
+  export type JobCurriculumOutboxWhereInput = {
+    AND?: JobCurriculumOutboxWhereInput | JobCurriculumOutboxWhereInput[]
+    OR?: JobCurriculumOutboxWhereInput[]
+    NOT?: JobCurriculumOutboxWhereInput | JobCurriculumOutboxWhereInput[]
+    id?: StringFilter<"JobCurriculumOutbox"> | string
+    jobOfferId?: StringFilter<"JobCurriculumOutbox"> | string
+    status?: EnumOutboxStatusFilter<"JobCurriculumOutbox"> | $Enums.OutboxStatus
+    forceRegenerate?: BoolFilter<"JobCurriculumOutbox"> | boolean
+    attempts?: IntFilter<"JobCurriculumOutbox"> | number
+    lastError?: StringNullableFilter<"JobCurriculumOutbox"> | string | null
+    createdAt?: DateTimeFilter<"JobCurriculumOutbox"> | Date | string
+    updatedAt?: DateTimeFilter<"JobCurriculumOutbox"> | Date | string
+    jobOffer?: XOR<JobOfferScalarRelationFilter, JobOfferWhereInput>
+  }
+
+  export type JobCurriculumOutboxOrderByWithRelationInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    status?: SortOrder
+    forceRegenerate?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    jobOffer?: JobOfferOrderByWithRelationInput
+  }
+
+  export type JobCurriculumOutboxWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    jobOfferId?: string
+    AND?: JobCurriculumOutboxWhereInput | JobCurriculumOutboxWhereInput[]
+    OR?: JobCurriculumOutboxWhereInput[]
+    NOT?: JobCurriculumOutboxWhereInput | JobCurriculumOutboxWhereInput[]
+    status?: EnumOutboxStatusFilter<"JobCurriculumOutbox"> | $Enums.OutboxStatus
+    forceRegenerate?: BoolFilter<"JobCurriculumOutbox"> | boolean
+    attempts?: IntFilter<"JobCurriculumOutbox"> | number
+    lastError?: StringNullableFilter<"JobCurriculumOutbox"> | string | null
+    createdAt?: DateTimeFilter<"JobCurriculumOutbox"> | Date | string
+    updatedAt?: DateTimeFilter<"JobCurriculumOutbox"> | Date | string
+    jobOffer?: XOR<JobOfferScalarRelationFilter, JobOfferWhereInput>
+  }, "id" | "jobOfferId">
+
+  export type JobCurriculumOutboxOrderByWithAggregationInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    status?: SortOrder
+    forceRegenerate?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: JobCurriculumOutboxCountOrderByAggregateInput
+    _avg?: JobCurriculumOutboxAvgOrderByAggregateInput
+    _max?: JobCurriculumOutboxMaxOrderByAggregateInput
+    _min?: JobCurriculumOutboxMinOrderByAggregateInput
+    _sum?: JobCurriculumOutboxSumOrderByAggregateInput
+  }
+
+  export type JobCurriculumOutboxScalarWhereWithAggregatesInput = {
+    AND?: JobCurriculumOutboxScalarWhereWithAggregatesInput | JobCurriculumOutboxScalarWhereWithAggregatesInput[]
+    OR?: JobCurriculumOutboxScalarWhereWithAggregatesInput[]
+    NOT?: JobCurriculumOutboxScalarWhereWithAggregatesInput | JobCurriculumOutboxScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"JobCurriculumOutbox"> | string
+    jobOfferId?: StringWithAggregatesFilter<"JobCurriculumOutbox"> | string
+    status?: EnumOutboxStatusWithAggregatesFilter<"JobCurriculumOutbox"> | $Enums.OutboxStatus
+    forceRegenerate?: BoolWithAggregatesFilter<"JobCurriculumOutbox"> | boolean
+    attempts?: IntWithAggregatesFilter<"JobCurriculumOutbox"> | number
+    lastError?: StringNullableWithAggregatesFilter<"JobCurriculumOutbox"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"JobCurriculumOutbox"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"JobCurriculumOutbox"> | Date | string
+  }
+
+  export type JobCurriculumPdfOutboxWhereInput = {
+    AND?: JobCurriculumPdfOutboxWhereInput | JobCurriculumPdfOutboxWhereInput[]
+    OR?: JobCurriculumPdfOutboxWhereInput[]
+    NOT?: JobCurriculumPdfOutboxWhereInput | JobCurriculumPdfOutboxWhereInput[]
+    id?: StringFilter<"JobCurriculumPdfOutbox"> | string
+    jobOfferId?: StringFilter<"JobCurriculumPdfOutbox"> | string
+    status?: EnumOutboxStatusFilter<"JobCurriculumPdfOutbox"> | $Enums.OutboxStatus
+    templateName?: StringNullableFilter<"JobCurriculumPdfOutbox"> | string | null
+    forceRegenerate?: BoolFilter<"JobCurriculumPdfOutbox"> | boolean
+    attempts?: IntFilter<"JobCurriculumPdfOutbox"> | number
+    lastError?: StringNullableFilter<"JobCurriculumPdfOutbox"> | string | null
+    createdAt?: DateTimeFilter<"JobCurriculumPdfOutbox"> | Date | string
+    updatedAt?: DateTimeFilter<"JobCurriculumPdfOutbox"> | Date | string
+    jobOffer?: XOR<JobOfferScalarRelationFilter, JobOfferWhereInput>
+  }
+
+  export type JobCurriculumPdfOutboxOrderByWithRelationInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    status?: SortOrder
+    templateName?: SortOrderInput | SortOrder
+    forceRegenerate?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    jobOffer?: JobOfferOrderByWithRelationInput
+  }
+
+  export type JobCurriculumPdfOutboxWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    jobOfferId?: string
+    AND?: JobCurriculumPdfOutboxWhereInput | JobCurriculumPdfOutboxWhereInput[]
+    OR?: JobCurriculumPdfOutboxWhereInput[]
+    NOT?: JobCurriculumPdfOutboxWhereInput | JobCurriculumPdfOutboxWhereInput[]
+    status?: EnumOutboxStatusFilter<"JobCurriculumPdfOutbox"> | $Enums.OutboxStatus
+    templateName?: StringNullableFilter<"JobCurriculumPdfOutbox"> | string | null
+    forceRegenerate?: BoolFilter<"JobCurriculumPdfOutbox"> | boolean
+    attempts?: IntFilter<"JobCurriculumPdfOutbox"> | number
+    lastError?: StringNullableFilter<"JobCurriculumPdfOutbox"> | string | null
+    createdAt?: DateTimeFilter<"JobCurriculumPdfOutbox"> | Date | string
+    updatedAt?: DateTimeFilter<"JobCurriculumPdfOutbox"> | Date | string
+    jobOffer?: XOR<JobOfferScalarRelationFilter, JobOfferWhereInput>
+  }, "id" | "jobOfferId">
+
+  export type JobCurriculumPdfOutboxOrderByWithAggregationInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    status?: SortOrder
+    templateName?: SortOrderInput | SortOrder
+    forceRegenerate?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: JobCurriculumPdfOutboxCountOrderByAggregateInput
+    _avg?: JobCurriculumPdfOutboxAvgOrderByAggregateInput
+    _max?: JobCurriculumPdfOutboxMaxOrderByAggregateInput
+    _min?: JobCurriculumPdfOutboxMinOrderByAggregateInput
+    _sum?: JobCurriculumPdfOutboxSumOrderByAggregateInput
+  }
+
+  export type JobCurriculumPdfOutboxScalarWhereWithAggregatesInput = {
+    AND?: JobCurriculumPdfOutboxScalarWhereWithAggregatesInput | JobCurriculumPdfOutboxScalarWhereWithAggregatesInput[]
+    OR?: JobCurriculumPdfOutboxScalarWhereWithAggregatesInput[]
+    NOT?: JobCurriculumPdfOutboxScalarWhereWithAggregatesInput | JobCurriculumPdfOutboxScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"JobCurriculumPdfOutbox"> | string
+    jobOfferId?: StringWithAggregatesFilter<"JobCurriculumPdfOutbox"> | string
+    status?: EnumOutboxStatusWithAggregatesFilter<"JobCurriculumPdfOutbox"> | $Enums.OutboxStatus
+    templateName?: StringNullableWithAggregatesFilter<"JobCurriculumPdfOutbox"> | string | null
+    forceRegenerate?: BoolWithAggregatesFilter<"JobCurriculumPdfOutbox"> | boolean
+    attempts?: IntWithAggregatesFilter<"JobCurriculumPdfOutbox"> | number
+    lastError?: StringNullableWithAggregatesFilter<"JobCurriculumPdfOutbox"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"JobCurriculumPdfOutbox"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"JobCurriculumPdfOutbox"> | Date | string
+  }
+
   export type JobEvaluationWhereInput = {
     AND?: JobEvaluationWhereInput | JobEvaluationWhereInput[]
     OR?: JobEvaluationWhereInput[]
@@ -14241,6 +18299,73 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"JobEvaluation"> | Date | string
   }
 
+  export type JobEvaluationOutboxWhereInput = {
+    AND?: JobEvaluationOutboxWhereInput | JobEvaluationOutboxWhereInput[]
+    OR?: JobEvaluationOutboxWhereInput[]
+    NOT?: JobEvaluationOutboxWhereInput | JobEvaluationOutboxWhereInput[]
+    id?: StringFilter<"JobEvaluationOutbox"> | string
+    jobOfferId?: StringFilter<"JobEvaluationOutbox"> | string
+    status?: EnumOutboxStatusFilter<"JobEvaluationOutbox"> | $Enums.OutboxStatus
+    attempts?: IntFilter<"JobEvaluationOutbox"> | number
+    lastError?: StringNullableFilter<"JobEvaluationOutbox"> | string | null
+    createdAt?: DateTimeFilter<"JobEvaluationOutbox"> | Date | string
+    updatedAt?: DateTimeFilter<"JobEvaluationOutbox"> | Date | string
+    jobOffer?: XOR<JobOfferScalarRelationFilter, JobOfferWhereInput>
+  }
+
+  export type JobEvaluationOutboxOrderByWithRelationInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    status?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    jobOffer?: JobOfferOrderByWithRelationInput
+  }
+
+  export type JobEvaluationOutboxWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    jobOfferId?: string
+    AND?: JobEvaluationOutboxWhereInput | JobEvaluationOutboxWhereInput[]
+    OR?: JobEvaluationOutboxWhereInput[]
+    NOT?: JobEvaluationOutboxWhereInput | JobEvaluationOutboxWhereInput[]
+    status?: EnumOutboxStatusFilter<"JobEvaluationOutbox"> | $Enums.OutboxStatus
+    attempts?: IntFilter<"JobEvaluationOutbox"> | number
+    lastError?: StringNullableFilter<"JobEvaluationOutbox"> | string | null
+    createdAt?: DateTimeFilter<"JobEvaluationOutbox"> | Date | string
+    updatedAt?: DateTimeFilter<"JobEvaluationOutbox"> | Date | string
+    jobOffer?: XOR<JobOfferScalarRelationFilter, JobOfferWhereInput>
+  }, "id" | "jobOfferId">
+
+  export type JobEvaluationOutboxOrderByWithAggregationInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    status?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: JobEvaluationOutboxCountOrderByAggregateInput
+    _avg?: JobEvaluationOutboxAvgOrderByAggregateInput
+    _max?: JobEvaluationOutboxMaxOrderByAggregateInput
+    _min?: JobEvaluationOutboxMinOrderByAggregateInput
+    _sum?: JobEvaluationOutboxSumOrderByAggregateInput
+  }
+
+  export type JobEvaluationOutboxScalarWhereWithAggregatesInput = {
+    AND?: JobEvaluationOutboxScalarWhereWithAggregatesInput | JobEvaluationOutboxScalarWhereWithAggregatesInput[]
+    OR?: JobEvaluationOutboxScalarWhereWithAggregatesInput[]
+    NOT?: JobEvaluationOutboxScalarWhereWithAggregatesInput | JobEvaluationOutboxScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"JobEvaluationOutbox"> | string
+    jobOfferId?: StringWithAggregatesFilter<"JobEvaluationOutbox"> | string
+    status?: EnumOutboxStatusWithAggregatesFilter<"JobEvaluationOutbox"> | $Enums.OutboxStatus
+    attempts?: IntWithAggregatesFilter<"JobEvaluationOutbox"> | number
+    lastError?: StringNullableWithAggregatesFilter<"JobEvaluationOutbox"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"JobEvaluationOutbox"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"JobEvaluationOutbox"> | Date | string
+  }
+
   export type JobOfferWhereInput = {
     AND?: JobOfferWhereInput | JobOfferWhereInput[]
     OR?: JobOfferWhereInput[]
@@ -14264,12 +18389,16 @@ export namespace Prisma {
     experienceLevel?: EnumExperienceLevelFilter<"JobOffer"> | $Enums.ExperienceLevel
     skills?: StringNullableFilter<"JobOffer"> | string | null
     status?: EnumApplicationStatusFilter<"JobOffer"> | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFilter<"JobOffer"> | $Enums.JobEvaluationProcessStatus
     notes?: StringNullableFilter<"JobOffer"> | string | null
     createdAt?: DateTimeFilter<"JobOffer"> | Date | string
     updatedAt?: DateTimeFilter<"JobOffer"> | Date | string
     company?: XOR<CompanyScalarRelationFilter, CompanyWhereInput>
     evaluation?: XOR<JobEvaluationNullableScalarRelationFilter, JobEvaluationWhereInput> | null
+    evaluationOutbox?: XOR<JobEvaluationOutboxNullableScalarRelationFilter, JobEvaluationOutboxWhereInput> | null
     curriculum?: XOR<JobCurriculumNullableScalarRelationFilter, JobCurriculumWhereInput> | null
+    curriculumOutbox?: XOR<JobCurriculumOutboxNullableScalarRelationFilter, JobCurriculumOutboxWhereInput> | null
+    curriculumPdfOutbox?: XOR<JobCurriculumPdfOutboxNullableScalarRelationFilter, JobCurriculumPdfOutboxWhereInput> | null
     statusHistory?: JobStatusHistoryListRelationFilter
   }
 
@@ -14293,12 +18422,16 @@ export namespace Prisma {
     experienceLevel?: SortOrder
     skills?: SortOrderInput | SortOrder
     status?: SortOrder
+    evaluationProcessStatus?: SortOrder
     notes?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     company?: CompanyOrderByWithRelationInput
     evaluation?: JobEvaluationOrderByWithRelationInput
+    evaluationOutbox?: JobEvaluationOutboxOrderByWithRelationInput
     curriculum?: JobCurriculumOrderByWithRelationInput
+    curriculumOutbox?: JobCurriculumOutboxOrderByWithRelationInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxOrderByWithRelationInput
     statusHistory?: JobStatusHistoryOrderByRelationAggregateInput
   }
 
@@ -14326,12 +18459,16 @@ export namespace Prisma {
     experienceLevel?: EnumExperienceLevelFilter<"JobOffer"> | $Enums.ExperienceLevel
     skills?: StringNullableFilter<"JobOffer"> | string | null
     status?: EnumApplicationStatusFilter<"JobOffer"> | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFilter<"JobOffer"> | $Enums.JobEvaluationProcessStatus
     notes?: StringNullableFilter<"JobOffer"> | string | null
     createdAt?: DateTimeFilter<"JobOffer"> | Date | string
     updatedAt?: DateTimeFilter<"JobOffer"> | Date | string
     company?: XOR<CompanyScalarRelationFilter, CompanyWhereInput>
     evaluation?: XOR<JobEvaluationNullableScalarRelationFilter, JobEvaluationWhereInput> | null
+    evaluationOutbox?: XOR<JobEvaluationOutboxNullableScalarRelationFilter, JobEvaluationOutboxWhereInput> | null
     curriculum?: XOR<JobCurriculumNullableScalarRelationFilter, JobCurriculumWhereInput> | null
+    curriculumOutbox?: XOR<JobCurriculumOutboxNullableScalarRelationFilter, JobCurriculumOutboxWhereInput> | null
+    curriculumPdfOutbox?: XOR<JobCurriculumPdfOutboxNullableScalarRelationFilter, JobCurriculumPdfOutboxWhereInput> | null
     statusHistory?: JobStatusHistoryListRelationFilter
   }, "id" | "url" | "source_externalId">
 
@@ -14355,6 +18492,7 @@ export namespace Prisma {
     experienceLevel?: SortOrder
     skills?: SortOrderInput | SortOrder
     status?: SortOrder
+    evaluationProcessStatus?: SortOrder
     notes?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -14388,6 +18526,7 @@ export namespace Prisma {
     experienceLevel?: EnumExperienceLevelWithAggregatesFilter<"JobOffer"> | $Enums.ExperienceLevel
     skills?: StringNullableWithAggregatesFilter<"JobOffer"> | string | null
     status?: EnumApplicationStatusWithAggregatesFilter<"JobOffer"> | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusWithAggregatesFilter<"JobOffer"> | $Enums.JobEvaluationProcessStatus
     notes?: StringNullableWithAggregatesFilter<"JobOffer"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"JobOffer"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"JobOffer"> | Date | string
@@ -14651,7 +18790,8 @@ export namespace Prisma {
 
   export type JobCurriculumCreateInput = {
     id?: string
-    storageKey: string
+    storageKey?: string | null
+    pdfStatus?: $Enums.JobCurriculumPdfStatus
     explanation: string
     customLabel?: string | null
     createdAt?: Date | string
@@ -14665,7 +18805,8 @@ export namespace Prisma {
   export type JobCurriculumUncheckedCreateInput = {
     id?: string
     jobOfferId: string
-    storageKey: string
+    storageKey?: string | null
+    pdfStatus?: $Enums.JobCurriculumPdfStatus
     explanation: string
     customLabel?: string | null
     createdAt?: Date | string
@@ -14677,7 +18818,8 @@ export namespace Prisma {
 
   export type JobCurriculumUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    storageKey?: StringFieldUpdateOperationsInput | string
+    storageKey?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfStatus?: EnumJobCurriculumPdfStatusFieldUpdateOperationsInput | $Enums.JobCurriculumPdfStatus
     explanation?: StringFieldUpdateOperationsInput | string
     customLabel?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14691,7 +18833,8 @@ export namespace Prisma {
   export type JobCurriculumUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     jobOfferId?: StringFieldUpdateOperationsInput | string
-    storageKey?: StringFieldUpdateOperationsInput | string
+    storageKey?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfStatus?: EnumJobCurriculumPdfStatusFieldUpdateOperationsInput | $Enums.JobCurriculumPdfStatus
     explanation?: StringFieldUpdateOperationsInput | string
     customLabel?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14704,7 +18847,8 @@ export namespace Prisma {
   export type JobCurriculumCreateManyInput = {
     id?: string
     jobOfferId: string
-    storageKey: string
+    storageKey?: string | null
+    pdfStatus?: $Enums.JobCurriculumPdfStatus
     explanation: string
     customLabel?: string | null
     createdAt?: Date | string
@@ -14713,7 +18857,8 @@ export namespace Prisma {
 
   export type JobCurriculumUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    storageKey?: StringFieldUpdateOperationsInput | string
+    storageKey?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfStatus?: EnumJobCurriculumPdfStatusFieldUpdateOperationsInput | $Enums.JobCurriculumPdfStatus
     explanation?: StringFieldUpdateOperationsInput | string
     customLabel?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14723,7 +18868,8 @@ export namespace Prisma {
   export type JobCurriculumUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     jobOfferId?: StringFieldUpdateOperationsInput | string
-    storageKey?: StringFieldUpdateOperationsInput | string
+    storageKey?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfStatus?: EnumJobCurriculumPdfStatusFieldUpdateOperationsInput | $Enums.JobCurriculumPdfStatus
     explanation?: StringFieldUpdateOperationsInput | string
     customLabel?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14944,6 +19090,165 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type JobCurriculumOutboxCreateInput = {
+    id?: string
+    status?: $Enums.OutboxStatus
+    forceRegenerate?: boolean
+    attempts?: number
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    jobOffer: JobOfferCreateNestedOneWithoutCurriculumOutboxInput
+  }
+
+  export type JobCurriculumOutboxUncheckedCreateInput = {
+    id?: string
+    jobOfferId: string
+    status?: $Enums.OutboxStatus
+    forceRegenerate?: boolean
+    attempts?: number
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type JobCurriculumOutboxUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+    forceRegenerate?: BoolFieldUpdateOperationsInput | boolean
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    jobOffer?: JobOfferUpdateOneRequiredWithoutCurriculumOutboxNestedInput
+  }
+
+  export type JobCurriculumOutboxUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    jobOfferId?: StringFieldUpdateOperationsInput | string
+    status?: EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+    forceRegenerate?: BoolFieldUpdateOperationsInput | boolean
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type JobCurriculumOutboxCreateManyInput = {
+    id?: string
+    jobOfferId: string
+    status?: $Enums.OutboxStatus
+    forceRegenerate?: boolean
+    attempts?: number
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type JobCurriculumOutboxUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+    forceRegenerate?: BoolFieldUpdateOperationsInput | boolean
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type JobCurriculumOutboxUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    jobOfferId?: StringFieldUpdateOperationsInput | string
+    status?: EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+    forceRegenerate?: BoolFieldUpdateOperationsInput | boolean
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type JobCurriculumPdfOutboxCreateInput = {
+    id?: string
+    status?: $Enums.OutboxStatus
+    templateName?: string | null
+    forceRegenerate?: boolean
+    attempts?: number
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    jobOffer: JobOfferCreateNestedOneWithoutCurriculumPdfOutboxInput
+  }
+
+  export type JobCurriculumPdfOutboxUncheckedCreateInput = {
+    id?: string
+    jobOfferId: string
+    status?: $Enums.OutboxStatus
+    templateName?: string | null
+    forceRegenerate?: boolean
+    attempts?: number
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type JobCurriculumPdfOutboxUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+    templateName?: NullableStringFieldUpdateOperationsInput | string | null
+    forceRegenerate?: BoolFieldUpdateOperationsInput | boolean
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    jobOffer?: JobOfferUpdateOneRequiredWithoutCurriculumPdfOutboxNestedInput
+  }
+
+  export type JobCurriculumPdfOutboxUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    jobOfferId?: StringFieldUpdateOperationsInput | string
+    status?: EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+    templateName?: NullableStringFieldUpdateOperationsInput | string | null
+    forceRegenerate?: BoolFieldUpdateOperationsInput | boolean
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type JobCurriculumPdfOutboxCreateManyInput = {
+    id?: string
+    jobOfferId: string
+    status?: $Enums.OutboxStatus
+    templateName?: string | null
+    forceRegenerate?: boolean
+    attempts?: number
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type JobCurriculumPdfOutboxUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+    templateName?: NullableStringFieldUpdateOperationsInput | string | null
+    forceRegenerate?: BoolFieldUpdateOperationsInput | boolean
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type JobCurriculumPdfOutboxUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    jobOfferId?: StringFieldUpdateOperationsInput | string
+    status?: EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+    templateName?: NullableStringFieldUpdateOperationsInput | string | null
+    forceRegenerate?: BoolFieldUpdateOperationsInput | boolean
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type JobEvaluationCreateInput = {
     id?: string
     status?: $Enums.EvaluationStatus
@@ -15076,6 +19381,75 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type JobEvaluationOutboxCreateInput = {
+    id?: string
+    status?: $Enums.OutboxStatus
+    attempts?: number
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    jobOffer: JobOfferCreateNestedOneWithoutEvaluationOutboxInput
+  }
+
+  export type JobEvaluationOutboxUncheckedCreateInput = {
+    id?: string
+    jobOfferId: string
+    status?: $Enums.OutboxStatus
+    attempts?: number
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type JobEvaluationOutboxUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    jobOffer?: JobOfferUpdateOneRequiredWithoutEvaluationOutboxNestedInput
+  }
+
+  export type JobEvaluationOutboxUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    jobOfferId?: StringFieldUpdateOperationsInput | string
+    status?: EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type JobEvaluationOutboxCreateManyInput = {
+    id?: string
+    jobOfferId: string
+    status?: $Enums.OutboxStatus
+    attempts?: number
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type JobEvaluationOutboxUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type JobEvaluationOutboxUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    jobOfferId?: StringFieldUpdateOperationsInput | string
+    status?: EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type JobOfferCreateInput = {
     id?: string
     externalId?: string | null
@@ -15095,12 +19469,16 @@ export namespace Prisma {
     experienceLevel?: $Enums.ExperienceLevel
     skills?: string | null
     status?: $Enums.ApplicationStatus
+    evaluationProcessStatus?: $Enums.JobEvaluationProcessStatus
     notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     company: CompanyCreateNestedOneWithoutJobOffersInput
     evaluation?: JobEvaluationCreateNestedOneWithoutJobOfferInput
+    evaluationOutbox?: JobEvaluationOutboxCreateNestedOneWithoutJobOfferInput
     curriculum?: JobCurriculumCreateNestedOneWithoutJobOfferInput
+    curriculumOutbox?: JobCurriculumOutboxCreateNestedOneWithoutJobOfferInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxCreateNestedOneWithoutJobOfferInput
     statusHistory?: JobStatusHistoryCreateNestedManyWithoutJobOfferInput
   }
 
@@ -15124,11 +19502,15 @@ export namespace Prisma {
     experienceLevel?: $Enums.ExperienceLevel
     skills?: string | null
     status?: $Enums.ApplicationStatus
+    evaluationProcessStatus?: $Enums.JobEvaluationProcessStatus
     notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     evaluation?: JobEvaluationUncheckedCreateNestedOneWithoutJobOfferInput
+    evaluationOutbox?: JobEvaluationOutboxUncheckedCreateNestedOneWithoutJobOfferInput
     curriculum?: JobCurriculumUncheckedCreateNestedOneWithoutJobOfferInput
+    curriculumOutbox?: JobCurriculumOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedCreateNestedOneWithoutJobOfferInput
     statusHistory?: JobStatusHistoryUncheckedCreateNestedManyWithoutJobOfferInput
   }
 
@@ -15151,12 +19533,16 @@ export namespace Prisma {
     experienceLevel?: EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
     skills?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFieldUpdateOperationsInput | $Enums.JobEvaluationProcessStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUpdateOneRequiredWithoutJobOffersNestedInput
     evaluation?: JobEvaluationUpdateOneWithoutJobOfferNestedInput
+    evaluationOutbox?: JobEvaluationOutboxUpdateOneWithoutJobOfferNestedInput
     curriculum?: JobCurriculumUpdateOneWithoutJobOfferNestedInput
+    curriculumOutbox?: JobCurriculumOutboxUpdateOneWithoutJobOfferNestedInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUpdateOneWithoutJobOfferNestedInput
     statusHistory?: JobStatusHistoryUpdateManyWithoutJobOfferNestedInput
   }
 
@@ -15180,11 +19566,15 @@ export namespace Prisma {
     experienceLevel?: EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
     skills?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFieldUpdateOperationsInput | $Enums.JobEvaluationProcessStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     evaluation?: JobEvaluationUncheckedUpdateOneWithoutJobOfferNestedInput
+    evaluationOutbox?: JobEvaluationOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
     curriculum?: JobCurriculumUncheckedUpdateOneWithoutJobOfferNestedInput
+    curriculumOutbox?: JobCurriculumOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
     statusHistory?: JobStatusHistoryUncheckedUpdateManyWithoutJobOfferNestedInput
   }
 
@@ -15208,6 +19598,7 @@ export namespace Prisma {
     experienceLevel?: $Enums.ExperienceLevel
     skills?: string | null
     status?: $Enums.ApplicationStatus
+    evaluationProcessStatus?: $Enums.JobEvaluationProcessStatus
     notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -15232,6 +19623,7 @@ export namespace Prisma {
     experienceLevel?: EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
     skills?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFieldUpdateOperationsInput | $Enums.JobEvaluationProcessStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15257,6 +19649,7 @@ export namespace Prisma {
     experienceLevel?: EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
     skills?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFieldUpdateOperationsInput | $Enums.JobEvaluationProcessStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15609,6 +20002,13 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type EnumJobCurriculumPdfStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.JobCurriculumPdfStatus | EnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.JobCurriculumPdfStatus[] | ListEnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.JobCurriculumPdfStatus[] | ListEnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumJobCurriculumPdfStatusFilter<$PrismaModel> | $Enums.JobCurriculumPdfStatus
+  }
+
   export type JobOfferScalarRelationFilter = {
     is?: JobOfferWhereInput
     isNot?: JobOfferWhereInput
@@ -15648,6 +20048,7 @@ export namespace Prisma {
     id?: SortOrder
     jobOfferId?: SortOrder
     storageKey?: SortOrder
+    pdfStatus?: SortOrder
     explanation?: SortOrder
     customLabel?: SortOrder
     createdAt?: SortOrder
@@ -15658,6 +20059,7 @@ export namespace Prisma {
     id?: SortOrder
     jobOfferId?: SortOrder
     storageKey?: SortOrder
+    pdfStatus?: SortOrder
     explanation?: SortOrder
     customLabel?: SortOrder
     createdAt?: SortOrder
@@ -15668,10 +20070,21 @@ export namespace Prisma {
     id?: SortOrder
     jobOfferId?: SortOrder
     storageKey?: SortOrder
+    pdfStatus?: SortOrder
     explanation?: SortOrder
     customLabel?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type EnumJobCurriculumPdfStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.JobCurriculumPdfStatus | EnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.JobCurriculumPdfStatus[] | ListEnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.JobCurriculumPdfStatus[] | ListEnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumJobCurriculumPdfStatusWithAggregatesFilter<$PrismaModel> | $Enums.JobCurriculumPdfStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumJobCurriculumPdfStatusFilter<$PrismaModel>
+    _max?: NestedEnumJobCurriculumPdfStatusFilter<$PrismaModel>
   }
 
   export type BoolFilter<$PrismaModel = never> = {
@@ -15836,6 +20249,108 @@ export namespace Prisma {
     order?: SortOrder
   }
 
+  export type EnumOutboxStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.OutboxStatus | EnumOutboxStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.OutboxStatus[] | ListEnumOutboxStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OutboxStatus[] | ListEnumOutboxStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumOutboxStatusFilter<$PrismaModel> | $Enums.OutboxStatus
+  }
+
+  export type JobCurriculumOutboxCountOrderByAggregateInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    status?: SortOrder
+    forceRegenerate?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type JobCurriculumOutboxAvgOrderByAggregateInput = {
+    attempts?: SortOrder
+  }
+
+  export type JobCurriculumOutboxMaxOrderByAggregateInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    status?: SortOrder
+    forceRegenerate?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type JobCurriculumOutboxMinOrderByAggregateInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    status?: SortOrder
+    forceRegenerate?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type JobCurriculumOutboxSumOrderByAggregateInput = {
+    attempts?: SortOrder
+  }
+
+  export type EnumOutboxStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OutboxStatus | EnumOutboxStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.OutboxStatus[] | ListEnumOutboxStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OutboxStatus[] | ListEnumOutboxStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumOutboxStatusWithAggregatesFilter<$PrismaModel> | $Enums.OutboxStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOutboxStatusFilter<$PrismaModel>
+    _max?: NestedEnumOutboxStatusFilter<$PrismaModel>
+  }
+
+  export type JobCurriculumPdfOutboxCountOrderByAggregateInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    status?: SortOrder
+    templateName?: SortOrder
+    forceRegenerate?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type JobCurriculumPdfOutboxAvgOrderByAggregateInput = {
+    attempts?: SortOrder
+  }
+
+  export type JobCurriculumPdfOutboxMaxOrderByAggregateInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    status?: SortOrder
+    templateName?: SortOrder
+    forceRegenerate?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type JobCurriculumPdfOutboxMinOrderByAggregateInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    status?: SortOrder
+    templateName?: SortOrder
+    forceRegenerate?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type JobCurriculumPdfOutboxSumOrderByAggregateInput = {
+    attempts?: SortOrder
+  }
+
   export type EnumEvaluationStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.EvaluationStatus | EnumEvaluationStatusFieldRefInput<$PrismaModel>
     in?: $Enums.EvaluationStatus[] | ListEnumEvaluationStatusFieldRefInput<$PrismaModel>
@@ -15983,6 +20498,44 @@ export namespace Prisma {
     _max?: NestedEnumEvaluationPriorityFilter<$PrismaModel>
   }
 
+  export type JobEvaluationOutboxCountOrderByAggregateInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    status?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type JobEvaluationOutboxAvgOrderByAggregateInput = {
+    attempts?: SortOrder
+  }
+
+  export type JobEvaluationOutboxMaxOrderByAggregateInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    status?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type JobEvaluationOutboxMinOrderByAggregateInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    status?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type JobEvaluationOutboxSumOrderByAggregateInput = {
+    attempts?: SortOrder
+  }
+
   export type EnumJobSourceFilter<$PrismaModel = never> = {
     equals?: $Enums.JobSource | EnumJobSourceFieldRefInput<$PrismaModel>
     in?: $Enums.JobSource[] | ListEnumJobSourceFieldRefInput<$PrismaModel>
@@ -16033,6 +20586,13 @@ export namespace Prisma {
     not?: NestedEnumApplicationStatusFilter<$PrismaModel> | $Enums.ApplicationStatus
   }
 
+  export type EnumJobEvaluationProcessStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.JobEvaluationProcessStatus | EnumJobEvaluationProcessStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.JobEvaluationProcessStatus[] | ListEnumJobEvaluationProcessStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.JobEvaluationProcessStatus[] | ListEnumJobEvaluationProcessStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumJobEvaluationProcessStatusFilter<$PrismaModel> | $Enums.JobEvaluationProcessStatus
+  }
+
   export type CompanyScalarRelationFilter = {
     is?: CompanyWhereInput
     isNot?: CompanyWhereInput
@@ -16043,9 +20603,24 @@ export namespace Prisma {
     isNot?: JobEvaluationWhereInput | null
   }
 
+  export type JobEvaluationOutboxNullableScalarRelationFilter = {
+    is?: JobEvaluationOutboxWhereInput | null
+    isNot?: JobEvaluationOutboxWhereInput | null
+  }
+
   export type JobCurriculumNullableScalarRelationFilter = {
     is?: JobCurriculumWhereInput | null
     isNot?: JobCurriculumWhereInput | null
+  }
+
+  export type JobCurriculumOutboxNullableScalarRelationFilter = {
+    is?: JobCurriculumOutboxWhereInput | null
+    isNot?: JobCurriculumOutboxWhereInput | null
+  }
+
+  export type JobCurriculumPdfOutboxNullableScalarRelationFilter = {
+    is?: JobCurriculumPdfOutboxWhereInput | null
+    isNot?: JobCurriculumPdfOutboxWhereInput | null
   }
 
   export type JobStatusHistoryListRelationFilter = {
@@ -16083,6 +20658,7 @@ export namespace Prisma {
     experienceLevel?: SortOrder
     skills?: SortOrder
     status?: SortOrder
+    evaluationProcessStatus?: SortOrder
     notes?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -16113,6 +20689,7 @@ export namespace Prisma {
     experienceLevel?: SortOrder
     skills?: SortOrder
     status?: SortOrder
+    evaluationProcessStatus?: SortOrder
     notes?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -16138,6 +20715,7 @@ export namespace Prisma {
     experienceLevel?: SortOrder
     skills?: SortOrder
     status?: SortOrder
+    evaluationProcessStatus?: SortOrder
     notes?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -16216,6 +20794,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumApplicationStatusFilter<$PrismaModel>
     _max?: NestedEnumApplicationStatusFilter<$PrismaModel>
+  }
+
+  export type EnumJobEvaluationProcessStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.JobEvaluationProcessStatus | EnumJobEvaluationProcessStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.JobEvaluationProcessStatus[] | ListEnumJobEvaluationProcessStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.JobEvaluationProcessStatus[] | ListEnumJobEvaluationProcessStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumJobEvaluationProcessStatusWithAggregatesFilter<$PrismaModel> | $Enums.JobEvaluationProcessStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumJobEvaluationProcessStatusFilter<$PrismaModel>
+    _max?: NestedEnumJobEvaluationProcessStatusFilter<$PrismaModel>
   }
 
   export type EnumApplicationStatusNullableFilter<$PrismaModel = never> = {
@@ -16425,6 +21013,10 @@ export namespace Prisma {
     connect?: JobCurriculumPublicationWhereUniqueInput | JobCurriculumPublicationWhereUniqueInput[]
   }
 
+  export type EnumJobCurriculumPdfStatusFieldUpdateOperationsInput = {
+    set?: $Enums.JobCurriculumPdfStatus
+  }
+
   export type JobOfferUpdateOneRequiredWithoutCurriculumNestedInput = {
     create?: XOR<JobOfferCreateWithoutCurriculumInput, JobOfferUncheckedCreateWithoutCurriculumInput>
     connectOrCreate?: JobOfferCreateOrConnectWithoutCurriculumInput
@@ -16571,6 +21163,38 @@ export namespace Prisma {
     update?: XOR<XOR<JobCurriculumUpdateToOneWithWhereWithoutPublicationsInput, JobCurriculumUpdateWithoutPublicationsInput>, JobCurriculumUncheckedUpdateWithoutPublicationsInput>
   }
 
+  export type JobOfferCreateNestedOneWithoutCurriculumOutboxInput = {
+    create?: XOR<JobOfferCreateWithoutCurriculumOutboxInput, JobOfferUncheckedCreateWithoutCurriculumOutboxInput>
+    connectOrCreate?: JobOfferCreateOrConnectWithoutCurriculumOutboxInput
+    connect?: JobOfferWhereUniqueInput
+  }
+
+  export type EnumOutboxStatusFieldUpdateOperationsInput = {
+    set?: $Enums.OutboxStatus
+  }
+
+  export type JobOfferUpdateOneRequiredWithoutCurriculumOutboxNestedInput = {
+    create?: XOR<JobOfferCreateWithoutCurriculumOutboxInput, JobOfferUncheckedCreateWithoutCurriculumOutboxInput>
+    connectOrCreate?: JobOfferCreateOrConnectWithoutCurriculumOutboxInput
+    upsert?: JobOfferUpsertWithoutCurriculumOutboxInput
+    connect?: JobOfferWhereUniqueInput
+    update?: XOR<XOR<JobOfferUpdateToOneWithWhereWithoutCurriculumOutboxInput, JobOfferUpdateWithoutCurriculumOutboxInput>, JobOfferUncheckedUpdateWithoutCurriculumOutboxInput>
+  }
+
+  export type JobOfferCreateNestedOneWithoutCurriculumPdfOutboxInput = {
+    create?: XOR<JobOfferCreateWithoutCurriculumPdfOutboxInput, JobOfferUncheckedCreateWithoutCurriculumPdfOutboxInput>
+    connectOrCreate?: JobOfferCreateOrConnectWithoutCurriculumPdfOutboxInput
+    connect?: JobOfferWhereUniqueInput
+  }
+
+  export type JobOfferUpdateOneRequiredWithoutCurriculumPdfOutboxNestedInput = {
+    create?: XOR<JobOfferCreateWithoutCurriculumPdfOutboxInput, JobOfferUncheckedCreateWithoutCurriculumPdfOutboxInput>
+    connectOrCreate?: JobOfferCreateOrConnectWithoutCurriculumPdfOutboxInput
+    upsert?: JobOfferUpsertWithoutCurriculumPdfOutboxInput
+    connect?: JobOfferWhereUniqueInput
+    update?: XOR<XOR<JobOfferUpdateToOneWithWhereWithoutCurriculumPdfOutboxInput, JobOfferUpdateWithoutCurriculumPdfOutboxInput>, JobOfferUncheckedUpdateWithoutCurriculumPdfOutboxInput>
+  }
+
   export type JobOfferCreateNestedOneWithoutEvaluationInput = {
     create?: XOR<JobOfferCreateWithoutEvaluationInput, JobOfferUncheckedCreateWithoutEvaluationInput>
     connectOrCreate?: JobOfferCreateOrConnectWithoutEvaluationInput
@@ -16605,6 +21229,20 @@ export namespace Prisma {
     update?: XOR<XOR<JobOfferUpdateToOneWithWhereWithoutEvaluationInput, JobOfferUpdateWithoutEvaluationInput>, JobOfferUncheckedUpdateWithoutEvaluationInput>
   }
 
+  export type JobOfferCreateNestedOneWithoutEvaluationOutboxInput = {
+    create?: XOR<JobOfferCreateWithoutEvaluationOutboxInput, JobOfferUncheckedCreateWithoutEvaluationOutboxInput>
+    connectOrCreate?: JobOfferCreateOrConnectWithoutEvaluationOutboxInput
+    connect?: JobOfferWhereUniqueInput
+  }
+
+  export type JobOfferUpdateOneRequiredWithoutEvaluationOutboxNestedInput = {
+    create?: XOR<JobOfferCreateWithoutEvaluationOutboxInput, JobOfferUncheckedCreateWithoutEvaluationOutboxInput>
+    connectOrCreate?: JobOfferCreateOrConnectWithoutEvaluationOutboxInput
+    upsert?: JobOfferUpsertWithoutEvaluationOutboxInput
+    connect?: JobOfferWhereUniqueInput
+    update?: XOR<XOR<JobOfferUpdateToOneWithWhereWithoutEvaluationOutboxInput, JobOfferUpdateWithoutEvaluationOutboxInput>, JobOfferUncheckedUpdateWithoutEvaluationOutboxInput>
+  }
+
   export type CompanyCreateNestedOneWithoutJobOffersInput = {
     create?: XOR<CompanyCreateWithoutJobOffersInput, CompanyUncheckedCreateWithoutJobOffersInput>
     connectOrCreate?: CompanyCreateOrConnectWithoutJobOffersInput
@@ -16617,10 +21255,28 @@ export namespace Prisma {
     connect?: JobEvaluationWhereUniqueInput
   }
 
+  export type JobEvaluationOutboxCreateNestedOneWithoutJobOfferInput = {
+    create?: XOR<JobEvaluationOutboxCreateWithoutJobOfferInput, JobEvaluationOutboxUncheckedCreateWithoutJobOfferInput>
+    connectOrCreate?: JobEvaluationOutboxCreateOrConnectWithoutJobOfferInput
+    connect?: JobEvaluationOutboxWhereUniqueInput
+  }
+
   export type JobCurriculumCreateNestedOneWithoutJobOfferInput = {
     create?: XOR<JobCurriculumCreateWithoutJobOfferInput, JobCurriculumUncheckedCreateWithoutJobOfferInput>
     connectOrCreate?: JobCurriculumCreateOrConnectWithoutJobOfferInput
     connect?: JobCurriculumWhereUniqueInput
+  }
+
+  export type JobCurriculumOutboxCreateNestedOneWithoutJobOfferInput = {
+    create?: XOR<JobCurriculumOutboxCreateWithoutJobOfferInput, JobCurriculumOutboxUncheckedCreateWithoutJobOfferInput>
+    connectOrCreate?: JobCurriculumOutboxCreateOrConnectWithoutJobOfferInput
+    connect?: JobCurriculumOutboxWhereUniqueInput
+  }
+
+  export type JobCurriculumPdfOutboxCreateNestedOneWithoutJobOfferInput = {
+    create?: XOR<JobCurriculumPdfOutboxCreateWithoutJobOfferInput, JobCurriculumPdfOutboxUncheckedCreateWithoutJobOfferInput>
+    connectOrCreate?: JobCurriculumPdfOutboxCreateOrConnectWithoutJobOfferInput
+    connect?: JobCurriculumPdfOutboxWhereUniqueInput
   }
 
   export type JobStatusHistoryCreateNestedManyWithoutJobOfferInput = {
@@ -16636,10 +21292,28 @@ export namespace Prisma {
     connect?: JobEvaluationWhereUniqueInput
   }
 
+  export type JobEvaluationOutboxUncheckedCreateNestedOneWithoutJobOfferInput = {
+    create?: XOR<JobEvaluationOutboxCreateWithoutJobOfferInput, JobEvaluationOutboxUncheckedCreateWithoutJobOfferInput>
+    connectOrCreate?: JobEvaluationOutboxCreateOrConnectWithoutJobOfferInput
+    connect?: JobEvaluationOutboxWhereUniqueInput
+  }
+
   export type JobCurriculumUncheckedCreateNestedOneWithoutJobOfferInput = {
     create?: XOR<JobCurriculumCreateWithoutJobOfferInput, JobCurriculumUncheckedCreateWithoutJobOfferInput>
     connectOrCreate?: JobCurriculumCreateOrConnectWithoutJobOfferInput
     connect?: JobCurriculumWhereUniqueInput
+  }
+
+  export type JobCurriculumOutboxUncheckedCreateNestedOneWithoutJobOfferInput = {
+    create?: XOR<JobCurriculumOutboxCreateWithoutJobOfferInput, JobCurriculumOutboxUncheckedCreateWithoutJobOfferInput>
+    connectOrCreate?: JobCurriculumOutboxCreateOrConnectWithoutJobOfferInput
+    connect?: JobCurriculumOutboxWhereUniqueInput
+  }
+
+  export type JobCurriculumPdfOutboxUncheckedCreateNestedOneWithoutJobOfferInput = {
+    create?: XOR<JobCurriculumPdfOutboxCreateWithoutJobOfferInput, JobCurriculumPdfOutboxUncheckedCreateWithoutJobOfferInput>
+    connectOrCreate?: JobCurriculumPdfOutboxCreateOrConnectWithoutJobOfferInput
+    connect?: JobCurriculumPdfOutboxWhereUniqueInput
   }
 
   export type JobStatusHistoryUncheckedCreateNestedManyWithoutJobOfferInput = {
@@ -16677,6 +21351,10 @@ export namespace Prisma {
     set?: $Enums.ApplicationStatus
   }
 
+  export type EnumJobEvaluationProcessStatusFieldUpdateOperationsInput = {
+    set?: $Enums.JobEvaluationProcessStatus
+  }
+
   export type CompanyUpdateOneRequiredWithoutJobOffersNestedInput = {
     create?: XOR<CompanyCreateWithoutJobOffersInput, CompanyUncheckedCreateWithoutJobOffersInput>
     connectOrCreate?: CompanyCreateOrConnectWithoutJobOffersInput
@@ -16695,6 +21373,16 @@ export namespace Prisma {
     update?: XOR<XOR<JobEvaluationUpdateToOneWithWhereWithoutJobOfferInput, JobEvaluationUpdateWithoutJobOfferInput>, JobEvaluationUncheckedUpdateWithoutJobOfferInput>
   }
 
+  export type JobEvaluationOutboxUpdateOneWithoutJobOfferNestedInput = {
+    create?: XOR<JobEvaluationOutboxCreateWithoutJobOfferInput, JobEvaluationOutboxUncheckedCreateWithoutJobOfferInput>
+    connectOrCreate?: JobEvaluationOutboxCreateOrConnectWithoutJobOfferInput
+    upsert?: JobEvaluationOutboxUpsertWithoutJobOfferInput
+    disconnect?: JobEvaluationOutboxWhereInput | boolean
+    delete?: JobEvaluationOutboxWhereInput | boolean
+    connect?: JobEvaluationOutboxWhereUniqueInput
+    update?: XOR<XOR<JobEvaluationOutboxUpdateToOneWithWhereWithoutJobOfferInput, JobEvaluationOutboxUpdateWithoutJobOfferInput>, JobEvaluationOutboxUncheckedUpdateWithoutJobOfferInput>
+  }
+
   export type JobCurriculumUpdateOneWithoutJobOfferNestedInput = {
     create?: XOR<JobCurriculumCreateWithoutJobOfferInput, JobCurriculumUncheckedCreateWithoutJobOfferInput>
     connectOrCreate?: JobCurriculumCreateOrConnectWithoutJobOfferInput
@@ -16703,6 +21391,26 @@ export namespace Prisma {
     delete?: JobCurriculumWhereInput | boolean
     connect?: JobCurriculumWhereUniqueInput
     update?: XOR<XOR<JobCurriculumUpdateToOneWithWhereWithoutJobOfferInput, JobCurriculumUpdateWithoutJobOfferInput>, JobCurriculumUncheckedUpdateWithoutJobOfferInput>
+  }
+
+  export type JobCurriculumOutboxUpdateOneWithoutJobOfferNestedInput = {
+    create?: XOR<JobCurriculumOutboxCreateWithoutJobOfferInput, JobCurriculumOutboxUncheckedCreateWithoutJobOfferInput>
+    connectOrCreate?: JobCurriculumOutboxCreateOrConnectWithoutJobOfferInput
+    upsert?: JobCurriculumOutboxUpsertWithoutJobOfferInput
+    disconnect?: JobCurriculumOutboxWhereInput | boolean
+    delete?: JobCurriculumOutboxWhereInput | boolean
+    connect?: JobCurriculumOutboxWhereUniqueInput
+    update?: XOR<XOR<JobCurriculumOutboxUpdateToOneWithWhereWithoutJobOfferInput, JobCurriculumOutboxUpdateWithoutJobOfferInput>, JobCurriculumOutboxUncheckedUpdateWithoutJobOfferInput>
+  }
+
+  export type JobCurriculumPdfOutboxUpdateOneWithoutJobOfferNestedInput = {
+    create?: XOR<JobCurriculumPdfOutboxCreateWithoutJobOfferInput, JobCurriculumPdfOutboxUncheckedCreateWithoutJobOfferInput>
+    connectOrCreate?: JobCurriculumPdfOutboxCreateOrConnectWithoutJobOfferInput
+    upsert?: JobCurriculumPdfOutboxUpsertWithoutJobOfferInput
+    disconnect?: JobCurriculumPdfOutboxWhereInput | boolean
+    delete?: JobCurriculumPdfOutboxWhereInput | boolean
+    connect?: JobCurriculumPdfOutboxWhereUniqueInput
+    update?: XOR<XOR<JobCurriculumPdfOutboxUpdateToOneWithWhereWithoutJobOfferInput, JobCurriculumPdfOutboxUpdateWithoutJobOfferInput>, JobCurriculumPdfOutboxUncheckedUpdateWithoutJobOfferInput>
   }
 
   export type JobStatusHistoryUpdateManyWithoutJobOfferNestedInput = {
@@ -16729,6 +21437,16 @@ export namespace Prisma {
     update?: XOR<XOR<JobEvaluationUpdateToOneWithWhereWithoutJobOfferInput, JobEvaluationUpdateWithoutJobOfferInput>, JobEvaluationUncheckedUpdateWithoutJobOfferInput>
   }
 
+  export type JobEvaluationOutboxUncheckedUpdateOneWithoutJobOfferNestedInput = {
+    create?: XOR<JobEvaluationOutboxCreateWithoutJobOfferInput, JobEvaluationOutboxUncheckedCreateWithoutJobOfferInput>
+    connectOrCreate?: JobEvaluationOutboxCreateOrConnectWithoutJobOfferInput
+    upsert?: JobEvaluationOutboxUpsertWithoutJobOfferInput
+    disconnect?: JobEvaluationOutboxWhereInput | boolean
+    delete?: JobEvaluationOutboxWhereInput | boolean
+    connect?: JobEvaluationOutboxWhereUniqueInput
+    update?: XOR<XOR<JobEvaluationOutboxUpdateToOneWithWhereWithoutJobOfferInput, JobEvaluationOutboxUpdateWithoutJobOfferInput>, JobEvaluationOutboxUncheckedUpdateWithoutJobOfferInput>
+  }
+
   export type JobCurriculumUncheckedUpdateOneWithoutJobOfferNestedInput = {
     create?: XOR<JobCurriculumCreateWithoutJobOfferInput, JobCurriculumUncheckedCreateWithoutJobOfferInput>
     connectOrCreate?: JobCurriculumCreateOrConnectWithoutJobOfferInput
@@ -16737,6 +21455,26 @@ export namespace Prisma {
     delete?: JobCurriculumWhereInput | boolean
     connect?: JobCurriculumWhereUniqueInput
     update?: XOR<XOR<JobCurriculumUpdateToOneWithWhereWithoutJobOfferInput, JobCurriculumUpdateWithoutJobOfferInput>, JobCurriculumUncheckedUpdateWithoutJobOfferInput>
+  }
+
+  export type JobCurriculumOutboxUncheckedUpdateOneWithoutJobOfferNestedInput = {
+    create?: XOR<JobCurriculumOutboxCreateWithoutJobOfferInput, JobCurriculumOutboxUncheckedCreateWithoutJobOfferInput>
+    connectOrCreate?: JobCurriculumOutboxCreateOrConnectWithoutJobOfferInput
+    upsert?: JobCurriculumOutboxUpsertWithoutJobOfferInput
+    disconnect?: JobCurriculumOutboxWhereInput | boolean
+    delete?: JobCurriculumOutboxWhereInput | boolean
+    connect?: JobCurriculumOutboxWhereUniqueInput
+    update?: XOR<XOR<JobCurriculumOutboxUpdateToOneWithWhereWithoutJobOfferInput, JobCurriculumOutboxUpdateWithoutJobOfferInput>, JobCurriculumOutboxUncheckedUpdateWithoutJobOfferInput>
+  }
+
+  export type JobCurriculumPdfOutboxUncheckedUpdateOneWithoutJobOfferNestedInput = {
+    create?: XOR<JobCurriculumPdfOutboxCreateWithoutJobOfferInput, JobCurriculumPdfOutboxUncheckedCreateWithoutJobOfferInput>
+    connectOrCreate?: JobCurriculumPdfOutboxCreateOrConnectWithoutJobOfferInput
+    upsert?: JobCurriculumPdfOutboxUpsertWithoutJobOfferInput
+    disconnect?: JobCurriculumPdfOutboxWhereInput | boolean
+    delete?: JobCurriculumPdfOutboxWhereInput | boolean
+    connect?: JobCurriculumPdfOutboxWhereUniqueInput
+    update?: XOR<XOR<JobCurriculumPdfOutboxUpdateToOneWithWhereWithoutJobOfferInput, JobCurriculumPdfOutboxUpdateWithoutJobOfferInput>, JobCurriculumPdfOutboxUncheckedUpdateWithoutJobOfferInput>
   }
 
   export type JobStatusHistoryUncheckedUpdateManyWithoutJobOfferNestedInput = {
@@ -16907,6 +21645,23 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedEnumJobCurriculumPdfStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.JobCurriculumPdfStatus | EnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.JobCurriculumPdfStatus[] | ListEnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.JobCurriculumPdfStatus[] | ListEnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumJobCurriculumPdfStatusFilter<$PrismaModel> | $Enums.JobCurriculumPdfStatus
+  }
+
+  export type NestedEnumJobCurriculumPdfStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.JobCurriculumPdfStatus | EnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.JobCurriculumPdfStatus[] | ListEnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.JobCurriculumPdfStatus[] | ListEnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumJobCurriculumPdfStatusWithAggregatesFilter<$PrismaModel> | $Enums.JobCurriculumPdfStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumJobCurriculumPdfStatusFilter<$PrismaModel>
+    _max?: NestedEnumJobCurriculumPdfStatusFilter<$PrismaModel>
+  }
+
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -16945,6 +21700,23 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type NestedEnumOutboxStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.OutboxStatus | EnumOutboxStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.OutboxStatus[] | ListEnumOutboxStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OutboxStatus[] | ListEnumOutboxStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumOutboxStatusFilter<$PrismaModel> | $Enums.OutboxStatus
+  }
+
+  export type NestedEnumOutboxStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OutboxStatus | EnumOutboxStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.OutboxStatus[] | ListEnumOutboxStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OutboxStatus[] | ListEnumOutboxStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumOutboxStatusWithAggregatesFilter<$PrismaModel> | $Enums.OutboxStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOutboxStatusFilter<$PrismaModel>
+    _max?: NestedEnumOutboxStatusFilter<$PrismaModel>
   }
 
   export type NestedEnumEvaluationStatusFilter<$PrismaModel = never> = {
@@ -17053,6 +21825,13 @@ export namespace Prisma {
     not?: NestedEnumApplicationStatusFilter<$PrismaModel> | $Enums.ApplicationStatus
   }
 
+  export type NestedEnumJobEvaluationProcessStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.JobEvaluationProcessStatus | EnumJobEvaluationProcessStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.JobEvaluationProcessStatus[] | ListEnumJobEvaluationProcessStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.JobEvaluationProcessStatus[] | ListEnumJobEvaluationProcessStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumJobEvaluationProcessStatusFilter<$PrismaModel> | $Enums.JobEvaluationProcessStatus
+  }
+
   export type NestedEnumJobSourceWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.JobSource | EnumJobSourceFieldRefInput<$PrismaModel>
     in?: $Enums.JobSource[] | ListEnumJobSourceFieldRefInput<$PrismaModel>
@@ -17123,6 +21902,16 @@ export namespace Prisma {
     _max?: NestedEnumApplicationStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumJobEvaluationProcessStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.JobEvaluationProcessStatus | EnumJobEvaluationProcessStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.JobEvaluationProcessStatus[] | ListEnumJobEvaluationProcessStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.JobEvaluationProcessStatus[] | ListEnumJobEvaluationProcessStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumJobEvaluationProcessStatusWithAggregatesFilter<$PrismaModel> | $Enums.JobEvaluationProcessStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumJobEvaluationProcessStatusFilter<$PrismaModel>
+    _max?: NestedEnumJobEvaluationProcessStatusFilter<$PrismaModel>
+  }
+
   export type NestedEnumApplicationStatusNullableFilter<$PrismaModel = never> = {
     equals?: $Enums.ApplicationStatus | EnumApplicationStatusFieldRefInput<$PrismaModel> | null
     in?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel> | null
@@ -17159,11 +21948,15 @@ export namespace Prisma {
     experienceLevel?: $Enums.ExperienceLevel
     skills?: string | null
     status?: $Enums.ApplicationStatus
+    evaluationProcessStatus?: $Enums.JobEvaluationProcessStatus
     notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     evaluation?: JobEvaluationCreateNestedOneWithoutJobOfferInput
+    evaluationOutbox?: JobEvaluationOutboxCreateNestedOneWithoutJobOfferInput
     curriculum?: JobCurriculumCreateNestedOneWithoutJobOfferInput
+    curriculumOutbox?: JobCurriculumOutboxCreateNestedOneWithoutJobOfferInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxCreateNestedOneWithoutJobOfferInput
     statusHistory?: JobStatusHistoryCreateNestedManyWithoutJobOfferInput
   }
 
@@ -17186,11 +21979,15 @@ export namespace Prisma {
     experienceLevel?: $Enums.ExperienceLevel
     skills?: string | null
     status?: $Enums.ApplicationStatus
+    evaluationProcessStatus?: $Enums.JobEvaluationProcessStatus
     notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     evaluation?: JobEvaluationUncheckedCreateNestedOneWithoutJobOfferInput
+    evaluationOutbox?: JobEvaluationOutboxUncheckedCreateNestedOneWithoutJobOfferInput
     curriculum?: JobCurriculumUncheckedCreateNestedOneWithoutJobOfferInput
+    curriculumOutbox?: JobCurriculumOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedCreateNestedOneWithoutJobOfferInput
     statusHistory?: JobStatusHistoryUncheckedCreateNestedManyWithoutJobOfferInput
   }
 
@@ -17243,6 +22040,7 @@ export namespace Prisma {
     experienceLevel?: EnumExperienceLevelFilter<"JobOffer"> | $Enums.ExperienceLevel
     skills?: StringNullableFilter<"JobOffer"> | string | null
     status?: EnumApplicationStatusFilter<"JobOffer"> | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFilter<"JobOffer"> | $Enums.JobEvaluationProcessStatus
     notes?: StringNullableFilter<"JobOffer"> | string | null
     createdAt?: DateTimeFilter<"JobOffer"> | Date | string
     updatedAt?: DateTimeFilter<"JobOffer"> | Date | string
@@ -17267,11 +22065,15 @@ export namespace Prisma {
     experienceLevel?: $Enums.ExperienceLevel
     skills?: string | null
     status?: $Enums.ApplicationStatus
+    evaluationProcessStatus?: $Enums.JobEvaluationProcessStatus
     notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     company: CompanyCreateNestedOneWithoutJobOffersInput
     evaluation?: JobEvaluationCreateNestedOneWithoutJobOfferInput
+    evaluationOutbox?: JobEvaluationOutboxCreateNestedOneWithoutJobOfferInput
+    curriculumOutbox?: JobCurriculumOutboxCreateNestedOneWithoutJobOfferInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxCreateNestedOneWithoutJobOfferInput
     statusHistory?: JobStatusHistoryCreateNestedManyWithoutJobOfferInput
   }
 
@@ -17295,10 +22097,14 @@ export namespace Prisma {
     experienceLevel?: $Enums.ExperienceLevel
     skills?: string | null
     status?: $Enums.ApplicationStatus
+    evaluationProcessStatus?: $Enums.JobEvaluationProcessStatus
     notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     evaluation?: JobEvaluationUncheckedCreateNestedOneWithoutJobOfferInput
+    evaluationOutbox?: JobEvaluationOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    curriculumOutbox?: JobCurriculumOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedCreateNestedOneWithoutJobOfferInput
     statusHistory?: JobStatusHistoryUncheckedCreateNestedManyWithoutJobOfferInput
   }
 
@@ -17423,11 +22229,15 @@ export namespace Prisma {
     experienceLevel?: EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
     skills?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFieldUpdateOperationsInput | $Enums.JobEvaluationProcessStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUpdateOneRequiredWithoutJobOffersNestedInput
     evaluation?: JobEvaluationUpdateOneWithoutJobOfferNestedInput
+    evaluationOutbox?: JobEvaluationOutboxUpdateOneWithoutJobOfferNestedInput
+    curriculumOutbox?: JobCurriculumOutboxUpdateOneWithoutJobOfferNestedInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUpdateOneWithoutJobOfferNestedInput
     statusHistory?: JobStatusHistoryUpdateManyWithoutJobOfferNestedInput
   }
 
@@ -17451,10 +22261,14 @@ export namespace Prisma {
     experienceLevel?: EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
     skills?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFieldUpdateOperationsInput | $Enums.JobEvaluationProcessStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     evaluation?: JobEvaluationUncheckedUpdateOneWithoutJobOfferNestedInput
+    evaluationOutbox?: JobEvaluationOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    curriculumOutbox?: JobCurriculumOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
     statusHistory?: JobStatusHistoryUncheckedUpdateManyWithoutJobOfferNestedInput
   }
 
@@ -17548,7 +22362,8 @@ export namespace Prisma {
 
   export type JobCurriculumCreateWithoutWorkInput = {
     id?: string
-    storageKey: string
+    storageKey?: string | null
+    pdfStatus?: $Enums.JobCurriculumPdfStatus
     explanation: string
     customLabel?: string | null
     createdAt?: Date | string
@@ -17561,7 +22376,8 @@ export namespace Prisma {
   export type JobCurriculumUncheckedCreateWithoutWorkInput = {
     id?: string
     jobOfferId: string
-    storageKey: string
+    storageKey?: string | null
+    pdfStatus?: $Enums.JobCurriculumPdfStatus
     explanation: string
     customLabel?: string | null
     createdAt?: Date | string
@@ -17588,7 +22404,8 @@ export namespace Prisma {
 
   export type JobCurriculumUpdateWithoutWorkInput = {
     id?: StringFieldUpdateOperationsInput | string
-    storageKey?: StringFieldUpdateOperationsInput | string
+    storageKey?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfStatus?: EnumJobCurriculumPdfStatusFieldUpdateOperationsInput | $Enums.JobCurriculumPdfStatus
     explanation?: StringFieldUpdateOperationsInput | string
     customLabel?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17601,7 +22418,8 @@ export namespace Prisma {
   export type JobCurriculumUncheckedUpdateWithoutWorkInput = {
     id?: StringFieldUpdateOperationsInput | string
     jobOfferId?: StringFieldUpdateOperationsInput | string
-    storageKey?: StringFieldUpdateOperationsInput | string
+    storageKey?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfStatus?: EnumJobCurriculumPdfStatusFieldUpdateOperationsInput | $Enums.JobCurriculumPdfStatus
     explanation?: StringFieldUpdateOperationsInput | string
     customLabel?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17612,7 +22430,8 @@ export namespace Prisma {
 
   export type JobCurriculumCreateWithoutProjectsInput = {
     id?: string
-    storageKey: string
+    storageKey?: string | null
+    pdfStatus?: $Enums.JobCurriculumPdfStatus
     explanation: string
     customLabel?: string | null
     createdAt?: Date | string
@@ -17625,7 +22444,8 @@ export namespace Prisma {
   export type JobCurriculumUncheckedCreateWithoutProjectsInput = {
     id?: string
     jobOfferId: string
-    storageKey: string
+    storageKey?: string | null
+    pdfStatus?: $Enums.JobCurriculumPdfStatus
     explanation: string
     customLabel?: string | null
     createdAt?: Date | string
@@ -17652,7 +22472,8 @@ export namespace Prisma {
 
   export type JobCurriculumUpdateWithoutProjectsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    storageKey?: StringFieldUpdateOperationsInput | string
+    storageKey?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfStatus?: EnumJobCurriculumPdfStatusFieldUpdateOperationsInput | $Enums.JobCurriculumPdfStatus
     explanation?: StringFieldUpdateOperationsInput | string
     customLabel?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17665,7 +22486,8 @@ export namespace Prisma {
   export type JobCurriculumUncheckedUpdateWithoutProjectsInput = {
     id?: StringFieldUpdateOperationsInput | string
     jobOfferId?: StringFieldUpdateOperationsInput | string
-    storageKey?: StringFieldUpdateOperationsInput | string
+    storageKey?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfStatus?: EnumJobCurriculumPdfStatusFieldUpdateOperationsInput | $Enums.JobCurriculumPdfStatus
     explanation?: StringFieldUpdateOperationsInput | string
     customLabel?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17676,7 +22498,8 @@ export namespace Prisma {
 
   export type JobCurriculumCreateWithoutPublicationsInput = {
     id?: string
-    storageKey: string
+    storageKey?: string | null
+    pdfStatus?: $Enums.JobCurriculumPdfStatus
     explanation: string
     customLabel?: string | null
     createdAt?: Date | string
@@ -17689,7 +22512,8 @@ export namespace Prisma {
   export type JobCurriculumUncheckedCreateWithoutPublicationsInput = {
     id?: string
     jobOfferId: string
-    storageKey: string
+    storageKey?: string | null
+    pdfStatus?: $Enums.JobCurriculumPdfStatus
     explanation: string
     customLabel?: string | null
     createdAt?: Date | string
@@ -17716,7 +22540,8 @@ export namespace Prisma {
 
   export type JobCurriculumUpdateWithoutPublicationsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    storageKey?: StringFieldUpdateOperationsInput | string
+    storageKey?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfStatus?: EnumJobCurriculumPdfStatusFieldUpdateOperationsInput | $Enums.JobCurriculumPdfStatus
     explanation?: StringFieldUpdateOperationsInput | string
     customLabel?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17729,13 +22554,294 @@ export namespace Prisma {
   export type JobCurriculumUncheckedUpdateWithoutPublicationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     jobOfferId?: StringFieldUpdateOperationsInput | string
-    storageKey?: StringFieldUpdateOperationsInput | string
+    storageKey?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfStatus?: EnumJobCurriculumPdfStatusFieldUpdateOperationsInput | $Enums.JobCurriculumPdfStatus
     explanation?: StringFieldUpdateOperationsInput | string
     customLabel?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     work?: JobCurriculumWorkUncheckedUpdateManyWithoutCurriculumNestedInput
     projects?: JobCurriculumProjectUncheckedUpdateManyWithoutCurriculumNestedInput
+  }
+
+  export type JobOfferCreateWithoutCurriculumOutboxInput = {
+    id?: string
+    externalId?: string | null
+    source: $Enums.JobSource
+    url: string
+    title: string
+    location?: string | null
+    remoteType?: $Enums.RemoteType
+    rawDescription: string
+    descriptionMarkdown?: string | null
+    datePosted?: Date | string | null
+    salaryMin?: number | null
+    salaryMax?: number | null
+    currency?: string | null
+    contractType?: string | null
+    roleCategory?: string | null
+    experienceLevel?: $Enums.ExperienceLevel
+    skills?: string | null
+    status?: $Enums.ApplicationStatus
+    evaluationProcessStatus?: $Enums.JobEvaluationProcessStatus
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    company: CompanyCreateNestedOneWithoutJobOffersInput
+    evaluation?: JobEvaluationCreateNestedOneWithoutJobOfferInput
+    evaluationOutbox?: JobEvaluationOutboxCreateNestedOneWithoutJobOfferInput
+    curriculum?: JobCurriculumCreateNestedOneWithoutJobOfferInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxCreateNestedOneWithoutJobOfferInput
+    statusHistory?: JobStatusHistoryCreateNestedManyWithoutJobOfferInput
+  }
+
+  export type JobOfferUncheckedCreateWithoutCurriculumOutboxInput = {
+    id?: string
+    externalId?: string | null
+    source: $Enums.JobSource
+    url: string
+    title: string
+    location?: string | null
+    remoteType?: $Enums.RemoteType
+    rawDescription: string
+    descriptionMarkdown?: string | null
+    datePosted?: Date | string | null
+    companyId: string
+    salaryMin?: number | null
+    salaryMax?: number | null
+    currency?: string | null
+    contractType?: string | null
+    roleCategory?: string | null
+    experienceLevel?: $Enums.ExperienceLevel
+    skills?: string | null
+    status?: $Enums.ApplicationStatus
+    evaluationProcessStatus?: $Enums.JobEvaluationProcessStatus
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    evaluation?: JobEvaluationUncheckedCreateNestedOneWithoutJobOfferInput
+    evaluationOutbox?: JobEvaluationOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    curriculum?: JobCurriculumUncheckedCreateNestedOneWithoutJobOfferInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    statusHistory?: JobStatusHistoryUncheckedCreateNestedManyWithoutJobOfferInput
+  }
+
+  export type JobOfferCreateOrConnectWithoutCurriculumOutboxInput = {
+    where: JobOfferWhereUniqueInput
+    create: XOR<JobOfferCreateWithoutCurriculumOutboxInput, JobOfferUncheckedCreateWithoutCurriculumOutboxInput>
+  }
+
+  export type JobOfferUpsertWithoutCurriculumOutboxInput = {
+    update: XOR<JobOfferUpdateWithoutCurriculumOutboxInput, JobOfferUncheckedUpdateWithoutCurriculumOutboxInput>
+    create: XOR<JobOfferCreateWithoutCurriculumOutboxInput, JobOfferUncheckedCreateWithoutCurriculumOutboxInput>
+    where?: JobOfferWhereInput
+  }
+
+  export type JobOfferUpdateToOneWithWhereWithoutCurriculumOutboxInput = {
+    where?: JobOfferWhereInput
+    data: XOR<JobOfferUpdateWithoutCurriculumOutboxInput, JobOfferUncheckedUpdateWithoutCurriculumOutboxInput>
+  }
+
+  export type JobOfferUpdateWithoutCurriculumOutboxInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: EnumJobSourceFieldUpdateOperationsInput | $Enums.JobSource
+    url?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    remoteType?: EnumRemoteTypeFieldUpdateOperationsInput | $Enums.RemoteType
+    rawDescription?: StringFieldUpdateOperationsInput | string
+    descriptionMarkdown?: NullableStringFieldUpdateOperationsInput | string | null
+    datePosted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
+    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
+    currency?: NullableStringFieldUpdateOperationsInput | string | null
+    contractType?: NullableStringFieldUpdateOperationsInput | string | null
+    roleCategory?: NullableStringFieldUpdateOperationsInput | string | null
+    experienceLevel?: EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
+    skills?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFieldUpdateOperationsInput | $Enums.JobEvaluationProcessStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    company?: CompanyUpdateOneRequiredWithoutJobOffersNestedInput
+    evaluation?: JobEvaluationUpdateOneWithoutJobOfferNestedInput
+    evaluationOutbox?: JobEvaluationOutboxUpdateOneWithoutJobOfferNestedInput
+    curriculum?: JobCurriculumUpdateOneWithoutJobOfferNestedInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUpdateOneWithoutJobOfferNestedInput
+    statusHistory?: JobStatusHistoryUpdateManyWithoutJobOfferNestedInput
+  }
+
+  export type JobOfferUncheckedUpdateWithoutCurriculumOutboxInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: EnumJobSourceFieldUpdateOperationsInput | $Enums.JobSource
+    url?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    remoteType?: EnumRemoteTypeFieldUpdateOperationsInput | $Enums.RemoteType
+    rawDescription?: StringFieldUpdateOperationsInput | string
+    descriptionMarkdown?: NullableStringFieldUpdateOperationsInput | string | null
+    datePosted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    companyId?: StringFieldUpdateOperationsInput | string
+    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
+    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
+    currency?: NullableStringFieldUpdateOperationsInput | string | null
+    contractType?: NullableStringFieldUpdateOperationsInput | string | null
+    roleCategory?: NullableStringFieldUpdateOperationsInput | string | null
+    experienceLevel?: EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
+    skills?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFieldUpdateOperationsInput | $Enums.JobEvaluationProcessStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    evaluation?: JobEvaluationUncheckedUpdateOneWithoutJobOfferNestedInput
+    evaluationOutbox?: JobEvaluationOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    curriculum?: JobCurriculumUncheckedUpdateOneWithoutJobOfferNestedInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    statusHistory?: JobStatusHistoryUncheckedUpdateManyWithoutJobOfferNestedInput
+  }
+
+  export type JobOfferCreateWithoutCurriculumPdfOutboxInput = {
+    id?: string
+    externalId?: string | null
+    source: $Enums.JobSource
+    url: string
+    title: string
+    location?: string | null
+    remoteType?: $Enums.RemoteType
+    rawDescription: string
+    descriptionMarkdown?: string | null
+    datePosted?: Date | string | null
+    salaryMin?: number | null
+    salaryMax?: number | null
+    currency?: string | null
+    contractType?: string | null
+    roleCategory?: string | null
+    experienceLevel?: $Enums.ExperienceLevel
+    skills?: string | null
+    status?: $Enums.ApplicationStatus
+    evaluationProcessStatus?: $Enums.JobEvaluationProcessStatus
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    company: CompanyCreateNestedOneWithoutJobOffersInput
+    evaluation?: JobEvaluationCreateNestedOneWithoutJobOfferInput
+    evaluationOutbox?: JobEvaluationOutboxCreateNestedOneWithoutJobOfferInput
+    curriculum?: JobCurriculumCreateNestedOneWithoutJobOfferInput
+    curriculumOutbox?: JobCurriculumOutboxCreateNestedOneWithoutJobOfferInput
+    statusHistory?: JobStatusHistoryCreateNestedManyWithoutJobOfferInput
+  }
+
+  export type JobOfferUncheckedCreateWithoutCurriculumPdfOutboxInput = {
+    id?: string
+    externalId?: string | null
+    source: $Enums.JobSource
+    url: string
+    title: string
+    location?: string | null
+    remoteType?: $Enums.RemoteType
+    rawDescription: string
+    descriptionMarkdown?: string | null
+    datePosted?: Date | string | null
+    companyId: string
+    salaryMin?: number | null
+    salaryMax?: number | null
+    currency?: string | null
+    contractType?: string | null
+    roleCategory?: string | null
+    experienceLevel?: $Enums.ExperienceLevel
+    skills?: string | null
+    status?: $Enums.ApplicationStatus
+    evaluationProcessStatus?: $Enums.JobEvaluationProcessStatus
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    evaluation?: JobEvaluationUncheckedCreateNestedOneWithoutJobOfferInput
+    evaluationOutbox?: JobEvaluationOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    curriculum?: JobCurriculumUncheckedCreateNestedOneWithoutJobOfferInput
+    curriculumOutbox?: JobCurriculumOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    statusHistory?: JobStatusHistoryUncheckedCreateNestedManyWithoutJobOfferInput
+  }
+
+  export type JobOfferCreateOrConnectWithoutCurriculumPdfOutboxInput = {
+    where: JobOfferWhereUniqueInput
+    create: XOR<JobOfferCreateWithoutCurriculumPdfOutboxInput, JobOfferUncheckedCreateWithoutCurriculumPdfOutboxInput>
+  }
+
+  export type JobOfferUpsertWithoutCurriculumPdfOutboxInput = {
+    update: XOR<JobOfferUpdateWithoutCurriculumPdfOutboxInput, JobOfferUncheckedUpdateWithoutCurriculumPdfOutboxInput>
+    create: XOR<JobOfferCreateWithoutCurriculumPdfOutboxInput, JobOfferUncheckedCreateWithoutCurriculumPdfOutboxInput>
+    where?: JobOfferWhereInput
+  }
+
+  export type JobOfferUpdateToOneWithWhereWithoutCurriculumPdfOutboxInput = {
+    where?: JobOfferWhereInput
+    data: XOR<JobOfferUpdateWithoutCurriculumPdfOutboxInput, JobOfferUncheckedUpdateWithoutCurriculumPdfOutboxInput>
+  }
+
+  export type JobOfferUpdateWithoutCurriculumPdfOutboxInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: EnumJobSourceFieldUpdateOperationsInput | $Enums.JobSource
+    url?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    remoteType?: EnumRemoteTypeFieldUpdateOperationsInput | $Enums.RemoteType
+    rawDescription?: StringFieldUpdateOperationsInput | string
+    descriptionMarkdown?: NullableStringFieldUpdateOperationsInput | string | null
+    datePosted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
+    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
+    currency?: NullableStringFieldUpdateOperationsInput | string | null
+    contractType?: NullableStringFieldUpdateOperationsInput | string | null
+    roleCategory?: NullableStringFieldUpdateOperationsInput | string | null
+    experienceLevel?: EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
+    skills?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFieldUpdateOperationsInput | $Enums.JobEvaluationProcessStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    company?: CompanyUpdateOneRequiredWithoutJobOffersNestedInput
+    evaluation?: JobEvaluationUpdateOneWithoutJobOfferNestedInput
+    evaluationOutbox?: JobEvaluationOutboxUpdateOneWithoutJobOfferNestedInput
+    curriculum?: JobCurriculumUpdateOneWithoutJobOfferNestedInput
+    curriculumOutbox?: JobCurriculumOutboxUpdateOneWithoutJobOfferNestedInput
+    statusHistory?: JobStatusHistoryUpdateManyWithoutJobOfferNestedInput
+  }
+
+  export type JobOfferUncheckedUpdateWithoutCurriculumPdfOutboxInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: EnumJobSourceFieldUpdateOperationsInput | $Enums.JobSource
+    url?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    remoteType?: EnumRemoteTypeFieldUpdateOperationsInput | $Enums.RemoteType
+    rawDescription?: StringFieldUpdateOperationsInput | string
+    descriptionMarkdown?: NullableStringFieldUpdateOperationsInput | string | null
+    datePosted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    companyId?: StringFieldUpdateOperationsInput | string
+    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
+    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
+    currency?: NullableStringFieldUpdateOperationsInput | string | null
+    contractType?: NullableStringFieldUpdateOperationsInput | string | null
+    roleCategory?: NullableStringFieldUpdateOperationsInput | string | null
+    experienceLevel?: EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
+    skills?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFieldUpdateOperationsInput | $Enums.JobEvaluationProcessStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    evaluation?: JobEvaluationUncheckedUpdateOneWithoutJobOfferNestedInput
+    evaluationOutbox?: JobEvaluationOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    curriculum?: JobCurriculumUncheckedUpdateOneWithoutJobOfferNestedInput
+    curriculumOutbox?: JobCurriculumOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    statusHistory?: JobStatusHistoryUncheckedUpdateManyWithoutJobOfferNestedInput
   }
 
   export type JobOfferCreateWithoutEvaluationInput = {
@@ -17757,11 +22863,15 @@ export namespace Prisma {
     experienceLevel?: $Enums.ExperienceLevel
     skills?: string | null
     status?: $Enums.ApplicationStatus
+    evaluationProcessStatus?: $Enums.JobEvaluationProcessStatus
     notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     company: CompanyCreateNestedOneWithoutJobOffersInput
+    evaluationOutbox?: JobEvaluationOutboxCreateNestedOneWithoutJobOfferInput
     curriculum?: JobCurriculumCreateNestedOneWithoutJobOfferInput
+    curriculumOutbox?: JobCurriculumOutboxCreateNestedOneWithoutJobOfferInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxCreateNestedOneWithoutJobOfferInput
     statusHistory?: JobStatusHistoryCreateNestedManyWithoutJobOfferInput
   }
 
@@ -17785,10 +22895,14 @@ export namespace Prisma {
     experienceLevel?: $Enums.ExperienceLevel
     skills?: string | null
     status?: $Enums.ApplicationStatus
+    evaluationProcessStatus?: $Enums.JobEvaluationProcessStatus
     notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    evaluationOutbox?: JobEvaluationOutboxUncheckedCreateNestedOneWithoutJobOfferInput
     curriculum?: JobCurriculumUncheckedCreateNestedOneWithoutJobOfferInput
+    curriculumOutbox?: JobCurriculumOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedCreateNestedOneWithoutJobOfferInput
     statusHistory?: JobStatusHistoryUncheckedCreateNestedManyWithoutJobOfferInput
   }
 
@@ -17827,11 +22941,15 @@ export namespace Prisma {
     experienceLevel?: EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
     skills?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFieldUpdateOperationsInput | $Enums.JobEvaluationProcessStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUpdateOneRequiredWithoutJobOffersNestedInput
+    evaluationOutbox?: JobEvaluationOutboxUpdateOneWithoutJobOfferNestedInput
     curriculum?: JobCurriculumUpdateOneWithoutJobOfferNestedInput
+    curriculumOutbox?: JobCurriculumOutboxUpdateOneWithoutJobOfferNestedInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUpdateOneWithoutJobOfferNestedInput
     statusHistory?: JobStatusHistoryUpdateManyWithoutJobOfferNestedInput
   }
 
@@ -17855,10 +22973,154 @@ export namespace Prisma {
     experienceLevel?: EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
     skills?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFieldUpdateOperationsInput | $Enums.JobEvaluationProcessStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    evaluationOutbox?: JobEvaluationOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
     curriculum?: JobCurriculumUncheckedUpdateOneWithoutJobOfferNestedInput
+    curriculumOutbox?: JobCurriculumOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    statusHistory?: JobStatusHistoryUncheckedUpdateManyWithoutJobOfferNestedInput
+  }
+
+  export type JobOfferCreateWithoutEvaluationOutboxInput = {
+    id?: string
+    externalId?: string | null
+    source: $Enums.JobSource
+    url: string
+    title: string
+    location?: string | null
+    remoteType?: $Enums.RemoteType
+    rawDescription: string
+    descriptionMarkdown?: string | null
+    datePosted?: Date | string | null
+    salaryMin?: number | null
+    salaryMax?: number | null
+    currency?: string | null
+    contractType?: string | null
+    roleCategory?: string | null
+    experienceLevel?: $Enums.ExperienceLevel
+    skills?: string | null
+    status?: $Enums.ApplicationStatus
+    evaluationProcessStatus?: $Enums.JobEvaluationProcessStatus
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    company: CompanyCreateNestedOneWithoutJobOffersInput
+    evaluation?: JobEvaluationCreateNestedOneWithoutJobOfferInput
+    curriculum?: JobCurriculumCreateNestedOneWithoutJobOfferInput
+    curriculumOutbox?: JobCurriculumOutboxCreateNestedOneWithoutJobOfferInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxCreateNestedOneWithoutJobOfferInput
+    statusHistory?: JobStatusHistoryCreateNestedManyWithoutJobOfferInput
+  }
+
+  export type JobOfferUncheckedCreateWithoutEvaluationOutboxInput = {
+    id?: string
+    externalId?: string | null
+    source: $Enums.JobSource
+    url: string
+    title: string
+    location?: string | null
+    remoteType?: $Enums.RemoteType
+    rawDescription: string
+    descriptionMarkdown?: string | null
+    datePosted?: Date | string | null
+    companyId: string
+    salaryMin?: number | null
+    salaryMax?: number | null
+    currency?: string | null
+    contractType?: string | null
+    roleCategory?: string | null
+    experienceLevel?: $Enums.ExperienceLevel
+    skills?: string | null
+    status?: $Enums.ApplicationStatus
+    evaluationProcessStatus?: $Enums.JobEvaluationProcessStatus
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    evaluation?: JobEvaluationUncheckedCreateNestedOneWithoutJobOfferInput
+    curriculum?: JobCurriculumUncheckedCreateNestedOneWithoutJobOfferInput
+    curriculumOutbox?: JobCurriculumOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    statusHistory?: JobStatusHistoryUncheckedCreateNestedManyWithoutJobOfferInput
+  }
+
+  export type JobOfferCreateOrConnectWithoutEvaluationOutboxInput = {
+    where: JobOfferWhereUniqueInput
+    create: XOR<JobOfferCreateWithoutEvaluationOutboxInput, JobOfferUncheckedCreateWithoutEvaluationOutboxInput>
+  }
+
+  export type JobOfferUpsertWithoutEvaluationOutboxInput = {
+    update: XOR<JobOfferUpdateWithoutEvaluationOutboxInput, JobOfferUncheckedUpdateWithoutEvaluationOutboxInput>
+    create: XOR<JobOfferCreateWithoutEvaluationOutboxInput, JobOfferUncheckedCreateWithoutEvaluationOutboxInput>
+    where?: JobOfferWhereInput
+  }
+
+  export type JobOfferUpdateToOneWithWhereWithoutEvaluationOutboxInput = {
+    where?: JobOfferWhereInput
+    data: XOR<JobOfferUpdateWithoutEvaluationOutboxInput, JobOfferUncheckedUpdateWithoutEvaluationOutboxInput>
+  }
+
+  export type JobOfferUpdateWithoutEvaluationOutboxInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: EnumJobSourceFieldUpdateOperationsInput | $Enums.JobSource
+    url?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    remoteType?: EnumRemoteTypeFieldUpdateOperationsInput | $Enums.RemoteType
+    rawDescription?: StringFieldUpdateOperationsInput | string
+    descriptionMarkdown?: NullableStringFieldUpdateOperationsInput | string | null
+    datePosted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
+    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
+    currency?: NullableStringFieldUpdateOperationsInput | string | null
+    contractType?: NullableStringFieldUpdateOperationsInput | string | null
+    roleCategory?: NullableStringFieldUpdateOperationsInput | string | null
+    experienceLevel?: EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
+    skills?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFieldUpdateOperationsInput | $Enums.JobEvaluationProcessStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    company?: CompanyUpdateOneRequiredWithoutJobOffersNestedInput
+    evaluation?: JobEvaluationUpdateOneWithoutJobOfferNestedInput
+    curriculum?: JobCurriculumUpdateOneWithoutJobOfferNestedInput
+    curriculumOutbox?: JobCurriculumOutboxUpdateOneWithoutJobOfferNestedInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUpdateOneWithoutJobOfferNestedInput
+    statusHistory?: JobStatusHistoryUpdateManyWithoutJobOfferNestedInput
+  }
+
+  export type JobOfferUncheckedUpdateWithoutEvaluationOutboxInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: EnumJobSourceFieldUpdateOperationsInput | $Enums.JobSource
+    url?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    remoteType?: EnumRemoteTypeFieldUpdateOperationsInput | $Enums.RemoteType
+    rawDescription?: StringFieldUpdateOperationsInput | string
+    descriptionMarkdown?: NullableStringFieldUpdateOperationsInput | string | null
+    datePosted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    companyId?: StringFieldUpdateOperationsInput | string
+    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
+    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
+    currency?: NullableStringFieldUpdateOperationsInput | string | null
+    contractType?: NullableStringFieldUpdateOperationsInput | string | null
+    roleCategory?: NullableStringFieldUpdateOperationsInput | string | null
+    experienceLevel?: EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
+    skills?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFieldUpdateOperationsInput | $Enums.JobEvaluationProcessStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    evaluation?: JobEvaluationUncheckedUpdateOneWithoutJobOfferNestedInput
+    curriculum?: JobCurriculumUncheckedUpdateOneWithoutJobOfferNestedInput
+    curriculumOutbox?: JobCurriculumOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
     statusHistory?: JobStatusHistoryUncheckedUpdateManyWithoutJobOfferNestedInput
   }
 
@@ -17934,9 +23196,33 @@ export namespace Prisma {
     create: XOR<JobEvaluationCreateWithoutJobOfferInput, JobEvaluationUncheckedCreateWithoutJobOfferInput>
   }
 
+  export type JobEvaluationOutboxCreateWithoutJobOfferInput = {
+    id?: string
+    status?: $Enums.OutboxStatus
+    attempts?: number
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type JobEvaluationOutboxUncheckedCreateWithoutJobOfferInput = {
+    id?: string
+    status?: $Enums.OutboxStatus
+    attempts?: number
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type JobEvaluationOutboxCreateOrConnectWithoutJobOfferInput = {
+    where: JobEvaluationOutboxWhereUniqueInput
+    create: XOR<JobEvaluationOutboxCreateWithoutJobOfferInput, JobEvaluationOutboxUncheckedCreateWithoutJobOfferInput>
+  }
+
   export type JobCurriculumCreateWithoutJobOfferInput = {
     id?: string
-    storageKey: string
+    storageKey?: string | null
+    pdfStatus?: $Enums.JobCurriculumPdfStatus
     explanation: string
     customLabel?: string | null
     createdAt?: Date | string
@@ -17948,7 +23234,8 @@ export namespace Prisma {
 
   export type JobCurriculumUncheckedCreateWithoutJobOfferInput = {
     id?: string
-    storageKey: string
+    storageKey?: string | null
+    pdfStatus?: $Enums.JobCurriculumPdfStatus
     explanation: string
     customLabel?: string | null
     createdAt?: Date | string
@@ -17961,6 +23248,58 @@ export namespace Prisma {
   export type JobCurriculumCreateOrConnectWithoutJobOfferInput = {
     where: JobCurriculumWhereUniqueInput
     create: XOR<JobCurriculumCreateWithoutJobOfferInput, JobCurriculumUncheckedCreateWithoutJobOfferInput>
+  }
+
+  export type JobCurriculumOutboxCreateWithoutJobOfferInput = {
+    id?: string
+    status?: $Enums.OutboxStatus
+    forceRegenerate?: boolean
+    attempts?: number
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type JobCurriculumOutboxUncheckedCreateWithoutJobOfferInput = {
+    id?: string
+    status?: $Enums.OutboxStatus
+    forceRegenerate?: boolean
+    attempts?: number
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type JobCurriculumOutboxCreateOrConnectWithoutJobOfferInput = {
+    where: JobCurriculumOutboxWhereUniqueInput
+    create: XOR<JobCurriculumOutboxCreateWithoutJobOfferInput, JobCurriculumOutboxUncheckedCreateWithoutJobOfferInput>
+  }
+
+  export type JobCurriculumPdfOutboxCreateWithoutJobOfferInput = {
+    id?: string
+    status?: $Enums.OutboxStatus
+    templateName?: string | null
+    forceRegenerate?: boolean
+    attempts?: number
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type JobCurriculumPdfOutboxUncheckedCreateWithoutJobOfferInput = {
+    id?: string
+    status?: $Enums.OutboxStatus
+    templateName?: string | null
+    forceRegenerate?: boolean
+    attempts?: number
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type JobCurriculumPdfOutboxCreateOrConnectWithoutJobOfferInput = {
+    where: JobCurriculumPdfOutboxWhereUniqueInput
+    create: XOR<JobCurriculumPdfOutboxCreateWithoutJobOfferInput, JobCurriculumPdfOutboxUncheckedCreateWithoutJobOfferInput>
   }
 
   export type JobStatusHistoryCreateWithoutJobOfferInput = {
@@ -18071,6 +23410,35 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type JobEvaluationOutboxUpsertWithoutJobOfferInput = {
+    update: XOR<JobEvaluationOutboxUpdateWithoutJobOfferInput, JobEvaluationOutboxUncheckedUpdateWithoutJobOfferInput>
+    create: XOR<JobEvaluationOutboxCreateWithoutJobOfferInput, JobEvaluationOutboxUncheckedCreateWithoutJobOfferInput>
+    where?: JobEvaluationOutboxWhereInput
+  }
+
+  export type JobEvaluationOutboxUpdateToOneWithWhereWithoutJobOfferInput = {
+    where?: JobEvaluationOutboxWhereInput
+    data: XOR<JobEvaluationOutboxUpdateWithoutJobOfferInput, JobEvaluationOutboxUncheckedUpdateWithoutJobOfferInput>
+  }
+
+  export type JobEvaluationOutboxUpdateWithoutJobOfferInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type JobEvaluationOutboxUncheckedUpdateWithoutJobOfferInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type JobCurriculumUpsertWithoutJobOfferInput = {
     update: XOR<JobCurriculumUpdateWithoutJobOfferInput, JobCurriculumUncheckedUpdateWithoutJobOfferInput>
     create: XOR<JobCurriculumCreateWithoutJobOfferInput, JobCurriculumUncheckedCreateWithoutJobOfferInput>
@@ -18084,7 +23452,8 @@ export namespace Prisma {
 
   export type JobCurriculumUpdateWithoutJobOfferInput = {
     id?: StringFieldUpdateOperationsInput | string
-    storageKey?: StringFieldUpdateOperationsInput | string
+    storageKey?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfStatus?: EnumJobCurriculumPdfStatusFieldUpdateOperationsInput | $Enums.JobCurriculumPdfStatus
     explanation?: StringFieldUpdateOperationsInput | string
     customLabel?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18096,7 +23465,8 @@ export namespace Prisma {
 
   export type JobCurriculumUncheckedUpdateWithoutJobOfferInput = {
     id?: StringFieldUpdateOperationsInput | string
-    storageKey?: StringFieldUpdateOperationsInput | string
+    storageKey?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfStatus?: EnumJobCurriculumPdfStatusFieldUpdateOperationsInput | $Enums.JobCurriculumPdfStatus
     explanation?: StringFieldUpdateOperationsInput | string
     customLabel?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18104,6 +23474,70 @@ export namespace Prisma {
     work?: JobCurriculumWorkUncheckedUpdateManyWithoutCurriculumNestedInput
     projects?: JobCurriculumProjectUncheckedUpdateManyWithoutCurriculumNestedInput
     publications?: JobCurriculumPublicationUncheckedUpdateManyWithoutCurriculumNestedInput
+  }
+
+  export type JobCurriculumOutboxUpsertWithoutJobOfferInput = {
+    update: XOR<JobCurriculumOutboxUpdateWithoutJobOfferInput, JobCurriculumOutboxUncheckedUpdateWithoutJobOfferInput>
+    create: XOR<JobCurriculumOutboxCreateWithoutJobOfferInput, JobCurriculumOutboxUncheckedCreateWithoutJobOfferInput>
+    where?: JobCurriculumOutboxWhereInput
+  }
+
+  export type JobCurriculumOutboxUpdateToOneWithWhereWithoutJobOfferInput = {
+    where?: JobCurriculumOutboxWhereInput
+    data: XOR<JobCurriculumOutboxUpdateWithoutJobOfferInput, JobCurriculumOutboxUncheckedUpdateWithoutJobOfferInput>
+  }
+
+  export type JobCurriculumOutboxUpdateWithoutJobOfferInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+    forceRegenerate?: BoolFieldUpdateOperationsInput | boolean
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type JobCurriculumOutboxUncheckedUpdateWithoutJobOfferInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+    forceRegenerate?: BoolFieldUpdateOperationsInput | boolean
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type JobCurriculumPdfOutboxUpsertWithoutJobOfferInput = {
+    update: XOR<JobCurriculumPdfOutboxUpdateWithoutJobOfferInput, JobCurriculumPdfOutboxUncheckedUpdateWithoutJobOfferInput>
+    create: XOR<JobCurriculumPdfOutboxCreateWithoutJobOfferInput, JobCurriculumPdfOutboxUncheckedCreateWithoutJobOfferInput>
+    where?: JobCurriculumPdfOutboxWhereInput
+  }
+
+  export type JobCurriculumPdfOutboxUpdateToOneWithWhereWithoutJobOfferInput = {
+    where?: JobCurriculumPdfOutboxWhereInput
+    data: XOR<JobCurriculumPdfOutboxUpdateWithoutJobOfferInput, JobCurriculumPdfOutboxUncheckedUpdateWithoutJobOfferInput>
+  }
+
+  export type JobCurriculumPdfOutboxUpdateWithoutJobOfferInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+    templateName?: NullableStringFieldUpdateOperationsInput | string | null
+    forceRegenerate?: BoolFieldUpdateOperationsInput | boolean
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type JobCurriculumPdfOutboxUncheckedUpdateWithoutJobOfferInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+    templateName?: NullableStringFieldUpdateOperationsInput | string | null
+    forceRegenerate?: BoolFieldUpdateOperationsInput | boolean
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type JobStatusHistoryUpsertWithWhereUniqueWithoutJobOfferInput = {
@@ -18152,12 +23586,16 @@ export namespace Prisma {
     experienceLevel?: $Enums.ExperienceLevel
     skills?: string | null
     status?: $Enums.ApplicationStatus
+    evaluationProcessStatus?: $Enums.JobEvaluationProcessStatus
     notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     company: CompanyCreateNestedOneWithoutJobOffersInput
     evaluation?: JobEvaluationCreateNestedOneWithoutJobOfferInput
+    evaluationOutbox?: JobEvaluationOutboxCreateNestedOneWithoutJobOfferInput
     curriculum?: JobCurriculumCreateNestedOneWithoutJobOfferInput
+    curriculumOutbox?: JobCurriculumOutboxCreateNestedOneWithoutJobOfferInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxCreateNestedOneWithoutJobOfferInput
   }
 
   export type JobOfferUncheckedCreateWithoutStatusHistoryInput = {
@@ -18180,11 +23618,15 @@ export namespace Prisma {
     experienceLevel?: $Enums.ExperienceLevel
     skills?: string | null
     status?: $Enums.ApplicationStatus
+    evaluationProcessStatus?: $Enums.JobEvaluationProcessStatus
     notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     evaluation?: JobEvaluationUncheckedCreateNestedOneWithoutJobOfferInput
+    evaluationOutbox?: JobEvaluationOutboxUncheckedCreateNestedOneWithoutJobOfferInput
     curriculum?: JobCurriculumUncheckedCreateNestedOneWithoutJobOfferInput
+    curriculumOutbox?: JobCurriculumOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedCreateNestedOneWithoutJobOfferInput
   }
 
   export type JobOfferCreateOrConnectWithoutStatusHistoryInput = {
@@ -18222,12 +23664,16 @@ export namespace Prisma {
     experienceLevel?: EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
     skills?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFieldUpdateOperationsInput | $Enums.JobEvaluationProcessStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUpdateOneRequiredWithoutJobOffersNestedInput
     evaluation?: JobEvaluationUpdateOneWithoutJobOfferNestedInput
+    evaluationOutbox?: JobEvaluationOutboxUpdateOneWithoutJobOfferNestedInput
     curriculum?: JobCurriculumUpdateOneWithoutJobOfferNestedInput
+    curriculumOutbox?: JobCurriculumOutboxUpdateOneWithoutJobOfferNestedInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUpdateOneWithoutJobOfferNestedInput
   }
 
   export type JobOfferUncheckedUpdateWithoutStatusHistoryInput = {
@@ -18250,11 +23696,15 @@ export namespace Prisma {
     experienceLevel?: EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
     skills?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFieldUpdateOperationsInput | $Enums.JobEvaluationProcessStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     evaluation?: JobEvaluationUncheckedUpdateOneWithoutJobOfferNestedInput
+    evaluationOutbox?: JobEvaluationOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
     curriculum?: JobCurriculumUncheckedUpdateOneWithoutJobOfferNestedInput
+    curriculumOutbox?: JobCurriculumOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
   }
 
   export type JobOfferCreateManyCompanyInput = {
@@ -18276,6 +23726,7 @@ export namespace Prisma {
     experienceLevel?: $Enums.ExperienceLevel
     skills?: string | null
     status?: $Enums.ApplicationStatus
+    evaluationProcessStatus?: $Enums.JobEvaluationProcessStatus
     notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -18300,11 +23751,15 @@ export namespace Prisma {
     experienceLevel?: EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
     skills?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFieldUpdateOperationsInput | $Enums.JobEvaluationProcessStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     evaluation?: JobEvaluationUpdateOneWithoutJobOfferNestedInput
+    evaluationOutbox?: JobEvaluationOutboxUpdateOneWithoutJobOfferNestedInput
     curriculum?: JobCurriculumUpdateOneWithoutJobOfferNestedInput
+    curriculumOutbox?: JobCurriculumOutboxUpdateOneWithoutJobOfferNestedInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUpdateOneWithoutJobOfferNestedInput
     statusHistory?: JobStatusHistoryUpdateManyWithoutJobOfferNestedInput
   }
 
@@ -18327,11 +23782,15 @@ export namespace Prisma {
     experienceLevel?: EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
     skills?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFieldUpdateOperationsInput | $Enums.JobEvaluationProcessStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     evaluation?: JobEvaluationUncheckedUpdateOneWithoutJobOfferNestedInput
+    evaluationOutbox?: JobEvaluationOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
     curriculum?: JobCurriculumUncheckedUpdateOneWithoutJobOfferNestedInput
+    curriculumOutbox?: JobCurriculumOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
     statusHistory?: JobStatusHistoryUncheckedUpdateManyWithoutJobOfferNestedInput
   }
 
@@ -18354,6 +23813,7 @@ export namespace Prisma {
     experienceLevel?: EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
     skills?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFieldUpdateOperationsInput | $Enums.JobEvaluationProcessStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

@@ -2,23 +2,35 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copia pacchetti condivisi
+# 1. Copia solo manifest per cache npm install
+COPY packages/contracts/package*.json ./packages/contracts/
+COPY packages/database/package*.json ./packages/database/
+COPY services/api/package*.json ./services/api/
+
+# 2. Installazione dipendenze con cache mount BuildKit
+RUN --mount=type=cache,target=/root/.npm \
+    cd packages/contracts && npm install
+
+RUN --mount=type=cache,target=/root/.npm \
+    cd packages/database && npm install
+
+WORKDIR /app/services/api
+RUN --mount=type=cache,target=/root/.npm \
+    npm install --legacy-peer-deps
+
+RUN npm link /app/packages/contracts /app/packages/database
+
+# 3. Copia codice sorgente e compilazione
+WORKDIR /app
 COPY packages/contracts ./packages/contracts
-RUN cd packages/contracts && npm install && npm run build
+RUN cd packages/contracts && npm run build
 
 COPY packages/database ./packages/database
-RUN cd packages/database && npm install && npm run prisma:generate && npm run build
+RUN --mount=type=cache,target=/root/.cache/prisma \
+    cd packages/database && npm run prisma:generate && npm run build
 
-# Copia servizio API
 WORKDIR /app/services/api
-COPY services/api/package*.json ./
-
-RUN npm install --legacy-peer-deps
-RUN npm link /app/packages/contracts /app/packages/database
-
 COPY services/api ./
-
-RUN npm link /app/packages/contracts /app/packages/database
 RUN npm run build
 
 FROM node:20-alpine AS runner
@@ -31,6 +43,8 @@ COPY --from=builder /app/packages/database/dist /app/packages/database/dist
 COPY --from=builder /app/packages/database/client /app/packages/database/client
 COPY --from=builder /app/packages/database/package.json /app/packages/database/package.json
 COPY --from=builder /app/packages/database/node_modules /app/packages/database/node_modules
+COPY --from=builder /app/packages/database/prisma /app/packages/database/prisma
+COPY --from=builder /app/packages/database/prisma.config.ts /app/packages/database/prisma.config.ts
 
 WORKDIR /app/services/api
 

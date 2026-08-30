@@ -3,7 +3,8 @@ model JobCurriculum {
   jobOfferId    String                     @unique
   jobOffer      JobOffer                   @relation(fields: [jobOfferId], references: [id], onDelete: Cascade)
 
-  storageKey    String                     // Chiave identificativa dell'oggetto salvato in S3/MinIO
+  storageKey    String?                    // Chiave identificativa dell'oggetto salvato in S3/MinIO
+  pdfStatus     JobCurriculumPdfStatus     @default(PENDING) // Stato di rendering/compilazione del documento PDF
   explanation   String                     // Spiegazione testuale delle scelte fatte per il curriculum
   customLabel   String?                    // Titolo professionale personalizzato
 
@@ -15,6 +16,13 @@ model JobCurriculum {
   updatedAt     DateTime                   @updatedAt
 
   @@index([jobOfferId])
+}
+
+enum JobCurriculumPdfStatus {
+  PENDING
+  GENERATING
+  READY
+  FAILED
 }
 
 model JobCurriculumWork {

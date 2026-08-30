@@ -6,6 +6,7 @@ import {
   RemoteTypeEnum,
   ExperienceLevelEnum,
   ApplicationStatusEnum,
+  JobEvaluationProcessStatusEnum,
   JobStatusHistoryDto,
   calculateFreshness,
 } from './dto/job-offer.dto';
@@ -58,6 +59,7 @@ export function mapJobOfferToDto(rawOffer: JobOfferWithRelations): JobOfferDto {
       id: rawOffer.curriculum.id,
       jobOfferId: rawOffer.curriculum.jobOfferId,
       storageKey: rawOffer.curriculum.storageKey,
+      pdfStatus: rawOffer.curriculum.pdfStatus,
       explanation: rawOffer.curriculum.explanation,
       customLabel: rawOffer.curriculum.customLabel,
       work: (rawOffer.curriculum.work || []).map((w) => ({
@@ -108,6 +110,7 @@ export function mapJobOfferToDto(rawOffer: JobOfferWithRelations): JobOfferDto {
     experienceLevel: (rawOffer.experienceLevel as ExperienceLevelEnum) ?? ExperienceLevelEnum.UNSPECIFIED,
     skills: parsedSkills,
     status: (rawOffer.status as ApplicationStatusEnum) ?? ApplicationStatusEnum.NEW,
+    evaluationProcessStatus: (rawOffer.evaluationProcessStatus as JobEvaluationProcessStatusEnum) ?? JobEvaluationProcessStatusEnum.PENDING,
     freshness: calculateFreshness(rawOffer.datePosted, rawOffer.createdAt),
     statusHistory,
     notes: rawOffer.notes ?? null,

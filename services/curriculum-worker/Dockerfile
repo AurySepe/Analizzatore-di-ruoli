@@ -2,51 +2,40 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Installazione Chromium e font di sistema
-RUN apk add --no-cache \
-      chromium \
-      nss \
-      freetype \
-      harfbuzz \
-      ca-certificates \
-      ttf-freefont
+# 1. Copia solo manifest per cache npm install
+COPY packages/contracts/package*.json ./packages/contracts/
+COPY packages/database/package*.json ./packages/database/
+COPY services/curriculum-worker/package*.json ./services/curriculum-worker/
 
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+# 2. Installazione dipendenze con cache mount BuildKit
+RUN --mount=type=cache,target=/root/.npm \
+    cd packages/contracts && npm install
 
-# Copia pacchetti condivisi
+RUN --mount=type=cache,target=/root/.npm \
+    cd packages/database && npm install
+
+WORKDIR /app/services/curriculum-worker
+RUN --mount=type=cache,target=/root/.npm \
+    npm install --legacy-peer-deps
+
+RUN npm link /app/packages/contracts /app/packages/database
+
+# 3. Copia codice sorgente e compilazione
+WORKDIR /app
 COPY packages/contracts ./packages/contracts
-RUN cd packages/contracts && npm install && npm run build
+RUN cd packages/contracts && npm run build
 
 COPY packages/database ./packages/database
-RUN cd packages/database && npm install && npm run prisma:generate && npm run build
+RUN --mount=type=cache,target=/root/.cache/prisma \
+    cd packages/database && npm run prisma:generate && npm run build
 
-# Copia servizio Curriculum Worker
 WORKDIR /app/services/curriculum-worker
-COPY services/curriculum-worker/package*.json ./
-
-RUN npm install --legacy-peer-deps
-RUN npm link /app/packages/contracts /app/packages/database
-
 COPY services/curriculum-worker ./
-
-RUN npm link /app/packages/contracts /app/packages/database
 RUN npm run build
 
 FROM node:20-alpine AS runner
 
 WORKDIR /app
-
-RUN apk add --no-cache \
-      chromium \
-      nss \
-      freetype \
-      harfbuzz \
-      ca-certificates \
-      ttf-freefont
-
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 COPY --from=builder /app/packages/contracts/dist /app/packages/contracts/dist
 COPY --from=builder /app/packages/contracts/package.json /app/packages/contracts/package.json
@@ -60,6 +49,5 @@ WORKDIR /app/services/curriculum-worker
 COPY --from=builder /app/services/curriculum-worker/package*.json ./
 COPY --from=builder /app/services/curriculum-worker/node_modules ./node_modules
 COPY --from=builder /app/services/curriculum-worker/dist ./dist
-COPY --from=builder /app/services/curriculum-worker/src/templates ./dist/templates
 
 CMD ["node", "dist/main"]

@@ -284,7 +284,12 @@ export interface components {
             id: string;
             jobOfferId: string;
             /** @description Chiave di identificazione dell oggetto in S3/MinIO */
-            storageKey: string;
+            storageKey?: string | null;
+            /**
+             * @description Stato di compilazione del PDF
+             * @enum {string}
+             */
+            pdfStatus: "PENDING" | "GENERATING" | "READY" | "FAILED";
             explanation: string;
             /** @description Titolo professionale personalizzato per l annuncio */
             customLabel?: string | null;
@@ -391,6 +396,11 @@ export interface components {
              * @enum {string}
              */
             status: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
+            /**
+             * @default PENDING
+             * @enum {string}
+             */
+            evaluationProcessStatus: "NOT_EVALUATED" | "PENDING" | "EVALUATING" | "COMPLETED" | "FAILED";
             notes?: string | null;
             curriculum?: components["schemas"]["JobCurriculumDto"] | null;
             statusHistory?: components["schemas"]["JobStatusHistoryDto"][];
@@ -475,6 +485,11 @@ export interface components {
              * @enum {string}
              */
             status: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
+            /**
+             * @default PENDING
+             * @enum {string}
+             */
+            evaluationProcessStatus: "NOT_EVALUATED" | "PENDING" | "EVALUATING" | "COMPLETED" | "FAILED";
             notes?: string | null;
             evaluation?: components["schemas"]["JobEvaluationDto"] | null;
             curriculum?: components["schemas"]["JobCurriculumDto"] | null;
@@ -502,19 +517,67 @@ export interface components {
              */
             status: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
         };
+        ActiveProcessingJobDto: {
+            /** @description ID univoco dell annuncio */
+            id: string;
+            /** @description Titolo della posizione lavorativa */
+            title: string;
+            /** @description Nome dell azienda */
+            companyName: string;
+            /** @description Luogo di lavoro */
+            location: string | null;
+            /** @description Modalità di lavoro: REMOTE | HYBRID | ON_SITE | UNSPECIFIED */
+            remoteType: string;
+            /** @description Fonte dell annuncio */
+            source: string;
+            /** @description Stato di avanzamento: PENDING | EVALUATING */
+            evaluationProcessStatus: string;
+            /** @description Anteprima sintetica della descrizione */
+            descriptionSnippet: string | null;
+            /** @description Range salariale formattato */
+            salaryRange: string | null;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        RecentEvaluatedJobDto: {
+            /** @description ID della valutazione */
+            id: string;
+            /** @description ID dell annuncio correlato */
+            jobOfferId: string;
+            /** @description Titolo della posizione */
+            title: string;
+            /** @description Nome azienda */
+            companyName: string;
+            /** @description Punteggio globale assegnato da Gemini */
+            overallScore: number;
+            /** @description Priorità assegnata */
+            priority: string;
+            /** @description Modello AI utilizzato */
+            evaluatorModel: string;
+            /** @description Sintesi della valutazione */
+            summary: string | null;
+            /** Format: date-time */
+            evaluatedAt: string;
+        };
         CategorizationStatusDto: {
             /** @description Numero totale di annunci nel database */
             totalJobs: number;
             /** @description Numero di annunci già valutati con successo */
             evaluatedJobs: number;
-            /** @description Numero di annunci in attesa di valutazione */
+            /** @description Numero di annunci in coda o in lavorazione */
             pendingJobs: number;
+            /** @description Numero di annunci attualmente sotto elaborazione attiva con Gemini */
+            evaluatingCount: number;
             /** @description Indica se il processo di categorizzazione è attualmente attivo */
             isCategorizing: boolean;
             /** @description Indica se il profilo utente è completo di CV e criteri */
             isProfileComplete: boolean;
             /** @description Messaggio sintetico sullo stato */
             message: string;
+            /** @description Lista dei job attualmente in elaborazione o in coda */
+            activeJobs: components["schemas"]["ActiveProcessingJobDto"][];
+            /** @description Ultime valutazioni completate */
+            recentEvaluatedJobs: components["schemas"]["RecentEvaluatedJobDto"][];
         };
         CompanySummaryDto: {
             id: string;

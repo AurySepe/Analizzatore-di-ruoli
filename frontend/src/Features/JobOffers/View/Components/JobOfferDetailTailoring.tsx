@@ -463,12 +463,19 @@ const CurriculumEditor: React.FC<{
           <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block">
             Anteprima PDF Attuale (Ultimo Salvataggio)
           </span>
-          <iframe
-            key={editorState.pdfKey}
-            src={curriculum.pdfUrl}
-            title="Anteprima PDF Attuale"
-            className="h-[600px] w-full rounded-2xl border border-slate-200 bg-slate-100 shadow-inner"
-          />
+          {curriculum.pdfStatus === 'PENDING' || curriculum.pdfStatus === 'GENERATING' ? (
+            <div className="flex h-[300px] w-full flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-indigo-200 bg-indigo-50/40 p-6 text-center animate-pulse">
+              <span className="text-2xl">⚡</span>
+              <span className="text-xs font-bold text-slate-700">Compilazione del nuovo PDF in corso...</span>
+            </div>
+          ) : (
+            <iframe
+              key={curriculum.pdfUrl}
+              src={curriculum.pdfUrl}
+              title="Anteprima PDF Attuale"
+              className="h-[600px] w-full rounded-2xl border border-slate-200 bg-slate-100 shadow-inner"
+            />
+          )}
         </div>
       )}
     </div>
@@ -534,11 +541,40 @@ export const JobOfferDetailTailoring: React.FC<{
                 <span>📄 Scarica / Apri PDF</span>
               </a>
             </div>
-            <iframe
-              src={curriculum.pdfUrl}
-              title="Anteprima Curriculum PDF"
-              className="h-[600px] w-full rounded-2xl border border-slate-200 bg-slate-100 shadow-inner"
-            />
+            {curriculum.pdfStatus === 'PENDING' || curriculum.pdfStatus === 'GENERATING' ? (
+              <div className="flex h-[600px] w-full flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-indigo-200 bg-indigo-50/40 p-8 text-center">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-600 shadow-sm animate-bounce">
+                  <span className="text-2xl">⚡</span>
+                </div>
+                <div>
+                  <h5 className="text-base font-bold text-slate-900">
+                    {curriculum.pdfStatus === 'GENERATING' ? 'Compilazione PDF con Chromium in corso...' : 'In attesa del rendering PDF...'}
+                  </h5>
+                  <p className="mt-1 text-xs text-slate-500 max-w-sm">
+                    Il worker sta applicando le modifiche al template e rigenerando il documento su MinIO.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-indigo-700 shadow-xs border border-indigo-100 animate-pulse">
+                  <span className="h-2 w-2 rounded-full bg-indigo-600" />
+                  Sincronizzazione in tempo reale...
+                </div>
+              </div>
+            ) : curriculum.pdfStatus === 'FAILED' ? (
+              <div className="flex h-[300px] w-full flex-col items-center justify-center gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-6 text-center text-rose-800">
+                <span className="text-3xl">⚠️</span>
+                <h5 className="text-sm font-bold">Errore durante la compilazione del PDF</h5>
+                <p className="text-xs text-rose-600 max-w-md">
+                  Si è verificato un errore nel worker di rendering PDF. Prova a salvare nuovamente le modifiche per rigenerarlo.
+                </p>
+              </div>
+            ) : (
+              <iframe
+                key={curriculum.pdfUrl}
+                src={curriculum.pdfUrl}
+                title="Anteprima Curriculum PDF"
+                className="h-[600px] w-full rounded-2xl border border-slate-200 bg-slate-100 shadow-inner"
+              />
+            )}
           </div>
 
           {/* 2. Pulsante di Modifica Personalizzazioni AI */}

@@ -81,12 +81,27 @@ enum JobSource {
   MANUAL
 }
 
+enum OutboxStatus {
+  PENDING
+  PUBLISHED
+  FAILED
+}
+
+enum JobEvaluationProcessStatus {
+  NOT_EVALUATED
+  PENDING
+  EVALUATING
+  COMPLETED
+  FAILED
+}
+
 model JobCurriculum {
   id         String   @id @default(uuid())
   jobOfferId String   @unique
   jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id], onDelete: Cascade)
 
-  storageKey  String // Chiave identificativa dell'oggetto salvato in S3/MinIO
+  storageKey  String? // Chiave identificativa dell'oggetto salvato in S3/MinIO
+  pdfStatus   JobCurriculumPdfStatus @default(PENDING) // Stato di rendering/compilazione del documento PDF
   explanation String // Spiegazione testuale delle scelte fatte per il curriculum
   customLabel String? // Titolo professionale personalizzato
 
@@ -98,6 +113,13 @@ model JobCurriculum {
   updatedAt DateTime @updatedAt
 
   @@index([jobOfferId])
+}
+
+enum JobCurriculumPdfStatus {
+  PENDING
+  GENERATING
+  READY
+  FAILED
 }
 
 model JobCurriculumWork {
@@ -146,6 +168,37 @@ model JobCurriculumPublication {
   @@index([curriculumId])
 }
 
+model JobCurriculumOutbox {
+  id              String       @id @default(uuid())
+  jobOfferId      String       @unique
+  jobOffer        JobOffer     @relation(fields: [jobOfferId], references: [id], onDelete: Cascade)
+  status          OutboxStatus @default(PENDING)
+  forceRegenerate Boolean      @default(false)
+  attempts        Int          @default(0)
+  lastError       String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model JobCurriculumPdfOutbox {
+  id              String       @id @default(uuid())
+  jobOfferId      String       @unique
+  jobOffer        JobOffer     @relation(fields: [jobOfferId], references: [id], onDelete: Cascade)
+  status          OutboxStatus @default(PENDING)
+  templateName    String?
+  forceRegenerate Boolean      @default(false)
+  attempts        Int          @default(0)
+  lastError       String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
 model JobEvaluation {
   id         String   @id @default(uuid())
   jobOfferId String   @unique
@@ -174,6 +227,20 @@ model JobEvaluation {
   @@index([priority])
   @@index([status])
   @@index([evaluatorModel])
+}
+
+model JobEvaluationOutbox {
+  id         String       @id @default(uuid())
+  jobOfferId String       @unique
+  jobOffer   JobOffer     @relation(fields: [jobOfferId], references: [id], onDelete: Cascade)
+  status     OutboxStatus @default(PENDING)
+  attempts   Int          @default(0)
+  lastError  String?
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
 }
 
 model JobOffer {
@@ -206,18 +273,23 @@ model JobOffer {
   skills          String? // JSON string array (e.g. '["TypeScript","Node.js"]')
 
   // Tracking
-  status        ApplicationStatus  @default(NEW)
-  notes         String?
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime           @updatedAt
-  evaluation    JobEvaluation?
-  curriculum    JobCurriculum?
-  statusHistory JobStatusHistory[]
+  status                  ApplicationStatus          @default(NEW)
+  evaluationProcessStatus JobEvaluationProcessStatus @default(PENDING)
+  notes                   String?
+  createdAt               DateTime                   @default(now())
+  updatedAt               DateTime                   @updatedAt
+  evaluation              JobEvaluation?
+  evaluationOutbox        JobEvaluationOutbox?
+  curriculum              JobCurriculum?
+  curriculumOutbox        JobCurriculumOutbox?
+  curriculumPdfOutbox     JobCurriculumPdfOutbox?
+  statusHistory           JobStatusHistory[]
 
   @@unique([source, externalId])
   @@index([companyId])
   @@index([source])
   @@index([status])
+  @@index([evaluationProcessStatus])
 }
 
 model JobStatusHistory {

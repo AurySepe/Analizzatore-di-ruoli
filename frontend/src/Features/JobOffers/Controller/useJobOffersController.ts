@@ -83,34 +83,38 @@ export const useJobOffersController = (section: JobOffersSection): JobOffersCont
 
   const handleTitleFilterChange = useCallback(
     (value: string) => {
+      setSelectedJobOfferId(null);
       setFilters((current) => ({ ...current, title: value }));
       resetToFirstPage();
     },
-    [resetToFirstPage, setFilters],
+    [resetToFirstPage, setFilters, setSelectedJobOfferId],
   );
 
   const handleSourceFilterChange = useCallback(
     (value: JobOfferSource | null) => {
+      setSelectedJobOfferId(null);
       setFilters((current) => ({ ...current, source: value }));
       resetToFirstPage();
     },
-    [resetToFirstPage, setFilters],
+    [resetToFirstPage, setFilters, setSelectedJobOfferId],
   );
 
   const handlePriorityChange = useCallback(
     (value: JobOfferPriority | null) => {
+      setSelectedJobOfferId(null);
       setFilters((current) => ({ ...current, priority: value }));
       resetToFirstPage();
     },
-    [resetToFirstPage, setFilters],
+    [resetToFirstPage, setFilters, setSelectedJobOfferId],
   );
 
   const handleFreshnessFilterChange = useCallback(
     (value: JobOfferFreshness | null) => {
+      setSelectedJobOfferId(null);
       setFilters((current) => ({ ...current, freshness: value }));
       resetToFirstPage();
     },
-    [resetToFirstPage, setFilters],
+    [resetToFirstPage, setFilters, setSelectedJobOfferId],
   );
 
   const updateStatus = useCallback(
@@ -145,9 +149,10 @@ export const useJobOffersController = (section: JobOffersSection): JobOffersCont
   );
 
   const handleResetFilters = useCallback(() => {
+    setSelectedJobOfferId(null);
     setFilters(emptyJobOffersFilters);
     resetToFirstPage();
-  }, [resetToFirstPage, setFilters]);
+  }, [resetToFirstPage, setFilters, setSelectedJobOfferId]);
 
   const setSelectedCompanyId = useSetAtom(selectedCompanyIdAtom);
 

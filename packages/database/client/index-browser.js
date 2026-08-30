@@ -137,6 +137,7 @@ exports.Prisma.JobCurriculumScalarFieldEnum = {
   id: 'id',
   jobOfferId: 'jobOfferId',
   storageKey: 'storageKey',
+  pdfStatus: 'pdfStatus',
   explanation: 'explanation',
   customLabel: 'customLabel',
   createdAt: 'createdAt',
@@ -174,6 +175,29 @@ exports.Prisma.JobCurriculumPublicationScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.JobCurriculumOutboxScalarFieldEnum = {
+  id: 'id',
+  jobOfferId: 'jobOfferId',
+  status: 'status',
+  forceRegenerate: 'forceRegenerate',
+  attempts: 'attempts',
+  lastError: 'lastError',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.JobCurriculumPdfOutboxScalarFieldEnum = {
+  id: 'id',
+  jobOfferId: 'jobOfferId',
+  status: 'status',
+  templateName: 'templateName',
+  forceRegenerate: 'forceRegenerate',
+  attempts: 'attempts',
+  lastError: 'lastError',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.JobEvaluationScalarFieldEnum = {
   id: 'id',
   jobOfferId: 'jobOfferId',
@@ -189,6 +213,16 @@ exports.Prisma.JobEvaluationScalarFieldEnum = {
   detailedReasoning: 'detailedReasoning',
   pros: 'pros',
   cons: 'cons',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.JobEvaluationOutboxScalarFieldEnum = {
+  id: 'id',
+  jobOfferId: 'jobOfferId',
+  status: 'status',
+  attempts: 'attempts',
+  lastError: 'lastError',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -213,6 +247,7 @@ exports.Prisma.JobOfferScalarFieldEnum = {
   experienceLevel: 'experienceLevel',
   skills: 'skills',
   status: 'status',
+  evaluationProcessStatus: 'evaluationProcessStatus',
   notes: 'notes',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -256,6 +291,19 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.JobCurriculumPdfStatus = exports.$Enums.JobCurriculumPdfStatus = {
+  PENDING: 'PENDING',
+  GENERATING: 'GENERATING',
+  READY: 'READY',
+  FAILED: 'FAILED'
+};
+
+exports.OutboxStatus = exports.$Enums.OutboxStatus = {
+  PENDING: 'PENDING',
+  PUBLISHED: 'PUBLISHED',
+  FAILED: 'FAILED'
+};
+
 exports.EvaluationStatus = exports.$Enums.EvaluationStatus = {
   SUCCESS: 'SUCCESS',
   UNANALYZABLE: 'UNANALYZABLE'
@@ -313,13 +361,24 @@ exports.ApplicationStatus = exports.$Enums.ApplicationStatus = {
   ARCHIVED: 'ARCHIVED'
 };
 
+exports.JobEvaluationProcessStatus = exports.$Enums.JobEvaluationProcessStatus = {
+  NOT_EVALUATED: 'NOT_EVALUATED',
+  PENDING: 'PENDING',
+  EVALUATING: 'EVALUATING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED'
+};
+
 exports.Prisma.ModelName = {
   Company: 'Company',
   JobCurriculum: 'JobCurriculum',
   JobCurriculumWork: 'JobCurriculumWork',
   JobCurriculumProject: 'JobCurriculumProject',
   JobCurriculumPublication: 'JobCurriculumPublication',
+  JobCurriculumOutbox: 'JobCurriculumOutbox',
+  JobCurriculumPdfOutbox: 'JobCurriculumPdfOutbox',
   JobEvaluation: 'JobEvaluation',
+  JobEvaluationOutbox: 'JobEvaluationOutbox',
   JobOffer: 'JobOffer',
   JobStatusHistory: 'JobStatusHistory',
   SyncState: 'SyncState',

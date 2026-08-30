@@ -46,47 +46,70 @@ export class JobOfferIngestionProcessor extends WorkerHost {
 
       const sourceEnum = (JobSource as any)[payload.source] || JobSource.ARBEITNOW;
 
-      // 2. Upsert idempotente su JobOffer nel DB Principale
+      // 2. Upsert idempotente e inserimento atomico Outbox nel DB Principale
       const existingOffer = await this.prisma.jobOffer.findUnique({
         where: { url: payload.url },
+        include: { evaluation: true, evaluationOutbox: true },
       });
 
       const datePosted = payload.datePosted ? new Date(payload.datePosted) : null;
       const skillsJson = payload.tags && payload.tags.length > 0 ? JSON.stringify(payload.tags) : null;
 
       if (!existingOffer) {
-        const newOffer = await this.prisma.jobOffer.create({
-          data: {
-            externalId: payload.externalId,
-            source: sourceEnum,
-            url: payload.url,
-            title: payload.title,
-            companyId: company.id,
-            location: payload.location || null,
-            remoteType: remoteTypeEnum,
-            salaryMin: payload.salaryMin || null,
-            salaryMax: payload.salaryMax || null,
-            currency: payload.currency || 'EUR',
-            contractType: payload.contractType || null,
-            rawDescription: payload.rawDescription,
-            descriptionMarkdown: payload.descriptionMarkdown || null,
-            datePosted,
-            skills: skillsJson,
-          },
-        });
+        // Transazione Atomica: Creazione JobOffer + Record Outbox
+        await this.prisma.$transaction(async (tx) => {
+          const newOffer = await tx.jobOffer.create({
+            data: {
+              externalId: payload.externalId,
+              source: sourceEnum,
+              url: payload.url,
+              title: payload.title,
+              companyId: company.id,
+              location: payload.location || null,
+              remoteType: remoteTypeEnum,
+              salaryMin: payload.salaryMin || null,
+              salaryMax: payload.salaryMax || null,
+              currency: payload.currency || 'EUR',
+              contractType: payload.contractType || null,
+              rawDescription: payload.rawDescription,
+              descriptionMarkdown: payload.descriptionMarkdown || null,
+              datePosted,
+              skills: skillsJson,
+            },
+          });
 
-        this.logger.log(`✨ [IngestionWorker] Creato nuovo annuncio [ID: ${newOffer.id}] "${newOffer.title}"`);
+          await tx.jobEvaluationOutbox.create({
+            data: {
+              jobOfferId: newOffer.id,
+              status: 'PENDING',
+            },
+          });
+
+          this.logger.log(`✨ [IngestionWorker] Creato annuncio [ID: ${newOffer.id}] "${newOffer.title}" con record Outbox PENDING`);
+        });
       } else {
-        await this.prisma.jobOffer.update({
-          where: { id: existingOffer.id },
-          data: {
-            title: payload.title,
-            location: payload.location || null,
-            rawDescription: payload.rawDescription,
-            descriptionMarkdown: payload.descriptionMarkdown || null,
-            datePosted: datePosted || existingOffer.datePosted,
-            skills: skillsJson || existingOffer.skills,
-          },
+        await this.prisma.$transaction(async (tx) => {
+          await tx.jobOffer.update({
+            where: { id: existingOffer.id },
+            data: {
+              title: payload.title,
+              location: payload.location || null,
+              rawDescription: payload.rawDescription,
+              descriptionMarkdown: payload.descriptionMarkdown || null,
+              datePosted: datePosted || existingOffer.datePosted,
+              skills: skillsJson || existingOffer.skills,
+            },
+          });
+
+          if (!existingOffer.evaluation && !existingOffer.evaluationOutbox) {
+            await tx.jobEvaluationOutbox.create({
+              data: {
+                jobOfferId: existingOffer.id,
+                status: 'PENDING',
+              },
+            });
+            this.logger.log(`📥 [IngestionWorker] Creato Outbox PENDING per annuncio esistente senza valutazione [ID: ${existingOffer.id}]`);
+          }
         });
 
         this.logger.log(`🔄 [IngestionWorker] Aggiornato annuncio [ID: ${existingOffer.id}] "${existingOffer.title}"`);
