@@ -14,7 +14,9 @@ resources:
   - backend.yaml
   - relay-curriculum.yaml
   - relay-evaluation.yaml
+  - relay-cover-letter.yaml
   - worker-curriculum.yaml
+  - worker-cover-letter.yaml
   - worker-pdf.yaml
   - worker-evaluator.yaml
   - worker-extractor-arbeitnow.yaml

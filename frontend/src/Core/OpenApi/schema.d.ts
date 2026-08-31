@@ -175,6 +175,41 @@ export interface paths {
         patch: operations["JobOffersController_updateCurriculumTailoring"];
         trace?: never;
     };
+    "/api/job-offers/{id}/cover-letter": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recupera i dati e lo stato della cover letter per un annuncio */
+        get: operations["JobOffersController_getCoverLetter"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Aggiorna i dati della cover letter e attiva la rigenerazione del PDF */
+        patch: operations["JobOffersController_updateCoverLetter"];
+        trace?: never;
+    };
+    "/api/job-offers/{id}/cover-letter/pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recupera e trasmette lo stream del file PDF della cover letter compilata */
+        get: operations["JobOffersController_getCoverLetterPdf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/evaluations/status": {
         parameters: {
             query?: never;
@@ -316,6 +351,85 @@ export interface components {
             /** @description Spiegazione testuale delle motivazioni delle modifiche */
             explanation?: string;
         };
+        JobCoverLetterDto: {
+            /** @description ID univoco della cover letter */
+            id: string;
+            /** @description ID dell offerta di lavoro associata */
+            jobOfferId: string;
+            /** @description Titolo professionale personalizzato per l intestazione */
+            customLabel?: string | null;
+            /** @description Nome della persona destinataria */
+            recipientName?: string | null;
+            /** @description Titolo del team o del hiring manager */
+            recipientTitle?: string | null;
+            /** @description Nome dell azienda destinataria */
+            recipientCompany: string;
+            /** @description Location e modalita di lavoro dell azienda */
+            recipientAddress?: string | null;
+            /** @description Ruolo della posizione lavorativa */
+            recipientRole: string;
+            /** @description Data della lettera formattata in inglese */
+            date: string;
+            /** @description Saluto iniziale */
+            salutation: string;
+            /** @description Primo paragrafo: Esempio concreto MioCFO e metriche di impatto */
+            experienceParagraph1: string;
+            /** @description Secondo paragrafo: Metodologia AI-native in Antigravity IDE */
+            experienceParagraph2: string;
+            /** @description Terzo paragrafo: Motivazione specifica per l azienda */
+            companyMotivation: string;
+            /** @description Frase di chiusura e invito al colloquio */
+            callToAction: string;
+            /** @description Firma di chiusura */
+            signoff: string;
+            /** @description Spiegazione strategica generata dall AI */
+            explanation?: string | null;
+            /** @description Chiave di archiviazione del PDF su MinIO S3 */
+            storageKey?: string | null;
+            /**
+             * @description Stato di compilazione del PDF
+             * @enum {string}
+             */
+            pdfStatus: "PENDING" | "GENERATING" | "READY" | "FAILED";
+            /**
+             * Format: date-time
+             * @description Data di creazione
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Data di ultimo aggiornamento
+             */
+            updatedAt: string;
+        };
+        UpdateCoverLetterDto: {
+            /** @description Titolo professionale personalizzato per l intestazione */
+            customLabel?: string;
+            /** @description Nome della persona destinataria */
+            recipientName?: string;
+            /** @description Titolo del team o del hiring manager */
+            recipientTitle?: string;
+            /** @description Nome dell azienda destinataria */
+            recipientCompany?: string;
+            /** @description Location e modalita di lavoro dell azienda */
+            recipientAddress?: string;
+            /** @description Ruolo della posizione lavorativa */
+            recipientRole?: string;
+            /** @description Data della lettera formattata in inglese */
+            date?: string;
+            /** @description Saluto iniziale */
+            salutation?: string;
+            /** @description Primo paragrafo: Esempio concreto MioCFO e metriche di impatto */
+            experienceParagraph1?: string;
+            /** @description Secondo paragrafo: Metodologia AI-native in Antigravity IDE */
+            experienceParagraph2?: string;
+            /** @description Terzo paragrafo: Motivazione specifica per l azienda */
+            companyMotivation?: string;
+            /** @description Frase di chiusura e invito al colloquio */
+            callToAction?: string;
+            /** @description Firma di chiusura */
+            signoff?: string;
+        };
         FunnelConversionRatesDto: {
             /** @description Percentuale di conversione da candidatura a colloquio */
             applicationToInterview: number;
@@ -403,6 +517,7 @@ export interface components {
             evaluationProcessStatus: "NOT_EVALUATED" | "PENDING" | "EVALUATING" | "COMPLETED" | "FAILED";
             notes?: string | null;
             curriculum?: components["schemas"]["JobCurriculumDto"] | null;
+            coverLetter?: components["schemas"]["JobCoverLetterDto"] | null;
             statusHistory?: components["schemas"]["JobStatusHistoryDto"][];
             company: components["schemas"]["CreateCompanyDto"];
         };
@@ -493,6 +608,7 @@ export interface components {
             notes?: string | null;
             evaluation?: components["schemas"]["JobEvaluationDto"] | null;
             curriculum?: components["schemas"]["JobCurriculumDto"] | null;
+            coverLetter?: components["schemas"]["JobCoverLetterDto"] | null;
             /**
              * @example HOT
              * @enum {string}
@@ -992,6 +1108,72 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["JobOfferDto"];
                 };
+            };
+        };
+    };
+    JobOffersController_getCoverLetter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobCoverLetterDto"];
+                };
+            };
+        };
+    };
+    JobOffersController_updateCoverLetter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateCoverLetterDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobOfferDto"];
+                };
+            };
+        };
+    };
+    JobOffersController_getCoverLetterPdf: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description File binario PDF trasmesso come stream inline */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

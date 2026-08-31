@@ -5,6 +5,8 @@ import { JobSource } from '@analizzatore/database';
 import { CompanyDto, CreateCompanyDto } from './company.dto';
 import { JobEvaluationDto } from '../../evaluations/dto/job-evaluation.dto';
 import { JobCurriculumDto } from './job-curriculum.dto';
+import { JobCoverLetterDto } from './job-cover-letter.dto';
+
 
 
 export enum RemoteTypeEnum {
@@ -201,6 +203,11 @@ export class JobOfferDto {
   @ValidateIf((_, val) => val !== null)
   @IsOptional()
   curriculum?: JobCurriculumDto | null;
+
+  @ApiProperty({ type: () => JobCoverLetterDto, nullable: true, required: false })
+  @ValidateIf((_, val) => val !== null)
+  @IsOptional()
+  coverLetter?: JobCoverLetterDto | null;
 
   @ApiProperty({ enum: JobOfferFreshnessEnum, example: JobOfferFreshnessEnum.HOT })
   @IsEnum(JobOfferFreshnessEnum)

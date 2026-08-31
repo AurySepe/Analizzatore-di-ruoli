@@ -10,6 +10,7 @@ import { JobOfferDetailEvaluation } from './JobOfferDetailEvaluation';
 import { JobOfferDetailHeader } from './JobOfferDetailHeader';
 import { JobOfferDetailOverview } from './JobOfferDetailOverview';
 import { JobOfferDetailTailoring } from './JobOfferDetailTailoring';
+import { JobOfferDetailCoverLetter } from './JobOfferDetailCoverLetter';
 
 // ── Skeleton ──────────────────────────────────────────────────────────────────
 export const JobOfferDetailSkeleton: React.FC = () => (
@@ -63,7 +64,7 @@ export const JobOfferDetailView: React.FC<{
   editorController,
   showHeaderActions = true,
 }) => {
-  const [activeTab, setActiveTab] = useState<'details' | 'curriculum'>('details');
+  const [activeTab, setActiveTab] = useState<'details' | 'curriculum' | 'cover-letter'>('details');
 
   if (data === null) {
     return (
@@ -117,10 +118,30 @@ export const JobOfferDetailView: React.FC<{
                 : 'border-transparent text-slate-500 hover:text-slate-700'
             }`}
           >
-            <span>Curriculum Personalizzato</span>
+            <span>Curriculum</span>
             {data.curriculum ? (
               <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-800">
                 Pronto
+              </span>
+            ) : (
+              <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-800 animate-pulse">
+                In corso...
+              </span>
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('cover-letter')}
+            className={`flex items-center gap-2 border-b-2 py-3 px-4 text-sm font-semibold transition ${
+              currentTab === 'cover-letter'
+                ? 'border-emerald-600 text-emerald-600 font-bold'
+                : 'border-transparent text-slate-500 hover:text-slate-700'
+            }`}
+          >
+            <span>Cover Letter</span>
+            {data.coverLetter ? (
+              <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-800">
+                Pronta
               </span>
             ) : (
               <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-800 animate-pulse">
@@ -137,7 +158,7 @@ export const JobOfferDetailView: React.FC<{
             <JobOfferDetailEvaluation evaluation={data.evaluation} />
             <JobOfferDetailOverview data={data} onSelectCompany={onSelectCompany} />
           </>
-        ) : editorState && editorController ? (
+        ) : currentTab === 'curriculum' && editorState && editorController ? (
           <JobOfferDetailTailoring
             curriculum={data.curriculum}
             jobOfferId={data.id}
@@ -145,6 +166,8 @@ export const JobOfferDetailView: React.FC<{
             editorState={editorState}
             editorController={editorController}
           />
+        ) : currentTab === 'cover-letter' ? (
+          <JobOfferDetailCoverLetter offer={data} />
         ) : null}
       </div>
     </aside>

@@ -52,5 +52,15 @@ export const GENERATE_PDF_EVENT = 'GENERATE_PDF';
 export const EVALUATION_QUEUE_NAME = 'evaluation-jobs';
 export const EVALUATE_JOB_EVENT = 'EVALUATE_JOB';
 
+export interface GenerateCoverLetterTaskEvent {
+  jobOfferId: string;
+  forceRegenerate?: boolean;
+}
+
+export const COVER_LETTER_QUEUE_NAME = 'cover-letter-jobs';
+export const GENERATE_COVER_LETTER_EVENT = 'GENERATE_COVER_LETTER';
+
 export * from './queue-helper';
 export * from './user-profile.config';
+
+

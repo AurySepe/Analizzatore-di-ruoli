@@ -1,0 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --bg-color: #ffffff;
+  --primary-color: #111827;
+  --secondary-color: #374151;
+  --border-color: #e5e7eb;
+  --text-muted: #6b7280;
+  --accent-blue: #4f46e5;
+  --accent-purple: #4338ca;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--primary-color);
+  background-color: var(--bg-color);
+  line-height: 1.5;
+  font-size: 10px;
+  -webkit-font-smoothing: antialiased;
+  padding: 24px 34px 20px 34px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid var(--accent-blue);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  page-break-after: avoid;
+  break-after: avoid;
+}
+
+.header-left {
+  max-width: 65%;
+}
+
+.header-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--primary-color);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 3px;
+}
+
+.header-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--accent-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.header-right {
+  text-align: right;
+  font-size: 9.5px;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.header-contact-link {
+  color: var(--accent-blue);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.header-contact-link:hover {
+  text-decoration: underline;
+}
+
+.recipient-block {
+  margin-top: 14px;
+  margin-bottom: 16px;
+  font-size: 10px;
+  color: var(--secondary-color);
+  line-height: 1.4;
+}
+
+.recipient-company {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  color: var(--primary-color);
+  font-size: 11.5px;
+}
+
+.letter-date {
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 12px;
+  font-size: 9.5px;
+  color: var(--text-muted);
+}
+
+.letter-subject {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  color: var(--accent-blue);
+  margin-bottom: 18px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.letter-p {
+  font-size: 10px;
+  line-height: 1.55;
+  color: var(--secondary-color);
+  margin-bottom: 12px;
+  text-align: justify;
+}
+
+.closing-block {
+  margin-top: 20px;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.closing-signoff {
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.closing-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  color: var(--primary-color);
+  font-size: 11.5px;
+  margin-top: 12px;
+}
+
+.resume-wrapper {
+  position: relative;
+  min-height: 100%;
+}

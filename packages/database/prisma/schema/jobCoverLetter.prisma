@@ -1,0 +1,37 @@
+model JobCoverLetter {
+  id                  String                    @id @default(uuid())
+  jobOfferId          String                    @unique
+  jobOffer            JobOffer                  @relation(fields: [jobOfferId], references: [id], onDelete: Cascade)
+
+  customLabel         String?
+  recipientName       String?
+  recipientTitle      String?
+  recipientCompany    String
+  recipientAddress    String?
+  recipientRole       String
+  date                String
+  salutation          String
+
+  experienceParagraph1 String
+  experienceParagraph2 String
+  companyMotivation   String
+
+  callToAction        String                    @default("Happy to talk through any of this in more detail.")
+  signoff             String                    @default("Sincerely,")
+  explanation         String?
+
+  storageKey          String?
+  pdfStatus           JobCoverLetterPdfStatus   @default(PENDING)
+
+  createdAt           DateTime                  @default(now())
+  updatedAt           DateTime                  @updatedAt
+
+  @@index([jobOfferId])
+}
+
+enum JobCoverLetterPdfStatus {
+  PENDING
+  GENERATING
+  READY
+  FAILED
+}

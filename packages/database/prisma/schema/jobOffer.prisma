@@ -39,6 +39,8 @@ model JobOffer {
   curriculum              JobCurriculum?
   curriculumOutbox        JobCurriculumOutbox?
   curriculumPdfOutbox     JobCurriculumPdfOutbox?
+  coverLetter             JobCoverLetter?
+  coverLetterOutbox       JobCoverLetterOutbox?
   statusHistory           JobStatusHistory[]
 
   @@unique([source, externalId])

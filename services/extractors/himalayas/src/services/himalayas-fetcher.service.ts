@@ -13,34 +13,39 @@ export class HimalayasFetcherService {
   private readonly logger = new Logger(HimalayasFetcherService.name);
 
   /**
-   * Ruoli tech/product/data da raccogliere.
+   * Ruoli tech/software/data/engineering da raccogliere.
    */
   private readonly techRoleKeywords = [
     'software', 'developer', 'engineer', 'frontend', 'backend', 'fullstack',
     'full-stack', 'full stack', 'architect', 'tech lead', 'technical lead',
     'devops', 'cloud', 'infrastructure', 'platform', 'sre', 'reliability',
-    'node', 'typescript', 'javascript', 'react', 'python', 'java', 'golang',
-    'rust', 'c#', '.net', 'data engineer', 'ml engineer', 'ai engineer',
-    'machine learning', 'product manager', 'product owner', 'product engineer',
-    'head of product', 'principal', 'staff engineer', 'mobile', 'ios', 'android',
-    'embedded', 'firmware', 'security engineer', 'qa engineer', 'test engineer',
-    'data scientist', 'analytics engineer', 'database', 'api developer',
-    'solutions architect', 'systems engineer', 'programmer', 'web developer',
-    'data analyst', 'bi developer', 'sysadmin'
+    'node', 'typescript', 'javascript', 'react', 'python', 'golang',
+    'rust', 'data engineer', 'ml engineer', 'ai engineer',
+    'machine learning', 'product engineer', 'staff engineer', 'principal engineer',
+    'mobile', 'ios', 'android', 'embedded', 'firmware', 'security engineer',
+    'qa engineer', 'test engineer', 'data scientist', 'analytics engineer',
+    'api developer', 'solutions architect', 'systems engineer', 'programmer',
+    'web developer'
   ];
 
   /**
-   * Ruoli esclusi: non-tech, agency, o ruoli founder/co-founder.
+   * Ruoli esclusi: non-tech, sales, agency, o ruoli founder/co-founder.
    */
   private readonly excludedRoleKeywords = [
     'founder', 'co-founder', 'cofounder', 'founding engineer',
-    'hr ', 'human resources', 'recruiter', 'recruitment',
-    'sales', 'accountant', 'accounting', 'marketing', 'seo specialist',
-    'office manager', 'customer support', 'customer success representative',
+    'hr ', 'human resources', 'recruiter', 'recruiting', 'recruitment', 'sourcer',
+    'sales', 'account executive', 'account manager', 'bdr', 'sdr', 'business development',
+    'accountant', 'accounting', 'marketing', 'seo specialist', 'growth manager',
+    'office manager', 'customer support', 'customer success', 'customer service',
     'virtual assistant', 'copywriter', 'content writer', 'graphic designer',
     'social media', 'community manager', 'executive assistant',
     'piping engineer', 'actuary', 'music expert', 'interpreter', 'songwriting',
-    'audio engineer', 'advocate', 'investigator', 'instructor'
+    'audio engineer', 'advocate', 'investigator', 'instructor',
+    'auditor', 'intern', 'internship', 'document control',
+    'coordinator', 'assistant', 'technician', 'clerk', 'associate',
+    'nurse', 'warehouse', 'driver', 'legal', 'compliance officer',
+    'estimator', 'surveyor', 'joiner', 'mechanic', 'plumber', 'electrician',
+    'level designer'
   ];
 
   constructor(
@@ -93,15 +98,13 @@ export class HimalayasFetcherService {
 
         const titleLower = title.toLowerCase();
 
-        // === FILTRO 1: Escludi ruoli non tech / founding ===
+        // === FILTRO 1: Escludi ruoli non tech / non software / sales / operativi ===
         if (this.excludedRoleKeywords.some((kw) => titleLower.includes(kw))) {
           continue;
         }
 
-        // === FILTRO 2: Tieni solo ruoli tech/product/data ===
-        const tagsLower = tags.map((t) => t.toLowerCase()).join(' ');
-        const combinedText = `${titleLower} ${tagsLower}`;
-        if (!this.techRoleKeywords.some((kw) => combinedText.includes(kw))) {
+        // === FILTRO 2: Tieni solo ruoli con qualifica tech/software/data esplicita nel titolo ===
+        if (!this.techRoleKeywords.some((kw) => titleLower.includes(kw))) {
           continue;
         }
 

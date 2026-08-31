@@ -133,6 +133,40 @@ exports.Prisma.CompanyScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.JobCoverLetterScalarFieldEnum = {
+  id: 'id',
+  jobOfferId: 'jobOfferId',
+  customLabel: 'customLabel',
+  recipientName: 'recipientName',
+  recipientTitle: 'recipientTitle',
+  recipientCompany: 'recipientCompany',
+  recipientAddress: 'recipientAddress',
+  recipientRole: 'recipientRole',
+  date: 'date',
+  salutation: 'salutation',
+  experienceParagraph1: 'experienceParagraph1',
+  experienceParagraph2: 'experienceParagraph2',
+  companyMotivation: 'companyMotivation',
+  callToAction: 'callToAction',
+  signoff: 'signoff',
+  explanation: 'explanation',
+  storageKey: 'storageKey',
+  pdfStatus: 'pdfStatus',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.JobCoverLetterOutboxScalarFieldEnum = {
+  id: 'id',
+  jobOfferId: 'jobOfferId',
+  status: 'status',
+  forceRegenerate: 'forceRegenerate',
+  attempts: 'attempts',
+  lastError: 'lastError',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.JobCurriculumScalarFieldEnum = {
   id: 'id',
   jobOfferId: 'jobOfferId',
@@ -291,7 +325,7 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-exports.JobCurriculumPdfStatus = exports.$Enums.JobCurriculumPdfStatus = {
+exports.JobCoverLetterPdfStatus = exports.$Enums.JobCoverLetterPdfStatus = {
   PENDING: 'PENDING',
   GENERATING: 'GENERATING',
   READY: 'READY',
@@ -301,6 +335,13 @@ exports.JobCurriculumPdfStatus = exports.$Enums.JobCurriculumPdfStatus = {
 exports.OutboxStatus = exports.$Enums.OutboxStatus = {
   PENDING: 'PENDING',
   PUBLISHED: 'PUBLISHED',
+  FAILED: 'FAILED'
+};
+
+exports.JobCurriculumPdfStatus = exports.$Enums.JobCurriculumPdfStatus = {
+  PENDING: 'PENDING',
+  GENERATING: 'GENERATING',
+  READY: 'READY',
   FAILED: 'FAILED'
 };
 
@@ -373,6 +414,8 @@ exports.JobEvaluationProcessStatus = exports.$Enums.JobEvaluationProcessStatus =
 
 exports.Prisma.ModelName = {
   Company: 'Company',
+  JobCoverLetter: 'JobCoverLetter',
+  JobCoverLetterOutbox: 'JobCoverLetterOutbox',
   JobCurriculum: 'JobCurriculum',
   JobCurriculumWork: 'JobCurriculumWork',
   JobCurriculumProject: 'JobCurriculumProject',

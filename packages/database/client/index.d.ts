@@ -19,6 +19,16 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  */
 export type Company = $Result.DefaultSelection<Prisma.$CompanyPayload>
 /**
+ * Model JobCoverLetter
+ * 
+ */
+export type JobCoverLetter = $Result.DefaultSelection<Prisma.$JobCoverLetterPayload>
+/**
+ * Model JobCoverLetterOutbox
+ * 
+ */
+export type JobCoverLetterOutbox = $Result.DefaultSelection<Prisma.$JobCoverLetterOutboxPayload>
+/**
  * Model JobCurriculum
  * 
  */
@@ -183,6 +193,16 @@ export const JobEvaluationProcessStatus: {
 export type JobEvaluationProcessStatus = (typeof JobEvaluationProcessStatus)[keyof typeof JobEvaluationProcessStatus]
 
 
+export const JobCoverLetterPdfStatus: {
+  PENDING: 'PENDING',
+  GENERATING: 'GENERATING',
+  READY: 'READY',
+  FAILED: 'FAILED'
+};
+
+export type JobCoverLetterPdfStatus = (typeof JobCoverLetterPdfStatus)[keyof typeof JobCoverLetterPdfStatus]
+
+
 export const JobCurriculumPdfStatus: {
   PENDING: 'PENDING',
   GENERATING: 'GENERATING',
@@ -229,6 +249,10 @@ export const OutboxStatus: typeof $Enums.OutboxStatus
 export type JobEvaluationProcessStatus = $Enums.JobEvaluationProcessStatus
 
 export const JobEvaluationProcessStatus: typeof $Enums.JobEvaluationProcessStatus
+
+export type JobCoverLetterPdfStatus = $Enums.JobCoverLetterPdfStatus
+
+export const JobCoverLetterPdfStatus: typeof $Enums.JobCoverLetterPdfStatus
 
 export type JobCurriculumPdfStatus = $Enums.JobCurriculumPdfStatus
 
@@ -364,6 +388,26 @@ export class PrismaClient<
     * ```
     */
   get company(): Prisma.CompanyDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.jobCoverLetter`: Exposes CRUD operations for the **JobCoverLetter** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more JobCoverLetters
+    * const jobCoverLetters = await prisma.jobCoverLetter.findMany()
+    * ```
+    */
+  get jobCoverLetter(): Prisma.JobCoverLetterDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.jobCoverLetterOutbox`: Exposes CRUD operations for the **JobCoverLetterOutbox** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more JobCoverLetterOutboxes
+    * const jobCoverLetterOutboxes = await prisma.jobCoverLetterOutbox.findMany()
+    * ```
+    */
+  get jobCoverLetterOutbox(): Prisma.JobCoverLetterOutboxDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.jobCurriculum`: Exposes CRUD operations for the **JobCurriculum** model.
@@ -932,6 +976,8 @@ export namespace Prisma {
 
   export const ModelName: {
     Company: 'Company',
+    JobCoverLetter: 'JobCoverLetter',
+    JobCoverLetterOutbox: 'JobCoverLetterOutbox',
     JobCurriculum: 'JobCurriculum',
     JobCurriculumWork: 'JobCurriculumWork',
     JobCurriculumProject: 'JobCurriculumProject',
@@ -959,7 +1005,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "company" | "jobCurriculum" | "jobCurriculumWork" | "jobCurriculumProject" | "jobCurriculumPublication" | "jobCurriculumOutbox" | "jobCurriculumPdfOutbox" | "jobEvaluation" | "jobEvaluationOutbox" | "jobOffer" | "jobStatusHistory" | "syncState" | "userProfile"
+      modelProps: "company" | "jobCoverLetter" | "jobCoverLetterOutbox" | "jobCurriculum" | "jobCurriculumWork" | "jobCurriculumProject" | "jobCurriculumPublication" | "jobCurriculumOutbox" | "jobCurriculumPdfOutbox" | "jobEvaluation" | "jobEvaluationOutbox" | "jobOffer" | "jobStatusHistory" | "syncState" | "userProfile"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1034,6 +1080,154 @@ export namespace Prisma {
           count: {
             args: Prisma.CompanyCountArgs<ExtArgs>
             result: $Utils.Optional<CompanyCountAggregateOutputType> | number
+          }
+        }
+      }
+      JobCoverLetter: {
+        payload: Prisma.$JobCoverLetterPayload<ExtArgs>
+        fields: Prisma.JobCoverLetterFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.JobCoverLetterFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCoverLetterPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.JobCoverLetterFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCoverLetterPayload>
+          }
+          findFirst: {
+            args: Prisma.JobCoverLetterFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCoverLetterPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.JobCoverLetterFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCoverLetterPayload>
+          }
+          findMany: {
+            args: Prisma.JobCoverLetterFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCoverLetterPayload>[]
+          }
+          create: {
+            args: Prisma.JobCoverLetterCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCoverLetterPayload>
+          }
+          createMany: {
+            args: Prisma.JobCoverLetterCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.JobCoverLetterCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCoverLetterPayload>[]
+          }
+          delete: {
+            args: Prisma.JobCoverLetterDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCoverLetterPayload>
+          }
+          update: {
+            args: Prisma.JobCoverLetterUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCoverLetterPayload>
+          }
+          deleteMany: {
+            args: Prisma.JobCoverLetterDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.JobCoverLetterUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.JobCoverLetterUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCoverLetterPayload>[]
+          }
+          upsert: {
+            args: Prisma.JobCoverLetterUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCoverLetterPayload>
+          }
+          aggregate: {
+            args: Prisma.JobCoverLetterAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateJobCoverLetter>
+          }
+          groupBy: {
+            args: Prisma.JobCoverLetterGroupByArgs<ExtArgs>
+            result: $Utils.Optional<JobCoverLetterGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.JobCoverLetterCountArgs<ExtArgs>
+            result: $Utils.Optional<JobCoverLetterCountAggregateOutputType> | number
+          }
+        }
+      }
+      JobCoverLetterOutbox: {
+        payload: Prisma.$JobCoverLetterOutboxPayload<ExtArgs>
+        fields: Prisma.JobCoverLetterOutboxFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.JobCoverLetterOutboxFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCoverLetterOutboxPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.JobCoverLetterOutboxFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCoverLetterOutboxPayload>
+          }
+          findFirst: {
+            args: Prisma.JobCoverLetterOutboxFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCoverLetterOutboxPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.JobCoverLetterOutboxFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCoverLetterOutboxPayload>
+          }
+          findMany: {
+            args: Prisma.JobCoverLetterOutboxFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCoverLetterOutboxPayload>[]
+          }
+          create: {
+            args: Prisma.JobCoverLetterOutboxCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCoverLetterOutboxPayload>
+          }
+          createMany: {
+            args: Prisma.JobCoverLetterOutboxCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.JobCoverLetterOutboxCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCoverLetterOutboxPayload>[]
+          }
+          delete: {
+            args: Prisma.JobCoverLetterOutboxDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCoverLetterOutboxPayload>
+          }
+          update: {
+            args: Prisma.JobCoverLetterOutboxUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCoverLetterOutboxPayload>
+          }
+          deleteMany: {
+            args: Prisma.JobCoverLetterOutboxDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.JobCoverLetterOutboxUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.JobCoverLetterOutboxUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCoverLetterOutboxPayload>[]
+          }
+          upsert: {
+            args: Prisma.JobCoverLetterOutboxUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JobCoverLetterOutboxPayload>
+          }
+          aggregate: {
+            args: Prisma.JobCoverLetterOutboxAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateJobCoverLetterOutbox>
+          }
+          groupBy: {
+            args: Prisma.JobCoverLetterOutboxGroupByArgs<ExtArgs>
+            result: $Utils.Optional<JobCoverLetterOutboxGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.JobCoverLetterOutboxCountArgs<ExtArgs>
+            result: $Utils.Optional<JobCoverLetterOutboxCountAggregateOutputType> | number
           }
         }
       }
@@ -2049,6 +2243,8 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     company?: CompanyOmit
+    jobCoverLetter?: JobCoverLetterOmit
+    jobCoverLetterOutbox?: JobCoverLetterOutboxOmit
     jobCurriculum?: JobCurriculumOmit
     jobCurriculumWork?: JobCurriculumWorkOmit
     jobCurriculumProject?: JobCurriculumProjectOmit
@@ -3422,6 +3618,2400 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: CompanyInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model JobCoverLetter
+   */
+
+  export type AggregateJobCoverLetter = {
+    _count: JobCoverLetterCountAggregateOutputType | null
+    _min: JobCoverLetterMinAggregateOutputType | null
+    _max: JobCoverLetterMaxAggregateOutputType | null
+  }
+
+  export type JobCoverLetterMinAggregateOutputType = {
+    id: string | null
+    jobOfferId: string | null
+    customLabel: string | null
+    recipientName: string | null
+    recipientTitle: string | null
+    recipientCompany: string | null
+    recipientAddress: string | null
+    recipientRole: string | null
+    date: string | null
+    salutation: string | null
+    experienceParagraph1: string | null
+    experienceParagraph2: string | null
+    companyMotivation: string | null
+    callToAction: string | null
+    signoff: string | null
+    explanation: string | null
+    storageKey: string | null
+    pdfStatus: $Enums.JobCoverLetterPdfStatus | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type JobCoverLetterMaxAggregateOutputType = {
+    id: string | null
+    jobOfferId: string | null
+    customLabel: string | null
+    recipientName: string | null
+    recipientTitle: string | null
+    recipientCompany: string | null
+    recipientAddress: string | null
+    recipientRole: string | null
+    date: string | null
+    salutation: string | null
+    experienceParagraph1: string | null
+    experienceParagraph2: string | null
+    companyMotivation: string | null
+    callToAction: string | null
+    signoff: string | null
+    explanation: string | null
+    storageKey: string | null
+    pdfStatus: $Enums.JobCoverLetterPdfStatus | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type JobCoverLetterCountAggregateOutputType = {
+    id: number
+    jobOfferId: number
+    customLabel: number
+    recipientName: number
+    recipientTitle: number
+    recipientCompany: number
+    recipientAddress: number
+    recipientRole: number
+    date: number
+    salutation: number
+    experienceParagraph1: number
+    experienceParagraph2: number
+    companyMotivation: number
+    callToAction: number
+    signoff: number
+    explanation: number
+    storageKey: number
+    pdfStatus: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type JobCoverLetterMinAggregateInputType = {
+    id?: true
+    jobOfferId?: true
+    customLabel?: true
+    recipientName?: true
+    recipientTitle?: true
+    recipientCompany?: true
+    recipientAddress?: true
+    recipientRole?: true
+    date?: true
+    salutation?: true
+    experienceParagraph1?: true
+    experienceParagraph2?: true
+    companyMotivation?: true
+    callToAction?: true
+    signoff?: true
+    explanation?: true
+    storageKey?: true
+    pdfStatus?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type JobCoverLetterMaxAggregateInputType = {
+    id?: true
+    jobOfferId?: true
+    customLabel?: true
+    recipientName?: true
+    recipientTitle?: true
+    recipientCompany?: true
+    recipientAddress?: true
+    recipientRole?: true
+    date?: true
+    salutation?: true
+    experienceParagraph1?: true
+    experienceParagraph2?: true
+    companyMotivation?: true
+    callToAction?: true
+    signoff?: true
+    explanation?: true
+    storageKey?: true
+    pdfStatus?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type JobCoverLetterCountAggregateInputType = {
+    id?: true
+    jobOfferId?: true
+    customLabel?: true
+    recipientName?: true
+    recipientTitle?: true
+    recipientCompany?: true
+    recipientAddress?: true
+    recipientRole?: true
+    date?: true
+    salutation?: true
+    experienceParagraph1?: true
+    experienceParagraph2?: true
+    companyMotivation?: true
+    callToAction?: true
+    signoff?: true
+    explanation?: true
+    storageKey?: true
+    pdfStatus?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type JobCoverLetterAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which JobCoverLetter to aggregate.
+     */
+    where?: JobCoverLetterWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of JobCoverLetters to fetch.
+     */
+    orderBy?: JobCoverLetterOrderByWithRelationInput | JobCoverLetterOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: JobCoverLetterWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` JobCoverLetters from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` JobCoverLetters.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned JobCoverLetters
+    **/
+    _count?: true | JobCoverLetterCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: JobCoverLetterMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: JobCoverLetterMaxAggregateInputType
+  }
+
+  export type GetJobCoverLetterAggregateType<T extends JobCoverLetterAggregateArgs> = {
+        [P in keyof T & keyof AggregateJobCoverLetter]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateJobCoverLetter[P]>
+      : GetScalarType<T[P], AggregateJobCoverLetter[P]>
+  }
+
+
+
+
+  export type JobCoverLetterGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: JobCoverLetterWhereInput
+    orderBy?: JobCoverLetterOrderByWithAggregationInput | JobCoverLetterOrderByWithAggregationInput[]
+    by: JobCoverLetterScalarFieldEnum[] | JobCoverLetterScalarFieldEnum
+    having?: JobCoverLetterScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: JobCoverLetterCountAggregateInputType | true
+    _min?: JobCoverLetterMinAggregateInputType
+    _max?: JobCoverLetterMaxAggregateInputType
+  }
+
+  export type JobCoverLetterGroupByOutputType = {
+    id: string
+    jobOfferId: string
+    customLabel: string | null
+    recipientName: string | null
+    recipientTitle: string | null
+    recipientCompany: string
+    recipientAddress: string | null
+    recipientRole: string
+    date: string
+    salutation: string
+    experienceParagraph1: string
+    experienceParagraph2: string
+    companyMotivation: string
+    callToAction: string
+    signoff: string
+    explanation: string | null
+    storageKey: string | null
+    pdfStatus: $Enums.JobCoverLetterPdfStatus
+    createdAt: Date
+    updatedAt: Date
+    _count: JobCoverLetterCountAggregateOutputType | null
+    _min: JobCoverLetterMinAggregateOutputType | null
+    _max: JobCoverLetterMaxAggregateOutputType | null
+  }
+
+  type GetJobCoverLetterGroupByPayload<T extends JobCoverLetterGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<JobCoverLetterGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof JobCoverLetterGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], JobCoverLetterGroupByOutputType[P]>
+            : GetScalarType<T[P], JobCoverLetterGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type JobCoverLetterSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    jobOfferId?: boolean
+    customLabel?: boolean
+    recipientName?: boolean
+    recipientTitle?: boolean
+    recipientCompany?: boolean
+    recipientAddress?: boolean
+    recipientRole?: boolean
+    date?: boolean
+    salutation?: boolean
+    experienceParagraph1?: boolean
+    experienceParagraph2?: boolean
+    companyMotivation?: boolean
+    callToAction?: boolean
+    signoff?: boolean
+    explanation?: boolean
+    storageKey?: boolean
+    pdfStatus?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["jobCoverLetter"]>
+
+  export type JobCoverLetterSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    jobOfferId?: boolean
+    customLabel?: boolean
+    recipientName?: boolean
+    recipientTitle?: boolean
+    recipientCompany?: boolean
+    recipientAddress?: boolean
+    recipientRole?: boolean
+    date?: boolean
+    salutation?: boolean
+    experienceParagraph1?: boolean
+    experienceParagraph2?: boolean
+    companyMotivation?: boolean
+    callToAction?: boolean
+    signoff?: boolean
+    explanation?: boolean
+    storageKey?: boolean
+    pdfStatus?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["jobCoverLetter"]>
+
+  export type JobCoverLetterSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    jobOfferId?: boolean
+    customLabel?: boolean
+    recipientName?: boolean
+    recipientTitle?: boolean
+    recipientCompany?: boolean
+    recipientAddress?: boolean
+    recipientRole?: boolean
+    date?: boolean
+    salutation?: boolean
+    experienceParagraph1?: boolean
+    experienceParagraph2?: boolean
+    companyMotivation?: boolean
+    callToAction?: boolean
+    signoff?: boolean
+    explanation?: boolean
+    storageKey?: boolean
+    pdfStatus?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["jobCoverLetter"]>
+
+  export type JobCoverLetterSelectScalar = {
+    id?: boolean
+    jobOfferId?: boolean
+    customLabel?: boolean
+    recipientName?: boolean
+    recipientTitle?: boolean
+    recipientCompany?: boolean
+    recipientAddress?: boolean
+    recipientRole?: boolean
+    date?: boolean
+    salutation?: boolean
+    experienceParagraph1?: boolean
+    experienceParagraph2?: boolean
+    companyMotivation?: boolean
+    callToAction?: boolean
+    signoff?: boolean
+    explanation?: boolean
+    storageKey?: boolean
+    pdfStatus?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type JobCoverLetterOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "jobOfferId" | "customLabel" | "recipientName" | "recipientTitle" | "recipientCompany" | "recipientAddress" | "recipientRole" | "date" | "salutation" | "experienceParagraph1" | "experienceParagraph2" | "companyMotivation" | "callToAction" | "signoff" | "explanation" | "storageKey" | "pdfStatus" | "createdAt" | "updatedAt", ExtArgs["result"]["jobCoverLetter"]>
+  export type JobCoverLetterInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }
+  export type JobCoverLetterIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }
+  export type JobCoverLetterIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }
+
+  export type $JobCoverLetterPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "JobCoverLetter"
+    objects: {
+      jobOffer: Prisma.$JobOfferPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      jobOfferId: string
+      customLabel: string | null
+      recipientName: string | null
+      recipientTitle: string | null
+      recipientCompany: string
+      recipientAddress: string | null
+      recipientRole: string
+      date: string
+      salutation: string
+      experienceParagraph1: string
+      experienceParagraph2: string
+      companyMotivation: string
+      callToAction: string
+      signoff: string
+      explanation: string | null
+      storageKey: string | null
+      pdfStatus: $Enums.JobCoverLetterPdfStatus
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["jobCoverLetter"]>
+    composites: {}
+  }
+
+  type JobCoverLetterGetPayload<S extends boolean | null | undefined | JobCoverLetterDefaultArgs> = $Result.GetResult<Prisma.$JobCoverLetterPayload, S>
+
+  type JobCoverLetterCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<JobCoverLetterFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: JobCoverLetterCountAggregateInputType | true
+    }
+
+  export interface JobCoverLetterDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['JobCoverLetter'], meta: { name: 'JobCoverLetter' } }
+    /**
+     * Find zero or one JobCoverLetter that matches the filter.
+     * @param {JobCoverLetterFindUniqueArgs} args - Arguments to find a JobCoverLetter
+     * @example
+     * // Get one JobCoverLetter
+     * const jobCoverLetter = await prisma.jobCoverLetter.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends JobCoverLetterFindUniqueArgs>(args: SelectSubset<T, JobCoverLetterFindUniqueArgs<ExtArgs>>): Prisma__JobCoverLetterClient<$Result.GetResult<Prisma.$JobCoverLetterPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one JobCoverLetter that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {JobCoverLetterFindUniqueOrThrowArgs} args - Arguments to find a JobCoverLetter
+     * @example
+     * // Get one JobCoverLetter
+     * const jobCoverLetter = await prisma.jobCoverLetter.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends JobCoverLetterFindUniqueOrThrowArgs>(args: SelectSubset<T, JobCoverLetterFindUniqueOrThrowArgs<ExtArgs>>): Prisma__JobCoverLetterClient<$Result.GetResult<Prisma.$JobCoverLetterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first JobCoverLetter that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCoverLetterFindFirstArgs} args - Arguments to find a JobCoverLetter
+     * @example
+     * // Get one JobCoverLetter
+     * const jobCoverLetter = await prisma.jobCoverLetter.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends JobCoverLetterFindFirstArgs>(args?: SelectSubset<T, JobCoverLetterFindFirstArgs<ExtArgs>>): Prisma__JobCoverLetterClient<$Result.GetResult<Prisma.$JobCoverLetterPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first JobCoverLetter that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCoverLetterFindFirstOrThrowArgs} args - Arguments to find a JobCoverLetter
+     * @example
+     * // Get one JobCoverLetter
+     * const jobCoverLetter = await prisma.jobCoverLetter.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends JobCoverLetterFindFirstOrThrowArgs>(args?: SelectSubset<T, JobCoverLetterFindFirstOrThrowArgs<ExtArgs>>): Prisma__JobCoverLetterClient<$Result.GetResult<Prisma.$JobCoverLetterPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more JobCoverLetters that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCoverLetterFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all JobCoverLetters
+     * const jobCoverLetters = await prisma.jobCoverLetter.findMany()
+     * 
+     * // Get first 10 JobCoverLetters
+     * const jobCoverLetters = await prisma.jobCoverLetter.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const jobCoverLetterWithIdOnly = await prisma.jobCoverLetter.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends JobCoverLetterFindManyArgs>(args?: SelectSubset<T, JobCoverLetterFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobCoverLetterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a JobCoverLetter.
+     * @param {JobCoverLetterCreateArgs} args - Arguments to create a JobCoverLetter.
+     * @example
+     * // Create one JobCoverLetter
+     * const JobCoverLetter = await prisma.jobCoverLetter.create({
+     *   data: {
+     *     // ... data to create a JobCoverLetter
+     *   }
+     * })
+     * 
+     */
+    create<T extends JobCoverLetterCreateArgs>(args: SelectSubset<T, JobCoverLetterCreateArgs<ExtArgs>>): Prisma__JobCoverLetterClient<$Result.GetResult<Prisma.$JobCoverLetterPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many JobCoverLetters.
+     * @param {JobCoverLetterCreateManyArgs} args - Arguments to create many JobCoverLetters.
+     * @example
+     * // Create many JobCoverLetters
+     * const jobCoverLetter = await prisma.jobCoverLetter.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends JobCoverLetterCreateManyArgs>(args?: SelectSubset<T, JobCoverLetterCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many JobCoverLetters and returns the data saved in the database.
+     * @param {JobCoverLetterCreateManyAndReturnArgs} args - Arguments to create many JobCoverLetters.
+     * @example
+     * // Create many JobCoverLetters
+     * const jobCoverLetter = await prisma.jobCoverLetter.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many JobCoverLetters and only return the `id`
+     * const jobCoverLetterWithIdOnly = await prisma.jobCoverLetter.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends JobCoverLetterCreateManyAndReturnArgs>(args?: SelectSubset<T, JobCoverLetterCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobCoverLetterPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a JobCoverLetter.
+     * @param {JobCoverLetterDeleteArgs} args - Arguments to delete one JobCoverLetter.
+     * @example
+     * // Delete one JobCoverLetter
+     * const JobCoverLetter = await prisma.jobCoverLetter.delete({
+     *   where: {
+     *     // ... filter to delete one JobCoverLetter
+     *   }
+     * })
+     * 
+     */
+    delete<T extends JobCoverLetterDeleteArgs>(args: SelectSubset<T, JobCoverLetterDeleteArgs<ExtArgs>>): Prisma__JobCoverLetterClient<$Result.GetResult<Prisma.$JobCoverLetterPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one JobCoverLetter.
+     * @param {JobCoverLetterUpdateArgs} args - Arguments to update one JobCoverLetter.
+     * @example
+     * // Update one JobCoverLetter
+     * const jobCoverLetter = await prisma.jobCoverLetter.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends JobCoverLetterUpdateArgs>(args: SelectSubset<T, JobCoverLetterUpdateArgs<ExtArgs>>): Prisma__JobCoverLetterClient<$Result.GetResult<Prisma.$JobCoverLetterPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more JobCoverLetters.
+     * @param {JobCoverLetterDeleteManyArgs} args - Arguments to filter JobCoverLetters to delete.
+     * @example
+     * // Delete a few JobCoverLetters
+     * const { count } = await prisma.jobCoverLetter.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends JobCoverLetterDeleteManyArgs>(args?: SelectSubset<T, JobCoverLetterDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more JobCoverLetters.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCoverLetterUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many JobCoverLetters
+     * const jobCoverLetter = await prisma.jobCoverLetter.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends JobCoverLetterUpdateManyArgs>(args: SelectSubset<T, JobCoverLetterUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more JobCoverLetters and returns the data updated in the database.
+     * @param {JobCoverLetterUpdateManyAndReturnArgs} args - Arguments to update many JobCoverLetters.
+     * @example
+     * // Update many JobCoverLetters
+     * const jobCoverLetter = await prisma.jobCoverLetter.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more JobCoverLetters and only return the `id`
+     * const jobCoverLetterWithIdOnly = await prisma.jobCoverLetter.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends JobCoverLetterUpdateManyAndReturnArgs>(args: SelectSubset<T, JobCoverLetterUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobCoverLetterPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one JobCoverLetter.
+     * @param {JobCoverLetterUpsertArgs} args - Arguments to update or create a JobCoverLetter.
+     * @example
+     * // Update or create a JobCoverLetter
+     * const jobCoverLetter = await prisma.jobCoverLetter.upsert({
+     *   create: {
+     *     // ... data to create a JobCoverLetter
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the JobCoverLetter we want to update
+     *   }
+     * })
+     */
+    upsert<T extends JobCoverLetterUpsertArgs>(args: SelectSubset<T, JobCoverLetterUpsertArgs<ExtArgs>>): Prisma__JobCoverLetterClient<$Result.GetResult<Prisma.$JobCoverLetterPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of JobCoverLetters.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCoverLetterCountArgs} args - Arguments to filter JobCoverLetters to count.
+     * @example
+     * // Count the number of JobCoverLetters
+     * const count = await prisma.jobCoverLetter.count({
+     *   where: {
+     *     // ... the filter for the JobCoverLetters we want to count
+     *   }
+     * })
+    **/
+    count<T extends JobCoverLetterCountArgs>(
+      args?: Subset<T, JobCoverLetterCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], JobCoverLetterCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a JobCoverLetter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCoverLetterAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends JobCoverLetterAggregateArgs>(args: Subset<T, JobCoverLetterAggregateArgs>): Prisma.PrismaPromise<GetJobCoverLetterAggregateType<T>>
+
+    /**
+     * Group by JobCoverLetter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCoverLetterGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends JobCoverLetterGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: JobCoverLetterGroupByArgs['orderBy'] }
+        : { orderBy?: JobCoverLetterGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, JobCoverLetterGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetJobCoverLetterGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the JobCoverLetter model
+   */
+  readonly fields: JobCoverLetterFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for JobCoverLetter.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__JobCoverLetterClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    jobOffer<T extends JobOfferDefaultArgs<ExtArgs> = {}>(args?: Subset<T, JobOfferDefaultArgs<ExtArgs>>): Prisma__JobOfferClient<$Result.GetResult<Prisma.$JobOfferPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the JobCoverLetter model
+   */
+  interface JobCoverLetterFieldRefs {
+    readonly id: FieldRef<"JobCoverLetter", 'String'>
+    readonly jobOfferId: FieldRef<"JobCoverLetter", 'String'>
+    readonly customLabel: FieldRef<"JobCoverLetter", 'String'>
+    readonly recipientName: FieldRef<"JobCoverLetter", 'String'>
+    readonly recipientTitle: FieldRef<"JobCoverLetter", 'String'>
+    readonly recipientCompany: FieldRef<"JobCoverLetter", 'String'>
+    readonly recipientAddress: FieldRef<"JobCoverLetter", 'String'>
+    readonly recipientRole: FieldRef<"JobCoverLetter", 'String'>
+    readonly date: FieldRef<"JobCoverLetter", 'String'>
+    readonly salutation: FieldRef<"JobCoverLetter", 'String'>
+    readonly experienceParagraph1: FieldRef<"JobCoverLetter", 'String'>
+    readonly experienceParagraph2: FieldRef<"JobCoverLetter", 'String'>
+    readonly companyMotivation: FieldRef<"JobCoverLetter", 'String'>
+    readonly callToAction: FieldRef<"JobCoverLetter", 'String'>
+    readonly signoff: FieldRef<"JobCoverLetter", 'String'>
+    readonly explanation: FieldRef<"JobCoverLetter", 'String'>
+    readonly storageKey: FieldRef<"JobCoverLetter", 'String'>
+    readonly pdfStatus: FieldRef<"JobCoverLetter", 'JobCoverLetterPdfStatus'>
+    readonly createdAt: FieldRef<"JobCoverLetter", 'DateTime'>
+    readonly updatedAt: FieldRef<"JobCoverLetter", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * JobCoverLetter findUnique
+   */
+  export type JobCoverLetterFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetter
+     */
+    select?: JobCoverLetterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetter
+     */
+    omit?: JobCoverLetterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterInclude<ExtArgs> | null
+    /**
+     * Filter, which JobCoverLetter to fetch.
+     */
+    where: JobCoverLetterWhereUniqueInput
+  }
+
+  /**
+   * JobCoverLetter findUniqueOrThrow
+   */
+  export type JobCoverLetterFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetter
+     */
+    select?: JobCoverLetterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetter
+     */
+    omit?: JobCoverLetterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterInclude<ExtArgs> | null
+    /**
+     * Filter, which JobCoverLetter to fetch.
+     */
+    where: JobCoverLetterWhereUniqueInput
+  }
+
+  /**
+   * JobCoverLetter findFirst
+   */
+  export type JobCoverLetterFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetter
+     */
+    select?: JobCoverLetterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetter
+     */
+    omit?: JobCoverLetterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterInclude<ExtArgs> | null
+    /**
+     * Filter, which JobCoverLetter to fetch.
+     */
+    where?: JobCoverLetterWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of JobCoverLetters to fetch.
+     */
+    orderBy?: JobCoverLetterOrderByWithRelationInput | JobCoverLetterOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for JobCoverLetters.
+     */
+    cursor?: JobCoverLetterWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` JobCoverLetters from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` JobCoverLetters.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of JobCoverLetters.
+     */
+    distinct?: JobCoverLetterScalarFieldEnum | JobCoverLetterScalarFieldEnum[]
+  }
+
+  /**
+   * JobCoverLetter findFirstOrThrow
+   */
+  export type JobCoverLetterFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetter
+     */
+    select?: JobCoverLetterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetter
+     */
+    omit?: JobCoverLetterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterInclude<ExtArgs> | null
+    /**
+     * Filter, which JobCoverLetter to fetch.
+     */
+    where?: JobCoverLetterWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of JobCoverLetters to fetch.
+     */
+    orderBy?: JobCoverLetterOrderByWithRelationInput | JobCoverLetterOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for JobCoverLetters.
+     */
+    cursor?: JobCoverLetterWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` JobCoverLetters from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` JobCoverLetters.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of JobCoverLetters.
+     */
+    distinct?: JobCoverLetterScalarFieldEnum | JobCoverLetterScalarFieldEnum[]
+  }
+
+  /**
+   * JobCoverLetter findMany
+   */
+  export type JobCoverLetterFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetter
+     */
+    select?: JobCoverLetterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetter
+     */
+    omit?: JobCoverLetterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterInclude<ExtArgs> | null
+    /**
+     * Filter, which JobCoverLetters to fetch.
+     */
+    where?: JobCoverLetterWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of JobCoverLetters to fetch.
+     */
+    orderBy?: JobCoverLetterOrderByWithRelationInput | JobCoverLetterOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing JobCoverLetters.
+     */
+    cursor?: JobCoverLetterWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` JobCoverLetters from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` JobCoverLetters.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of JobCoverLetters.
+     */
+    distinct?: JobCoverLetterScalarFieldEnum | JobCoverLetterScalarFieldEnum[]
+  }
+
+  /**
+   * JobCoverLetter create
+   */
+  export type JobCoverLetterCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetter
+     */
+    select?: JobCoverLetterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetter
+     */
+    omit?: JobCoverLetterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterInclude<ExtArgs> | null
+    /**
+     * The data needed to create a JobCoverLetter.
+     */
+    data: XOR<JobCoverLetterCreateInput, JobCoverLetterUncheckedCreateInput>
+  }
+
+  /**
+   * JobCoverLetter createMany
+   */
+  export type JobCoverLetterCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many JobCoverLetters.
+     */
+    data: JobCoverLetterCreateManyInput | JobCoverLetterCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * JobCoverLetter createManyAndReturn
+   */
+  export type JobCoverLetterCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetter
+     */
+    select?: JobCoverLetterSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetter
+     */
+    omit?: JobCoverLetterOmit<ExtArgs> | null
+    /**
+     * The data used to create many JobCoverLetters.
+     */
+    data: JobCoverLetterCreateManyInput | JobCoverLetterCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * JobCoverLetter update
+   */
+  export type JobCoverLetterUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetter
+     */
+    select?: JobCoverLetterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetter
+     */
+    omit?: JobCoverLetterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterInclude<ExtArgs> | null
+    /**
+     * The data needed to update a JobCoverLetter.
+     */
+    data: XOR<JobCoverLetterUpdateInput, JobCoverLetterUncheckedUpdateInput>
+    /**
+     * Choose, which JobCoverLetter to update.
+     */
+    where: JobCoverLetterWhereUniqueInput
+  }
+
+  /**
+   * JobCoverLetter updateMany
+   */
+  export type JobCoverLetterUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update JobCoverLetters.
+     */
+    data: XOR<JobCoverLetterUpdateManyMutationInput, JobCoverLetterUncheckedUpdateManyInput>
+    /**
+     * Filter which JobCoverLetters to update
+     */
+    where?: JobCoverLetterWhereInput
+    /**
+     * Limit how many JobCoverLetters to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * JobCoverLetter updateManyAndReturn
+   */
+  export type JobCoverLetterUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetter
+     */
+    select?: JobCoverLetterSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetter
+     */
+    omit?: JobCoverLetterOmit<ExtArgs> | null
+    /**
+     * The data used to update JobCoverLetters.
+     */
+    data: XOR<JobCoverLetterUpdateManyMutationInput, JobCoverLetterUncheckedUpdateManyInput>
+    /**
+     * Filter which JobCoverLetters to update
+     */
+    where?: JobCoverLetterWhereInput
+    /**
+     * Limit how many JobCoverLetters to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * JobCoverLetter upsert
+   */
+  export type JobCoverLetterUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetter
+     */
+    select?: JobCoverLetterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetter
+     */
+    omit?: JobCoverLetterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterInclude<ExtArgs> | null
+    /**
+     * The filter to search for the JobCoverLetter to update in case it exists.
+     */
+    where: JobCoverLetterWhereUniqueInput
+    /**
+     * In case the JobCoverLetter found by the `where` argument doesn't exist, create a new JobCoverLetter with this data.
+     */
+    create: XOR<JobCoverLetterCreateInput, JobCoverLetterUncheckedCreateInput>
+    /**
+     * In case the JobCoverLetter was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<JobCoverLetterUpdateInput, JobCoverLetterUncheckedUpdateInput>
+  }
+
+  /**
+   * JobCoverLetter delete
+   */
+  export type JobCoverLetterDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetter
+     */
+    select?: JobCoverLetterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetter
+     */
+    omit?: JobCoverLetterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterInclude<ExtArgs> | null
+    /**
+     * Filter which JobCoverLetter to delete.
+     */
+    where: JobCoverLetterWhereUniqueInput
+  }
+
+  /**
+   * JobCoverLetter deleteMany
+   */
+  export type JobCoverLetterDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which JobCoverLetters to delete
+     */
+    where?: JobCoverLetterWhereInput
+    /**
+     * Limit how many JobCoverLetters to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * JobCoverLetter without action
+   */
+  export type JobCoverLetterDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetter
+     */
+    select?: JobCoverLetterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetter
+     */
+    omit?: JobCoverLetterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model JobCoverLetterOutbox
+   */
+
+  export type AggregateJobCoverLetterOutbox = {
+    _count: JobCoverLetterOutboxCountAggregateOutputType | null
+    _avg: JobCoverLetterOutboxAvgAggregateOutputType | null
+    _sum: JobCoverLetterOutboxSumAggregateOutputType | null
+    _min: JobCoverLetterOutboxMinAggregateOutputType | null
+    _max: JobCoverLetterOutboxMaxAggregateOutputType | null
+  }
+
+  export type JobCoverLetterOutboxAvgAggregateOutputType = {
+    attempts: number | null
+  }
+
+  export type JobCoverLetterOutboxSumAggregateOutputType = {
+    attempts: number | null
+  }
+
+  export type JobCoverLetterOutboxMinAggregateOutputType = {
+    id: string | null
+    jobOfferId: string | null
+    status: $Enums.OutboxStatus | null
+    forceRegenerate: boolean | null
+    attempts: number | null
+    lastError: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type JobCoverLetterOutboxMaxAggregateOutputType = {
+    id: string | null
+    jobOfferId: string | null
+    status: $Enums.OutboxStatus | null
+    forceRegenerate: boolean | null
+    attempts: number | null
+    lastError: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type JobCoverLetterOutboxCountAggregateOutputType = {
+    id: number
+    jobOfferId: number
+    status: number
+    forceRegenerate: number
+    attempts: number
+    lastError: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type JobCoverLetterOutboxAvgAggregateInputType = {
+    attempts?: true
+  }
+
+  export type JobCoverLetterOutboxSumAggregateInputType = {
+    attempts?: true
+  }
+
+  export type JobCoverLetterOutboxMinAggregateInputType = {
+    id?: true
+    jobOfferId?: true
+    status?: true
+    forceRegenerate?: true
+    attempts?: true
+    lastError?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type JobCoverLetterOutboxMaxAggregateInputType = {
+    id?: true
+    jobOfferId?: true
+    status?: true
+    forceRegenerate?: true
+    attempts?: true
+    lastError?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type JobCoverLetterOutboxCountAggregateInputType = {
+    id?: true
+    jobOfferId?: true
+    status?: true
+    forceRegenerate?: true
+    attempts?: true
+    lastError?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type JobCoverLetterOutboxAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which JobCoverLetterOutbox to aggregate.
+     */
+    where?: JobCoverLetterOutboxWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of JobCoverLetterOutboxes to fetch.
+     */
+    orderBy?: JobCoverLetterOutboxOrderByWithRelationInput | JobCoverLetterOutboxOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: JobCoverLetterOutboxWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` JobCoverLetterOutboxes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` JobCoverLetterOutboxes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned JobCoverLetterOutboxes
+    **/
+    _count?: true | JobCoverLetterOutboxCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: JobCoverLetterOutboxAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: JobCoverLetterOutboxSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: JobCoverLetterOutboxMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: JobCoverLetterOutboxMaxAggregateInputType
+  }
+
+  export type GetJobCoverLetterOutboxAggregateType<T extends JobCoverLetterOutboxAggregateArgs> = {
+        [P in keyof T & keyof AggregateJobCoverLetterOutbox]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateJobCoverLetterOutbox[P]>
+      : GetScalarType<T[P], AggregateJobCoverLetterOutbox[P]>
+  }
+
+
+
+
+  export type JobCoverLetterOutboxGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: JobCoverLetterOutboxWhereInput
+    orderBy?: JobCoverLetterOutboxOrderByWithAggregationInput | JobCoverLetterOutboxOrderByWithAggregationInput[]
+    by: JobCoverLetterOutboxScalarFieldEnum[] | JobCoverLetterOutboxScalarFieldEnum
+    having?: JobCoverLetterOutboxScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: JobCoverLetterOutboxCountAggregateInputType | true
+    _avg?: JobCoverLetterOutboxAvgAggregateInputType
+    _sum?: JobCoverLetterOutboxSumAggregateInputType
+    _min?: JobCoverLetterOutboxMinAggregateInputType
+    _max?: JobCoverLetterOutboxMaxAggregateInputType
+  }
+
+  export type JobCoverLetterOutboxGroupByOutputType = {
+    id: string
+    jobOfferId: string
+    status: $Enums.OutboxStatus
+    forceRegenerate: boolean
+    attempts: number
+    lastError: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: JobCoverLetterOutboxCountAggregateOutputType | null
+    _avg: JobCoverLetterOutboxAvgAggregateOutputType | null
+    _sum: JobCoverLetterOutboxSumAggregateOutputType | null
+    _min: JobCoverLetterOutboxMinAggregateOutputType | null
+    _max: JobCoverLetterOutboxMaxAggregateOutputType | null
+  }
+
+  type GetJobCoverLetterOutboxGroupByPayload<T extends JobCoverLetterOutboxGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<JobCoverLetterOutboxGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof JobCoverLetterOutboxGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], JobCoverLetterOutboxGroupByOutputType[P]>
+            : GetScalarType<T[P], JobCoverLetterOutboxGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type JobCoverLetterOutboxSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    jobOfferId?: boolean
+    status?: boolean
+    forceRegenerate?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["jobCoverLetterOutbox"]>
+
+  export type JobCoverLetterOutboxSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    jobOfferId?: boolean
+    status?: boolean
+    forceRegenerate?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["jobCoverLetterOutbox"]>
+
+  export type JobCoverLetterOutboxSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    jobOfferId?: boolean
+    status?: boolean
+    forceRegenerate?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["jobCoverLetterOutbox"]>
+
+  export type JobCoverLetterOutboxSelectScalar = {
+    id?: boolean
+    jobOfferId?: boolean
+    status?: boolean
+    forceRegenerate?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type JobCoverLetterOutboxOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "jobOfferId" | "status" | "forceRegenerate" | "attempts" | "lastError" | "createdAt" | "updatedAt", ExtArgs["result"]["jobCoverLetterOutbox"]>
+  export type JobCoverLetterOutboxInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }
+  export type JobCoverLetterOutboxIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }
+  export type JobCoverLetterOutboxIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    jobOffer?: boolean | JobOfferDefaultArgs<ExtArgs>
+  }
+
+  export type $JobCoverLetterOutboxPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "JobCoverLetterOutbox"
+    objects: {
+      jobOffer: Prisma.$JobOfferPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      jobOfferId: string
+      status: $Enums.OutboxStatus
+      forceRegenerate: boolean
+      attempts: number
+      lastError: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["jobCoverLetterOutbox"]>
+    composites: {}
+  }
+
+  type JobCoverLetterOutboxGetPayload<S extends boolean | null | undefined | JobCoverLetterOutboxDefaultArgs> = $Result.GetResult<Prisma.$JobCoverLetterOutboxPayload, S>
+
+  type JobCoverLetterOutboxCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<JobCoverLetterOutboxFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: JobCoverLetterOutboxCountAggregateInputType | true
+    }
+
+  export interface JobCoverLetterOutboxDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['JobCoverLetterOutbox'], meta: { name: 'JobCoverLetterOutbox' } }
+    /**
+     * Find zero or one JobCoverLetterOutbox that matches the filter.
+     * @param {JobCoverLetterOutboxFindUniqueArgs} args - Arguments to find a JobCoverLetterOutbox
+     * @example
+     * // Get one JobCoverLetterOutbox
+     * const jobCoverLetterOutbox = await prisma.jobCoverLetterOutbox.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends JobCoverLetterOutboxFindUniqueArgs>(args: SelectSubset<T, JobCoverLetterOutboxFindUniqueArgs<ExtArgs>>): Prisma__JobCoverLetterOutboxClient<$Result.GetResult<Prisma.$JobCoverLetterOutboxPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one JobCoverLetterOutbox that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {JobCoverLetterOutboxFindUniqueOrThrowArgs} args - Arguments to find a JobCoverLetterOutbox
+     * @example
+     * // Get one JobCoverLetterOutbox
+     * const jobCoverLetterOutbox = await prisma.jobCoverLetterOutbox.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends JobCoverLetterOutboxFindUniqueOrThrowArgs>(args: SelectSubset<T, JobCoverLetterOutboxFindUniqueOrThrowArgs<ExtArgs>>): Prisma__JobCoverLetterOutboxClient<$Result.GetResult<Prisma.$JobCoverLetterOutboxPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first JobCoverLetterOutbox that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCoverLetterOutboxFindFirstArgs} args - Arguments to find a JobCoverLetterOutbox
+     * @example
+     * // Get one JobCoverLetterOutbox
+     * const jobCoverLetterOutbox = await prisma.jobCoverLetterOutbox.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends JobCoverLetterOutboxFindFirstArgs>(args?: SelectSubset<T, JobCoverLetterOutboxFindFirstArgs<ExtArgs>>): Prisma__JobCoverLetterOutboxClient<$Result.GetResult<Prisma.$JobCoverLetterOutboxPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first JobCoverLetterOutbox that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCoverLetterOutboxFindFirstOrThrowArgs} args - Arguments to find a JobCoverLetterOutbox
+     * @example
+     * // Get one JobCoverLetterOutbox
+     * const jobCoverLetterOutbox = await prisma.jobCoverLetterOutbox.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends JobCoverLetterOutboxFindFirstOrThrowArgs>(args?: SelectSubset<T, JobCoverLetterOutboxFindFirstOrThrowArgs<ExtArgs>>): Prisma__JobCoverLetterOutboxClient<$Result.GetResult<Prisma.$JobCoverLetterOutboxPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more JobCoverLetterOutboxes that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCoverLetterOutboxFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all JobCoverLetterOutboxes
+     * const jobCoverLetterOutboxes = await prisma.jobCoverLetterOutbox.findMany()
+     * 
+     * // Get first 10 JobCoverLetterOutboxes
+     * const jobCoverLetterOutboxes = await prisma.jobCoverLetterOutbox.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const jobCoverLetterOutboxWithIdOnly = await prisma.jobCoverLetterOutbox.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends JobCoverLetterOutboxFindManyArgs>(args?: SelectSubset<T, JobCoverLetterOutboxFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobCoverLetterOutboxPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a JobCoverLetterOutbox.
+     * @param {JobCoverLetterOutboxCreateArgs} args - Arguments to create a JobCoverLetterOutbox.
+     * @example
+     * // Create one JobCoverLetterOutbox
+     * const JobCoverLetterOutbox = await prisma.jobCoverLetterOutbox.create({
+     *   data: {
+     *     // ... data to create a JobCoverLetterOutbox
+     *   }
+     * })
+     * 
+     */
+    create<T extends JobCoverLetterOutboxCreateArgs>(args: SelectSubset<T, JobCoverLetterOutboxCreateArgs<ExtArgs>>): Prisma__JobCoverLetterOutboxClient<$Result.GetResult<Prisma.$JobCoverLetterOutboxPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many JobCoverLetterOutboxes.
+     * @param {JobCoverLetterOutboxCreateManyArgs} args - Arguments to create many JobCoverLetterOutboxes.
+     * @example
+     * // Create many JobCoverLetterOutboxes
+     * const jobCoverLetterOutbox = await prisma.jobCoverLetterOutbox.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends JobCoverLetterOutboxCreateManyArgs>(args?: SelectSubset<T, JobCoverLetterOutboxCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many JobCoverLetterOutboxes and returns the data saved in the database.
+     * @param {JobCoverLetterOutboxCreateManyAndReturnArgs} args - Arguments to create many JobCoverLetterOutboxes.
+     * @example
+     * // Create many JobCoverLetterOutboxes
+     * const jobCoverLetterOutbox = await prisma.jobCoverLetterOutbox.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many JobCoverLetterOutboxes and only return the `id`
+     * const jobCoverLetterOutboxWithIdOnly = await prisma.jobCoverLetterOutbox.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends JobCoverLetterOutboxCreateManyAndReturnArgs>(args?: SelectSubset<T, JobCoverLetterOutboxCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobCoverLetterOutboxPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a JobCoverLetterOutbox.
+     * @param {JobCoverLetterOutboxDeleteArgs} args - Arguments to delete one JobCoverLetterOutbox.
+     * @example
+     * // Delete one JobCoverLetterOutbox
+     * const JobCoverLetterOutbox = await prisma.jobCoverLetterOutbox.delete({
+     *   where: {
+     *     // ... filter to delete one JobCoverLetterOutbox
+     *   }
+     * })
+     * 
+     */
+    delete<T extends JobCoverLetterOutboxDeleteArgs>(args: SelectSubset<T, JobCoverLetterOutboxDeleteArgs<ExtArgs>>): Prisma__JobCoverLetterOutboxClient<$Result.GetResult<Prisma.$JobCoverLetterOutboxPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one JobCoverLetterOutbox.
+     * @param {JobCoverLetterOutboxUpdateArgs} args - Arguments to update one JobCoverLetterOutbox.
+     * @example
+     * // Update one JobCoverLetterOutbox
+     * const jobCoverLetterOutbox = await prisma.jobCoverLetterOutbox.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends JobCoverLetterOutboxUpdateArgs>(args: SelectSubset<T, JobCoverLetterOutboxUpdateArgs<ExtArgs>>): Prisma__JobCoverLetterOutboxClient<$Result.GetResult<Prisma.$JobCoverLetterOutboxPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more JobCoverLetterOutboxes.
+     * @param {JobCoverLetterOutboxDeleteManyArgs} args - Arguments to filter JobCoverLetterOutboxes to delete.
+     * @example
+     * // Delete a few JobCoverLetterOutboxes
+     * const { count } = await prisma.jobCoverLetterOutbox.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends JobCoverLetterOutboxDeleteManyArgs>(args?: SelectSubset<T, JobCoverLetterOutboxDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more JobCoverLetterOutboxes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCoverLetterOutboxUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many JobCoverLetterOutboxes
+     * const jobCoverLetterOutbox = await prisma.jobCoverLetterOutbox.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends JobCoverLetterOutboxUpdateManyArgs>(args: SelectSubset<T, JobCoverLetterOutboxUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more JobCoverLetterOutboxes and returns the data updated in the database.
+     * @param {JobCoverLetterOutboxUpdateManyAndReturnArgs} args - Arguments to update many JobCoverLetterOutboxes.
+     * @example
+     * // Update many JobCoverLetterOutboxes
+     * const jobCoverLetterOutbox = await prisma.jobCoverLetterOutbox.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more JobCoverLetterOutboxes and only return the `id`
+     * const jobCoverLetterOutboxWithIdOnly = await prisma.jobCoverLetterOutbox.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends JobCoverLetterOutboxUpdateManyAndReturnArgs>(args: SelectSubset<T, JobCoverLetterOutboxUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobCoverLetterOutboxPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one JobCoverLetterOutbox.
+     * @param {JobCoverLetterOutboxUpsertArgs} args - Arguments to update or create a JobCoverLetterOutbox.
+     * @example
+     * // Update or create a JobCoverLetterOutbox
+     * const jobCoverLetterOutbox = await prisma.jobCoverLetterOutbox.upsert({
+     *   create: {
+     *     // ... data to create a JobCoverLetterOutbox
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the JobCoverLetterOutbox we want to update
+     *   }
+     * })
+     */
+    upsert<T extends JobCoverLetterOutboxUpsertArgs>(args: SelectSubset<T, JobCoverLetterOutboxUpsertArgs<ExtArgs>>): Prisma__JobCoverLetterOutboxClient<$Result.GetResult<Prisma.$JobCoverLetterOutboxPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of JobCoverLetterOutboxes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCoverLetterOutboxCountArgs} args - Arguments to filter JobCoverLetterOutboxes to count.
+     * @example
+     * // Count the number of JobCoverLetterOutboxes
+     * const count = await prisma.jobCoverLetterOutbox.count({
+     *   where: {
+     *     // ... the filter for the JobCoverLetterOutboxes we want to count
+     *   }
+     * })
+    **/
+    count<T extends JobCoverLetterOutboxCountArgs>(
+      args?: Subset<T, JobCoverLetterOutboxCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], JobCoverLetterOutboxCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a JobCoverLetterOutbox.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCoverLetterOutboxAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends JobCoverLetterOutboxAggregateArgs>(args: Subset<T, JobCoverLetterOutboxAggregateArgs>): Prisma.PrismaPromise<GetJobCoverLetterOutboxAggregateType<T>>
+
+    /**
+     * Group by JobCoverLetterOutbox.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobCoverLetterOutboxGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends JobCoverLetterOutboxGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: JobCoverLetterOutboxGroupByArgs['orderBy'] }
+        : { orderBy?: JobCoverLetterOutboxGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, JobCoverLetterOutboxGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetJobCoverLetterOutboxGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the JobCoverLetterOutbox model
+   */
+  readonly fields: JobCoverLetterOutboxFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for JobCoverLetterOutbox.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__JobCoverLetterOutboxClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    jobOffer<T extends JobOfferDefaultArgs<ExtArgs> = {}>(args?: Subset<T, JobOfferDefaultArgs<ExtArgs>>): Prisma__JobOfferClient<$Result.GetResult<Prisma.$JobOfferPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the JobCoverLetterOutbox model
+   */
+  interface JobCoverLetterOutboxFieldRefs {
+    readonly id: FieldRef<"JobCoverLetterOutbox", 'String'>
+    readonly jobOfferId: FieldRef<"JobCoverLetterOutbox", 'String'>
+    readonly status: FieldRef<"JobCoverLetterOutbox", 'OutboxStatus'>
+    readonly forceRegenerate: FieldRef<"JobCoverLetterOutbox", 'Boolean'>
+    readonly attempts: FieldRef<"JobCoverLetterOutbox", 'Int'>
+    readonly lastError: FieldRef<"JobCoverLetterOutbox", 'String'>
+    readonly createdAt: FieldRef<"JobCoverLetterOutbox", 'DateTime'>
+    readonly updatedAt: FieldRef<"JobCoverLetterOutbox", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * JobCoverLetterOutbox findUnique
+   */
+  export type JobCoverLetterOutboxFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetterOutbox
+     */
+    select?: JobCoverLetterOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetterOutbox
+     */
+    omit?: JobCoverLetterOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterOutboxInclude<ExtArgs> | null
+    /**
+     * Filter, which JobCoverLetterOutbox to fetch.
+     */
+    where: JobCoverLetterOutboxWhereUniqueInput
+  }
+
+  /**
+   * JobCoverLetterOutbox findUniqueOrThrow
+   */
+  export type JobCoverLetterOutboxFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetterOutbox
+     */
+    select?: JobCoverLetterOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetterOutbox
+     */
+    omit?: JobCoverLetterOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterOutboxInclude<ExtArgs> | null
+    /**
+     * Filter, which JobCoverLetterOutbox to fetch.
+     */
+    where: JobCoverLetterOutboxWhereUniqueInput
+  }
+
+  /**
+   * JobCoverLetterOutbox findFirst
+   */
+  export type JobCoverLetterOutboxFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetterOutbox
+     */
+    select?: JobCoverLetterOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetterOutbox
+     */
+    omit?: JobCoverLetterOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterOutboxInclude<ExtArgs> | null
+    /**
+     * Filter, which JobCoverLetterOutbox to fetch.
+     */
+    where?: JobCoverLetterOutboxWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of JobCoverLetterOutboxes to fetch.
+     */
+    orderBy?: JobCoverLetterOutboxOrderByWithRelationInput | JobCoverLetterOutboxOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for JobCoverLetterOutboxes.
+     */
+    cursor?: JobCoverLetterOutboxWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` JobCoverLetterOutboxes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` JobCoverLetterOutboxes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of JobCoverLetterOutboxes.
+     */
+    distinct?: JobCoverLetterOutboxScalarFieldEnum | JobCoverLetterOutboxScalarFieldEnum[]
+  }
+
+  /**
+   * JobCoverLetterOutbox findFirstOrThrow
+   */
+  export type JobCoverLetterOutboxFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetterOutbox
+     */
+    select?: JobCoverLetterOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetterOutbox
+     */
+    omit?: JobCoverLetterOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterOutboxInclude<ExtArgs> | null
+    /**
+     * Filter, which JobCoverLetterOutbox to fetch.
+     */
+    where?: JobCoverLetterOutboxWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of JobCoverLetterOutboxes to fetch.
+     */
+    orderBy?: JobCoverLetterOutboxOrderByWithRelationInput | JobCoverLetterOutboxOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for JobCoverLetterOutboxes.
+     */
+    cursor?: JobCoverLetterOutboxWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` JobCoverLetterOutboxes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` JobCoverLetterOutboxes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of JobCoverLetterOutboxes.
+     */
+    distinct?: JobCoverLetterOutboxScalarFieldEnum | JobCoverLetterOutboxScalarFieldEnum[]
+  }
+
+  /**
+   * JobCoverLetterOutbox findMany
+   */
+  export type JobCoverLetterOutboxFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetterOutbox
+     */
+    select?: JobCoverLetterOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetterOutbox
+     */
+    omit?: JobCoverLetterOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterOutboxInclude<ExtArgs> | null
+    /**
+     * Filter, which JobCoverLetterOutboxes to fetch.
+     */
+    where?: JobCoverLetterOutboxWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of JobCoverLetterOutboxes to fetch.
+     */
+    orderBy?: JobCoverLetterOutboxOrderByWithRelationInput | JobCoverLetterOutboxOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing JobCoverLetterOutboxes.
+     */
+    cursor?: JobCoverLetterOutboxWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` JobCoverLetterOutboxes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` JobCoverLetterOutboxes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of JobCoverLetterOutboxes.
+     */
+    distinct?: JobCoverLetterOutboxScalarFieldEnum | JobCoverLetterOutboxScalarFieldEnum[]
+  }
+
+  /**
+   * JobCoverLetterOutbox create
+   */
+  export type JobCoverLetterOutboxCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetterOutbox
+     */
+    select?: JobCoverLetterOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetterOutbox
+     */
+    omit?: JobCoverLetterOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterOutboxInclude<ExtArgs> | null
+    /**
+     * The data needed to create a JobCoverLetterOutbox.
+     */
+    data: XOR<JobCoverLetterOutboxCreateInput, JobCoverLetterOutboxUncheckedCreateInput>
+  }
+
+  /**
+   * JobCoverLetterOutbox createMany
+   */
+  export type JobCoverLetterOutboxCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many JobCoverLetterOutboxes.
+     */
+    data: JobCoverLetterOutboxCreateManyInput | JobCoverLetterOutboxCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * JobCoverLetterOutbox createManyAndReturn
+   */
+  export type JobCoverLetterOutboxCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetterOutbox
+     */
+    select?: JobCoverLetterOutboxSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetterOutbox
+     */
+    omit?: JobCoverLetterOutboxOmit<ExtArgs> | null
+    /**
+     * The data used to create many JobCoverLetterOutboxes.
+     */
+    data: JobCoverLetterOutboxCreateManyInput | JobCoverLetterOutboxCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterOutboxIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * JobCoverLetterOutbox update
+   */
+  export type JobCoverLetterOutboxUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetterOutbox
+     */
+    select?: JobCoverLetterOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetterOutbox
+     */
+    omit?: JobCoverLetterOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterOutboxInclude<ExtArgs> | null
+    /**
+     * The data needed to update a JobCoverLetterOutbox.
+     */
+    data: XOR<JobCoverLetterOutboxUpdateInput, JobCoverLetterOutboxUncheckedUpdateInput>
+    /**
+     * Choose, which JobCoverLetterOutbox to update.
+     */
+    where: JobCoverLetterOutboxWhereUniqueInput
+  }
+
+  /**
+   * JobCoverLetterOutbox updateMany
+   */
+  export type JobCoverLetterOutboxUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update JobCoverLetterOutboxes.
+     */
+    data: XOR<JobCoverLetterOutboxUpdateManyMutationInput, JobCoverLetterOutboxUncheckedUpdateManyInput>
+    /**
+     * Filter which JobCoverLetterOutboxes to update
+     */
+    where?: JobCoverLetterOutboxWhereInput
+    /**
+     * Limit how many JobCoverLetterOutboxes to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * JobCoverLetterOutbox updateManyAndReturn
+   */
+  export type JobCoverLetterOutboxUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetterOutbox
+     */
+    select?: JobCoverLetterOutboxSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetterOutbox
+     */
+    omit?: JobCoverLetterOutboxOmit<ExtArgs> | null
+    /**
+     * The data used to update JobCoverLetterOutboxes.
+     */
+    data: XOR<JobCoverLetterOutboxUpdateManyMutationInput, JobCoverLetterOutboxUncheckedUpdateManyInput>
+    /**
+     * Filter which JobCoverLetterOutboxes to update
+     */
+    where?: JobCoverLetterOutboxWhereInput
+    /**
+     * Limit how many JobCoverLetterOutboxes to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterOutboxIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * JobCoverLetterOutbox upsert
+   */
+  export type JobCoverLetterOutboxUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetterOutbox
+     */
+    select?: JobCoverLetterOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetterOutbox
+     */
+    omit?: JobCoverLetterOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterOutboxInclude<ExtArgs> | null
+    /**
+     * The filter to search for the JobCoverLetterOutbox to update in case it exists.
+     */
+    where: JobCoverLetterOutboxWhereUniqueInput
+    /**
+     * In case the JobCoverLetterOutbox found by the `where` argument doesn't exist, create a new JobCoverLetterOutbox with this data.
+     */
+    create: XOR<JobCoverLetterOutboxCreateInput, JobCoverLetterOutboxUncheckedCreateInput>
+    /**
+     * In case the JobCoverLetterOutbox was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<JobCoverLetterOutboxUpdateInput, JobCoverLetterOutboxUncheckedUpdateInput>
+  }
+
+  /**
+   * JobCoverLetterOutbox delete
+   */
+  export type JobCoverLetterOutboxDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetterOutbox
+     */
+    select?: JobCoverLetterOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetterOutbox
+     */
+    omit?: JobCoverLetterOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterOutboxInclude<ExtArgs> | null
+    /**
+     * Filter which JobCoverLetterOutbox to delete.
+     */
+    where: JobCoverLetterOutboxWhereUniqueInput
+  }
+
+  /**
+   * JobCoverLetterOutbox deleteMany
+   */
+  export type JobCoverLetterOutboxDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which JobCoverLetterOutboxes to delete
+     */
+    where?: JobCoverLetterOutboxWhereInput
+    /**
+     * Limit how many JobCoverLetterOutboxes to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * JobCoverLetterOutbox without action
+   */
+  export type JobCoverLetterOutboxDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetterOutbox
+     */
+    select?: JobCoverLetterOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetterOutbox
+     */
+    omit?: JobCoverLetterOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterOutboxInclude<ExtArgs> | null
   }
 
 
@@ -13003,6 +15593,8 @@ export namespace Prisma {
     curriculum?: boolean | JobOffer$curriculumArgs<ExtArgs>
     curriculumOutbox?: boolean | JobOffer$curriculumOutboxArgs<ExtArgs>
     curriculumPdfOutbox?: boolean | JobOffer$curriculumPdfOutboxArgs<ExtArgs>
+    coverLetter?: boolean | JobOffer$coverLetterArgs<ExtArgs>
+    coverLetterOutbox?: boolean | JobOffer$coverLetterOutboxArgs<ExtArgs>
     statusHistory?: boolean | JobOffer$statusHistoryArgs<ExtArgs>
     _count?: boolean | JobOfferCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["jobOffer"]>
@@ -13095,6 +15687,8 @@ export namespace Prisma {
     curriculum?: boolean | JobOffer$curriculumArgs<ExtArgs>
     curriculumOutbox?: boolean | JobOffer$curriculumOutboxArgs<ExtArgs>
     curriculumPdfOutbox?: boolean | JobOffer$curriculumPdfOutboxArgs<ExtArgs>
+    coverLetter?: boolean | JobOffer$coverLetterArgs<ExtArgs>
+    coverLetterOutbox?: boolean | JobOffer$coverLetterOutboxArgs<ExtArgs>
     statusHistory?: boolean | JobOffer$statusHistoryArgs<ExtArgs>
     _count?: boolean | JobOfferCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -13114,6 +15708,8 @@ export namespace Prisma {
       curriculum: Prisma.$JobCurriculumPayload<ExtArgs> | null
       curriculumOutbox: Prisma.$JobCurriculumOutboxPayload<ExtArgs> | null
       curriculumPdfOutbox: Prisma.$JobCurriculumPdfOutboxPayload<ExtArgs> | null
+      coverLetter: Prisma.$JobCoverLetterPayload<ExtArgs> | null
+      coverLetterOutbox: Prisma.$JobCoverLetterOutboxPayload<ExtArgs> | null
       statusHistory: Prisma.$JobStatusHistoryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -13540,6 +16136,8 @@ export namespace Prisma {
     curriculum<T extends JobOffer$curriculumArgs<ExtArgs> = {}>(args?: Subset<T, JobOffer$curriculumArgs<ExtArgs>>): Prisma__JobCurriculumClient<$Result.GetResult<Prisma.$JobCurriculumPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     curriculumOutbox<T extends JobOffer$curriculumOutboxArgs<ExtArgs> = {}>(args?: Subset<T, JobOffer$curriculumOutboxArgs<ExtArgs>>): Prisma__JobCurriculumOutboxClient<$Result.GetResult<Prisma.$JobCurriculumOutboxPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     curriculumPdfOutbox<T extends JobOffer$curriculumPdfOutboxArgs<ExtArgs> = {}>(args?: Subset<T, JobOffer$curriculumPdfOutboxArgs<ExtArgs>>): Prisma__JobCurriculumPdfOutboxClient<$Result.GetResult<Prisma.$JobCurriculumPdfOutboxPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    coverLetter<T extends JobOffer$coverLetterArgs<ExtArgs> = {}>(args?: Subset<T, JobOffer$coverLetterArgs<ExtArgs>>): Prisma__JobCoverLetterClient<$Result.GetResult<Prisma.$JobCoverLetterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    coverLetterOutbox<T extends JobOffer$coverLetterOutboxArgs<ExtArgs> = {}>(args?: Subset<T, JobOffer$coverLetterOutboxArgs<ExtArgs>>): Prisma__JobCoverLetterOutboxClient<$Result.GetResult<Prisma.$JobCoverLetterOutboxPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     statusHistory<T extends JobOffer$statusHistoryArgs<ExtArgs> = {}>(args?: Subset<T, JobOffer$statusHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobStatusHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -14086,6 +16684,44 @@ export namespace Prisma {
      */
     include?: JobCurriculumPdfOutboxInclude<ExtArgs> | null
     where?: JobCurriculumPdfOutboxWhereInput
+  }
+
+  /**
+   * JobOffer.coverLetter
+   */
+  export type JobOffer$coverLetterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetter
+     */
+    select?: JobCoverLetterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetter
+     */
+    omit?: JobCoverLetterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterInclude<ExtArgs> | null
+    where?: JobCoverLetterWhereInput
+  }
+
+  /**
+   * JobOffer.coverLetterOutbox
+   */
+  export type JobOffer$coverLetterOutboxArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobCoverLetterOutbox
+     */
+    select?: JobCoverLetterOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobCoverLetterOutbox
+     */
+    omit?: JobCoverLetterOutboxOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobCoverLetterOutboxInclude<ExtArgs> | null
+    where?: JobCoverLetterOutboxWhereInput
   }
 
   /**
@@ -17258,6 +19894,46 @@ export namespace Prisma {
   export type CompanyScalarFieldEnum = (typeof CompanyScalarFieldEnum)[keyof typeof CompanyScalarFieldEnum]
 
 
+  export const JobCoverLetterScalarFieldEnum: {
+    id: 'id',
+    jobOfferId: 'jobOfferId',
+    customLabel: 'customLabel',
+    recipientName: 'recipientName',
+    recipientTitle: 'recipientTitle',
+    recipientCompany: 'recipientCompany',
+    recipientAddress: 'recipientAddress',
+    recipientRole: 'recipientRole',
+    date: 'date',
+    salutation: 'salutation',
+    experienceParagraph1: 'experienceParagraph1',
+    experienceParagraph2: 'experienceParagraph2',
+    companyMotivation: 'companyMotivation',
+    callToAction: 'callToAction',
+    signoff: 'signoff',
+    explanation: 'explanation',
+    storageKey: 'storageKey',
+    pdfStatus: 'pdfStatus',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type JobCoverLetterScalarFieldEnum = (typeof JobCoverLetterScalarFieldEnum)[keyof typeof JobCoverLetterScalarFieldEnum]
+
+
+  export const JobCoverLetterOutboxScalarFieldEnum: {
+    id: 'id',
+    jobOfferId: 'jobOfferId',
+    status: 'status',
+    forceRegenerate: 'forceRegenerate',
+    attempts: 'attempts',
+    lastError: 'lastError',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type JobCoverLetterOutboxScalarFieldEnum = (typeof JobCoverLetterOutboxScalarFieldEnum)[keyof typeof JobCoverLetterOutboxScalarFieldEnum]
+
+
   export const JobCurriculumScalarFieldEnum: {
     id: 'id',
     jobOfferId: 'jobOfferId',
@@ -17510,23 +20186,16 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'JobCurriculumPdfStatus'
+   * Reference to a field of type 'JobCoverLetterPdfStatus'
    */
-  export type EnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'JobCurriculumPdfStatus'>
+  export type EnumJobCoverLetterPdfStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'JobCoverLetterPdfStatus'>
     
 
 
   /**
-   * Reference to a field of type 'JobCurriculumPdfStatus[]'
+   * Reference to a field of type 'JobCoverLetterPdfStatus[]'
    */
-  export type ListEnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'JobCurriculumPdfStatus[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Boolean'
-   */
-  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+  export type ListEnumJobCoverLetterPdfStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'JobCoverLetterPdfStatus[]'>
     
 
 
@@ -17541,6 +20210,27 @@ export namespace Prisma {
    * Reference to a field of type 'OutboxStatus[]'
    */
   export type ListEnumOutboxStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OutboxStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
+   * Reference to a field of type 'JobCurriculumPdfStatus'
+   */
+  export type EnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'JobCurriculumPdfStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'JobCurriculumPdfStatus[]'
+   */
+  export type ListEnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'JobCurriculumPdfStatus[]'>
     
 
 
@@ -17753,6 +20443,208 @@ export namespace Prisma {
     employeeCount?: IntNullableWithAggregatesFilter<"Company"> | number | null
     createdAt?: DateTimeWithAggregatesFilter<"Company"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Company"> | Date | string
+  }
+
+  export type JobCoverLetterWhereInput = {
+    AND?: JobCoverLetterWhereInput | JobCoverLetterWhereInput[]
+    OR?: JobCoverLetterWhereInput[]
+    NOT?: JobCoverLetterWhereInput | JobCoverLetterWhereInput[]
+    id?: StringFilter<"JobCoverLetter"> | string
+    jobOfferId?: StringFilter<"JobCoverLetter"> | string
+    customLabel?: StringNullableFilter<"JobCoverLetter"> | string | null
+    recipientName?: StringNullableFilter<"JobCoverLetter"> | string | null
+    recipientTitle?: StringNullableFilter<"JobCoverLetter"> | string | null
+    recipientCompany?: StringFilter<"JobCoverLetter"> | string
+    recipientAddress?: StringNullableFilter<"JobCoverLetter"> | string | null
+    recipientRole?: StringFilter<"JobCoverLetter"> | string
+    date?: StringFilter<"JobCoverLetter"> | string
+    salutation?: StringFilter<"JobCoverLetter"> | string
+    experienceParagraph1?: StringFilter<"JobCoverLetter"> | string
+    experienceParagraph2?: StringFilter<"JobCoverLetter"> | string
+    companyMotivation?: StringFilter<"JobCoverLetter"> | string
+    callToAction?: StringFilter<"JobCoverLetter"> | string
+    signoff?: StringFilter<"JobCoverLetter"> | string
+    explanation?: StringNullableFilter<"JobCoverLetter"> | string | null
+    storageKey?: StringNullableFilter<"JobCoverLetter"> | string | null
+    pdfStatus?: EnumJobCoverLetterPdfStatusFilter<"JobCoverLetter"> | $Enums.JobCoverLetterPdfStatus
+    createdAt?: DateTimeFilter<"JobCoverLetter"> | Date | string
+    updatedAt?: DateTimeFilter<"JobCoverLetter"> | Date | string
+    jobOffer?: XOR<JobOfferScalarRelationFilter, JobOfferWhereInput>
+  }
+
+  export type JobCoverLetterOrderByWithRelationInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    customLabel?: SortOrderInput | SortOrder
+    recipientName?: SortOrderInput | SortOrder
+    recipientTitle?: SortOrderInput | SortOrder
+    recipientCompany?: SortOrder
+    recipientAddress?: SortOrderInput | SortOrder
+    recipientRole?: SortOrder
+    date?: SortOrder
+    salutation?: SortOrder
+    experienceParagraph1?: SortOrder
+    experienceParagraph2?: SortOrder
+    companyMotivation?: SortOrder
+    callToAction?: SortOrder
+    signoff?: SortOrder
+    explanation?: SortOrderInput | SortOrder
+    storageKey?: SortOrderInput | SortOrder
+    pdfStatus?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    jobOffer?: JobOfferOrderByWithRelationInput
+  }
+
+  export type JobCoverLetterWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    jobOfferId?: string
+    AND?: JobCoverLetterWhereInput | JobCoverLetterWhereInput[]
+    OR?: JobCoverLetterWhereInput[]
+    NOT?: JobCoverLetterWhereInput | JobCoverLetterWhereInput[]
+    customLabel?: StringNullableFilter<"JobCoverLetter"> | string | null
+    recipientName?: StringNullableFilter<"JobCoverLetter"> | string | null
+    recipientTitle?: StringNullableFilter<"JobCoverLetter"> | string | null
+    recipientCompany?: StringFilter<"JobCoverLetter"> | string
+    recipientAddress?: StringNullableFilter<"JobCoverLetter"> | string | null
+    recipientRole?: StringFilter<"JobCoverLetter"> | string
+    date?: StringFilter<"JobCoverLetter"> | string
+    salutation?: StringFilter<"JobCoverLetter"> | string
+    experienceParagraph1?: StringFilter<"JobCoverLetter"> | string
+    experienceParagraph2?: StringFilter<"JobCoverLetter"> | string
+    companyMotivation?: StringFilter<"JobCoverLetter"> | string
+    callToAction?: StringFilter<"JobCoverLetter"> | string
+    signoff?: StringFilter<"JobCoverLetter"> | string
+    explanation?: StringNullableFilter<"JobCoverLetter"> | string | null
+    storageKey?: StringNullableFilter<"JobCoverLetter"> | string | null
+    pdfStatus?: EnumJobCoverLetterPdfStatusFilter<"JobCoverLetter"> | $Enums.JobCoverLetterPdfStatus
+    createdAt?: DateTimeFilter<"JobCoverLetter"> | Date | string
+    updatedAt?: DateTimeFilter<"JobCoverLetter"> | Date | string
+    jobOffer?: XOR<JobOfferScalarRelationFilter, JobOfferWhereInput>
+  }, "id" | "jobOfferId">
+
+  export type JobCoverLetterOrderByWithAggregationInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    customLabel?: SortOrderInput | SortOrder
+    recipientName?: SortOrderInput | SortOrder
+    recipientTitle?: SortOrderInput | SortOrder
+    recipientCompany?: SortOrder
+    recipientAddress?: SortOrderInput | SortOrder
+    recipientRole?: SortOrder
+    date?: SortOrder
+    salutation?: SortOrder
+    experienceParagraph1?: SortOrder
+    experienceParagraph2?: SortOrder
+    companyMotivation?: SortOrder
+    callToAction?: SortOrder
+    signoff?: SortOrder
+    explanation?: SortOrderInput | SortOrder
+    storageKey?: SortOrderInput | SortOrder
+    pdfStatus?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: JobCoverLetterCountOrderByAggregateInput
+    _max?: JobCoverLetterMaxOrderByAggregateInput
+    _min?: JobCoverLetterMinOrderByAggregateInput
+  }
+
+  export type JobCoverLetterScalarWhereWithAggregatesInput = {
+    AND?: JobCoverLetterScalarWhereWithAggregatesInput | JobCoverLetterScalarWhereWithAggregatesInput[]
+    OR?: JobCoverLetterScalarWhereWithAggregatesInput[]
+    NOT?: JobCoverLetterScalarWhereWithAggregatesInput | JobCoverLetterScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"JobCoverLetter"> | string
+    jobOfferId?: StringWithAggregatesFilter<"JobCoverLetter"> | string
+    customLabel?: StringNullableWithAggregatesFilter<"JobCoverLetter"> | string | null
+    recipientName?: StringNullableWithAggregatesFilter<"JobCoverLetter"> | string | null
+    recipientTitle?: StringNullableWithAggregatesFilter<"JobCoverLetter"> | string | null
+    recipientCompany?: StringWithAggregatesFilter<"JobCoverLetter"> | string
+    recipientAddress?: StringNullableWithAggregatesFilter<"JobCoverLetter"> | string | null
+    recipientRole?: StringWithAggregatesFilter<"JobCoverLetter"> | string
+    date?: StringWithAggregatesFilter<"JobCoverLetter"> | string
+    salutation?: StringWithAggregatesFilter<"JobCoverLetter"> | string
+    experienceParagraph1?: StringWithAggregatesFilter<"JobCoverLetter"> | string
+    experienceParagraph2?: StringWithAggregatesFilter<"JobCoverLetter"> | string
+    companyMotivation?: StringWithAggregatesFilter<"JobCoverLetter"> | string
+    callToAction?: StringWithAggregatesFilter<"JobCoverLetter"> | string
+    signoff?: StringWithAggregatesFilter<"JobCoverLetter"> | string
+    explanation?: StringNullableWithAggregatesFilter<"JobCoverLetter"> | string | null
+    storageKey?: StringNullableWithAggregatesFilter<"JobCoverLetter"> | string | null
+    pdfStatus?: EnumJobCoverLetterPdfStatusWithAggregatesFilter<"JobCoverLetter"> | $Enums.JobCoverLetterPdfStatus
+    createdAt?: DateTimeWithAggregatesFilter<"JobCoverLetter"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"JobCoverLetter"> | Date | string
+  }
+
+  export type JobCoverLetterOutboxWhereInput = {
+    AND?: JobCoverLetterOutboxWhereInput | JobCoverLetterOutboxWhereInput[]
+    OR?: JobCoverLetterOutboxWhereInput[]
+    NOT?: JobCoverLetterOutboxWhereInput | JobCoverLetterOutboxWhereInput[]
+    id?: StringFilter<"JobCoverLetterOutbox"> | string
+    jobOfferId?: StringFilter<"JobCoverLetterOutbox"> | string
+    status?: EnumOutboxStatusFilter<"JobCoverLetterOutbox"> | $Enums.OutboxStatus
+    forceRegenerate?: BoolFilter<"JobCoverLetterOutbox"> | boolean
+    attempts?: IntFilter<"JobCoverLetterOutbox"> | number
+    lastError?: StringNullableFilter<"JobCoverLetterOutbox"> | string | null
+    createdAt?: DateTimeFilter<"JobCoverLetterOutbox"> | Date | string
+    updatedAt?: DateTimeFilter<"JobCoverLetterOutbox"> | Date | string
+    jobOffer?: XOR<JobOfferScalarRelationFilter, JobOfferWhereInput>
+  }
+
+  export type JobCoverLetterOutboxOrderByWithRelationInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    status?: SortOrder
+    forceRegenerate?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    jobOffer?: JobOfferOrderByWithRelationInput
+  }
+
+  export type JobCoverLetterOutboxWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    jobOfferId?: string
+    AND?: JobCoverLetterOutboxWhereInput | JobCoverLetterOutboxWhereInput[]
+    OR?: JobCoverLetterOutboxWhereInput[]
+    NOT?: JobCoverLetterOutboxWhereInput | JobCoverLetterOutboxWhereInput[]
+    status?: EnumOutboxStatusFilter<"JobCoverLetterOutbox"> | $Enums.OutboxStatus
+    forceRegenerate?: BoolFilter<"JobCoverLetterOutbox"> | boolean
+    attempts?: IntFilter<"JobCoverLetterOutbox"> | number
+    lastError?: StringNullableFilter<"JobCoverLetterOutbox"> | string | null
+    createdAt?: DateTimeFilter<"JobCoverLetterOutbox"> | Date | string
+    updatedAt?: DateTimeFilter<"JobCoverLetterOutbox"> | Date | string
+    jobOffer?: XOR<JobOfferScalarRelationFilter, JobOfferWhereInput>
+  }, "id" | "jobOfferId">
+
+  export type JobCoverLetterOutboxOrderByWithAggregationInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    status?: SortOrder
+    forceRegenerate?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: JobCoverLetterOutboxCountOrderByAggregateInput
+    _avg?: JobCoverLetterOutboxAvgOrderByAggregateInput
+    _max?: JobCoverLetterOutboxMaxOrderByAggregateInput
+    _min?: JobCoverLetterOutboxMinOrderByAggregateInput
+    _sum?: JobCoverLetterOutboxSumOrderByAggregateInput
+  }
+
+  export type JobCoverLetterOutboxScalarWhereWithAggregatesInput = {
+    AND?: JobCoverLetterOutboxScalarWhereWithAggregatesInput | JobCoverLetterOutboxScalarWhereWithAggregatesInput[]
+    OR?: JobCoverLetterOutboxScalarWhereWithAggregatesInput[]
+    NOT?: JobCoverLetterOutboxScalarWhereWithAggregatesInput | JobCoverLetterOutboxScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"JobCoverLetterOutbox"> | string
+    jobOfferId?: StringWithAggregatesFilter<"JobCoverLetterOutbox"> | string
+    status?: EnumOutboxStatusWithAggregatesFilter<"JobCoverLetterOutbox"> | $Enums.OutboxStatus
+    forceRegenerate?: BoolWithAggregatesFilter<"JobCoverLetterOutbox"> | boolean
+    attempts?: IntWithAggregatesFilter<"JobCoverLetterOutbox"> | number
+    lastError?: StringNullableWithAggregatesFilter<"JobCoverLetterOutbox"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"JobCoverLetterOutbox"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"JobCoverLetterOutbox"> | Date | string
   }
 
   export type JobCurriculumWhereInput = {
@@ -18401,6 +21293,8 @@ export namespace Prisma {
     curriculum?: XOR<JobCurriculumNullableScalarRelationFilter, JobCurriculumWhereInput> | null
     curriculumOutbox?: XOR<JobCurriculumOutboxNullableScalarRelationFilter, JobCurriculumOutboxWhereInput> | null
     curriculumPdfOutbox?: XOR<JobCurriculumPdfOutboxNullableScalarRelationFilter, JobCurriculumPdfOutboxWhereInput> | null
+    coverLetter?: XOR<JobCoverLetterNullableScalarRelationFilter, JobCoverLetterWhereInput> | null
+    coverLetterOutbox?: XOR<JobCoverLetterOutboxNullableScalarRelationFilter, JobCoverLetterOutboxWhereInput> | null
     statusHistory?: JobStatusHistoryListRelationFilter
   }
 
@@ -18434,6 +21328,8 @@ export namespace Prisma {
     curriculum?: JobCurriculumOrderByWithRelationInput
     curriculumOutbox?: JobCurriculumOutboxOrderByWithRelationInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxOrderByWithRelationInput
+    coverLetter?: JobCoverLetterOrderByWithRelationInput
+    coverLetterOutbox?: JobCoverLetterOutboxOrderByWithRelationInput
     statusHistory?: JobStatusHistoryOrderByRelationAggregateInput
   }
 
@@ -18471,6 +21367,8 @@ export namespace Prisma {
     curriculum?: XOR<JobCurriculumNullableScalarRelationFilter, JobCurriculumWhereInput> | null
     curriculumOutbox?: XOR<JobCurriculumOutboxNullableScalarRelationFilter, JobCurriculumOutboxWhereInput> | null
     curriculumPdfOutbox?: XOR<JobCurriculumPdfOutboxNullableScalarRelationFilter, JobCurriculumPdfOutboxWhereInput> | null
+    coverLetter?: XOR<JobCoverLetterNullableScalarRelationFilter, JobCoverLetterWhereInput> | null
+    coverLetterOutbox?: XOR<JobCoverLetterOutboxNullableScalarRelationFilter, JobCoverLetterOutboxWhereInput> | null
     statusHistory?: JobStatusHistoryListRelationFilter
   }, "id" | "url" | "source_externalId">
 
@@ -18786,6 +21684,242 @@ export namespace Prisma {
     fundingStage?: NullableStringFieldUpdateOperationsInput | string | null
     companySizeRange?: NullableStringFieldUpdateOperationsInput | string | null
     employeeCount?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type JobCoverLetterCreateInput = {
+    id?: string
+    customLabel?: string | null
+    recipientName?: string | null
+    recipientTitle?: string | null
+    recipientCompany: string
+    recipientAddress?: string | null
+    recipientRole: string
+    date: string
+    salutation: string
+    experienceParagraph1: string
+    experienceParagraph2: string
+    companyMotivation: string
+    callToAction?: string
+    signoff?: string
+    explanation?: string | null
+    storageKey?: string | null
+    pdfStatus?: $Enums.JobCoverLetterPdfStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    jobOffer: JobOfferCreateNestedOneWithoutCoverLetterInput
+  }
+
+  export type JobCoverLetterUncheckedCreateInput = {
+    id?: string
+    jobOfferId: string
+    customLabel?: string | null
+    recipientName?: string | null
+    recipientTitle?: string | null
+    recipientCompany: string
+    recipientAddress?: string | null
+    recipientRole: string
+    date: string
+    salutation: string
+    experienceParagraph1: string
+    experienceParagraph2: string
+    companyMotivation: string
+    callToAction?: string
+    signoff?: string
+    explanation?: string | null
+    storageKey?: string | null
+    pdfStatus?: $Enums.JobCoverLetterPdfStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type JobCoverLetterUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientName?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientCompany?: StringFieldUpdateOperationsInput | string
+    recipientAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientRole?: StringFieldUpdateOperationsInput | string
+    date?: StringFieldUpdateOperationsInput | string
+    salutation?: StringFieldUpdateOperationsInput | string
+    experienceParagraph1?: StringFieldUpdateOperationsInput | string
+    experienceParagraph2?: StringFieldUpdateOperationsInput | string
+    companyMotivation?: StringFieldUpdateOperationsInput | string
+    callToAction?: StringFieldUpdateOperationsInput | string
+    signoff?: StringFieldUpdateOperationsInput | string
+    explanation?: NullableStringFieldUpdateOperationsInput | string | null
+    storageKey?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfStatus?: EnumJobCoverLetterPdfStatusFieldUpdateOperationsInput | $Enums.JobCoverLetterPdfStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    jobOffer?: JobOfferUpdateOneRequiredWithoutCoverLetterNestedInput
+  }
+
+  export type JobCoverLetterUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    jobOfferId?: StringFieldUpdateOperationsInput | string
+    customLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientName?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientCompany?: StringFieldUpdateOperationsInput | string
+    recipientAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientRole?: StringFieldUpdateOperationsInput | string
+    date?: StringFieldUpdateOperationsInput | string
+    salutation?: StringFieldUpdateOperationsInput | string
+    experienceParagraph1?: StringFieldUpdateOperationsInput | string
+    experienceParagraph2?: StringFieldUpdateOperationsInput | string
+    companyMotivation?: StringFieldUpdateOperationsInput | string
+    callToAction?: StringFieldUpdateOperationsInput | string
+    signoff?: StringFieldUpdateOperationsInput | string
+    explanation?: NullableStringFieldUpdateOperationsInput | string | null
+    storageKey?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfStatus?: EnumJobCoverLetterPdfStatusFieldUpdateOperationsInput | $Enums.JobCoverLetterPdfStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type JobCoverLetterCreateManyInput = {
+    id?: string
+    jobOfferId: string
+    customLabel?: string | null
+    recipientName?: string | null
+    recipientTitle?: string | null
+    recipientCompany: string
+    recipientAddress?: string | null
+    recipientRole: string
+    date: string
+    salutation: string
+    experienceParagraph1: string
+    experienceParagraph2: string
+    companyMotivation: string
+    callToAction?: string
+    signoff?: string
+    explanation?: string | null
+    storageKey?: string | null
+    pdfStatus?: $Enums.JobCoverLetterPdfStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type JobCoverLetterUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientName?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientCompany?: StringFieldUpdateOperationsInput | string
+    recipientAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientRole?: StringFieldUpdateOperationsInput | string
+    date?: StringFieldUpdateOperationsInput | string
+    salutation?: StringFieldUpdateOperationsInput | string
+    experienceParagraph1?: StringFieldUpdateOperationsInput | string
+    experienceParagraph2?: StringFieldUpdateOperationsInput | string
+    companyMotivation?: StringFieldUpdateOperationsInput | string
+    callToAction?: StringFieldUpdateOperationsInput | string
+    signoff?: StringFieldUpdateOperationsInput | string
+    explanation?: NullableStringFieldUpdateOperationsInput | string | null
+    storageKey?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfStatus?: EnumJobCoverLetterPdfStatusFieldUpdateOperationsInput | $Enums.JobCoverLetterPdfStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type JobCoverLetterUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    jobOfferId?: StringFieldUpdateOperationsInput | string
+    customLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientName?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientCompany?: StringFieldUpdateOperationsInput | string
+    recipientAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientRole?: StringFieldUpdateOperationsInput | string
+    date?: StringFieldUpdateOperationsInput | string
+    salutation?: StringFieldUpdateOperationsInput | string
+    experienceParagraph1?: StringFieldUpdateOperationsInput | string
+    experienceParagraph2?: StringFieldUpdateOperationsInput | string
+    companyMotivation?: StringFieldUpdateOperationsInput | string
+    callToAction?: StringFieldUpdateOperationsInput | string
+    signoff?: StringFieldUpdateOperationsInput | string
+    explanation?: NullableStringFieldUpdateOperationsInput | string | null
+    storageKey?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfStatus?: EnumJobCoverLetterPdfStatusFieldUpdateOperationsInput | $Enums.JobCoverLetterPdfStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type JobCoverLetterOutboxCreateInput = {
+    id?: string
+    status?: $Enums.OutboxStatus
+    forceRegenerate?: boolean
+    attempts?: number
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    jobOffer: JobOfferCreateNestedOneWithoutCoverLetterOutboxInput
+  }
+
+  export type JobCoverLetterOutboxUncheckedCreateInput = {
+    id?: string
+    jobOfferId: string
+    status?: $Enums.OutboxStatus
+    forceRegenerate?: boolean
+    attempts?: number
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type JobCoverLetterOutboxUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+    forceRegenerate?: BoolFieldUpdateOperationsInput | boolean
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    jobOffer?: JobOfferUpdateOneRequiredWithoutCoverLetterOutboxNestedInput
+  }
+
+  export type JobCoverLetterOutboxUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    jobOfferId?: StringFieldUpdateOperationsInput | string
+    status?: EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+    forceRegenerate?: BoolFieldUpdateOperationsInput | boolean
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type JobCoverLetterOutboxCreateManyInput = {
+    id?: string
+    jobOfferId: string
+    status?: $Enums.OutboxStatus
+    forceRegenerate?: boolean
+    attempts?: number
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type JobCoverLetterOutboxUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+    forceRegenerate?: BoolFieldUpdateOperationsInput | boolean
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type JobCoverLetterOutboxUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    jobOfferId?: StringFieldUpdateOperationsInput | string
+    status?: EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+    forceRegenerate?: BoolFieldUpdateOperationsInput | boolean
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -19481,6 +22615,8 @@ export namespace Prisma {
     curriculum?: JobCurriculumCreateNestedOneWithoutJobOfferInput
     curriculumOutbox?: JobCurriculumOutboxCreateNestedOneWithoutJobOfferInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxCreateNestedOneWithoutJobOfferInput
+    coverLetter?: JobCoverLetterCreateNestedOneWithoutJobOfferInput
+    coverLetterOutbox?: JobCoverLetterOutboxCreateNestedOneWithoutJobOfferInput
     statusHistory?: JobStatusHistoryCreateNestedManyWithoutJobOfferInput
   }
 
@@ -19513,6 +22649,8 @@ export namespace Prisma {
     curriculum?: JobCurriculumUncheckedCreateNestedOneWithoutJobOfferInput
     curriculumOutbox?: JobCurriculumOutboxUncheckedCreateNestedOneWithoutJobOfferInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    coverLetter?: JobCoverLetterUncheckedCreateNestedOneWithoutJobOfferInput
+    coverLetterOutbox?: JobCoverLetterOutboxUncheckedCreateNestedOneWithoutJobOfferInput
     statusHistory?: JobStatusHistoryUncheckedCreateNestedManyWithoutJobOfferInput
   }
 
@@ -19545,6 +22683,8 @@ export namespace Prisma {
     curriculum?: JobCurriculumUpdateOneWithoutJobOfferNestedInput
     curriculumOutbox?: JobCurriculumOutboxUpdateOneWithoutJobOfferNestedInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxUpdateOneWithoutJobOfferNestedInput
+    coverLetter?: JobCoverLetterUpdateOneWithoutJobOfferNestedInput
+    coverLetterOutbox?: JobCoverLetterOutboxUpdateOneWithoutJobOfferNestedInput
     statusHistory?: JobStatusHistoryUpdateManyWithoutJobOfferNestedInput
   }
 
@@ -19577,6 +22717,8 @@ export namespace Prisma {
     curriculum?: JobCurriculumUncheckedUpdateOneWithoutJobOfferNestedInput
     curriculumOutbox?: JobCurriculumOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    coverLetter?: JobCoverLetterUncheckedUpdateOneWithoutJobOfferNestedInput
+    coverLetterOutbox?: JobCoverLetterOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
     statusHistory?: JobStatusHistoryUncheckedUpdateManyWithoutJobOfferNestedInput
   }
 
@@ -20004,16 +23146,200 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type EnumJobCurriculumPdfStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.JobCurriculumPdfStatus | EnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.JobCurriculumPdfStatus[] | ListEnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.JobCurriculumPdfStatus[] | ListEnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumJobCurriculumPdfStatusFilter<$PrismaModel> | $Enums.JobCurriculumPdfStatus
+  export type EnumJobCoverLetterPdfStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.JobCoverLetterPdfStatus | EnumJobCoverLetterPdfStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.JobCoverLetterPdfStatus[] | ListEnumJobCoverLetterPdfStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.JobCoverLetterPdfStatus[] | ListEnumJobCoverLetterPdfStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumJobCoverLetterPdfStatusFilter<$PrismaModel> | $Enums.JobCoverLetterPdfStatus
   }
 
   export type JobOfferScalarRelationFilter = {
     is?: JobOfferWhereInput
     isNot?: JobOfferWhereInput
+  }
+
+  export type JobCoverLetterCountOrderByAggregateInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    customLabel?: SortOrder
+    recipientName?: SortOrder
+    recipientTitle?: SortOrder
+    recipientCompany?: SortOrder
+    recipientAddress?: SortOrder
+    recipientRole?: SortOrder
+    date?: SortOrder
+    salutation?: SortOrder
+    experienceParagraph1?: SortOrder
+    experienceParagraph2?: SortOrder
+    companyMotivation?: SortOrder
+    callToAction?: SortOrder
+    signoff?: SortOrder
+    explanation?: SortOrder
+    storageKey?: SortOrder
+    pdfStatus?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type JobCoverLetterMaxOrderByAggregateInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    customLabel?: SortOrder
+    recipientName?: SortOrder
+    recipientTitle?: SortOrder
+    recipientCompany?: SortOrder
+    recipientAddress?: SortOrder
+    recipientRole?: SortOrder
+    date?: SortOrder
+    salutation?: SortOrder
+    experienceParagraph1?: SortOrder
+    experienceParagraph2?: SortOrder
+    companyMotivation?: SortOrder
+    callToAction?: SortOrder
+    signoff?: SortOrder
+    explanation?: SortOrder
+    storageKey?: SortOrder
+    pdfStatus?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type JobCoverLetterMinOrderByAggregateInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    customLabel?: SortOrder
+    recipientName?: SortOrder
+    recipientTitle?: SortOrder
+    recipientCompany?: SortOrder
+    recipientAddress?: SortOrder
+    recipientRole?: SortOrder
+    date?: SortOrder
+    salutation?: SortOrder
+    experienceParagraph1?: SortOrder
+    experienceParagraph2?: SortOrder
+    companyMotivation?: SortOrder
+    callToAction?: SortOrder
+    signoff?: SortOrder
+    explanation?: SortOrder
+    storageKey?: SortOrder
+    pdfStatus?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumJobCoverLetterPdfStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.JobCoverLetterPdfStatus | EnumJobCoverLetterPdfStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.JobCoverLetterPdfStatus[] | ListEnumJobCoverLetterPdfStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.JobCoverLetterPdfStatus[] | ListEnumJobCoverLetterPdfStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumJobCoverLetterPdfStatusWithAggregatesFilter<$PrismaModel> | $Enums.JobCoverLetterPdfStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumJobCoverLetterPdfStatusFilter<$PrismaModel>
+    _max?: NestedEnumJobCoverLetterPdfStatusFilter<$PrismaModel>
+  }
+
+  export type EnumOutboxStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.OutboxStatus | EnumOutboxStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.OutboxStatus[] | ListEnumOutboxStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OutboxStatus[] | ListEnumOutboxStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumOutboxStatusFilter<$PrismaModel> | $Enums.OutboxStatus
+  }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
+  export type JobCoverLetterOutboxCountOrderByAggregateInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    status?: SortOrder
+    forceRegenerate?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type JobCoverLetterOutboxAvgOrderByAggregateInput = {
+    attempts?: SortOrder
+  }
+
+  export type JobCoverLetterOutboxMaxOrderByAggregateInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    status?: SortOrder
+    forceRegenerate?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type JobCoverLetterOutboxMinOrderByAggregateInput = {
+    id?: SortOrder
+    jobOfferId?: SortOrder
+    status?: SortOrder
+    forceRegenerate?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type JobCoverLetterOutboxSumOrderByAggregateInput = {
+    attempts?: SortOrder
+  }
+
+  export type EnumOutboxStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OutboxStatus | EnumOutboxStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.OutboxStatus[] | ListEnumOutboxStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OutboxStatus[] | ListEnumOutboxStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumOutboxStatusWithAggregatesFilter<$PrismaModel> | $Enums.OutboxStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOutboxStatusFilter<$PrismaModel>
+    _max?: NestedEnumOutboxStatusFilter<$PrismaModel>
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type EnumJobCurriculumPdfStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.JobCurriculumPdfStatus | EnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.JobCurriculumPdfStatus[] | ListEnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.JobCurriculumPdfStatus[] | ListEnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumJobCurriculumPdfStatusFilter<$PrismaModel> | $Enums.JobCurriculumPdfStatus
   }
 
   export type JobCurriculumWorkListRelationFilter = {
@@ -20089,22 +23415,6 @@ export namespace Prisma {
     _max?: NestedEnumJobCurriculumPdfStatusFilter<$PrismaModel>
   }
 
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
   export type JobCurriculumScalarRelationFilter = {
     is?: JobCurriculumWhereInput
     isNot?: JobCurriculumWhereInput
@@ -20152,30 +23462,6 @@ export namespace Prisma {
 
   export type JobCurriculumWorkSumOrderByAggregateInput = {
     order?: SortOrder
-  }
-
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type JobCurriculumProjectCountOrderByAggregateInput = {
@@ -20251,13 +23537,6 @@ export namespace Prisma {
     order?: SortOrder
   }
 
-  export type EnumOutboxStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.OutboxStatus | EnumOutboxStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.OutboxStatus[] | ListEnumOutboxStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.OutboxStatus[] | ListEnumOutboxStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumOutboxStatusFilter<$PrismaModel> | $Enums.OutboxStatus
-  }
-
   export type JobCurriculumOutboxCountOrderByAggregateInput = {
     id?: SortOrder
     jobOfferId?: SortOrder
@@ -20297,16 +23576,6 @@ export namespace Prisma {
 
   export type JobCurriculumOutboxSumOrderByAggregateInput = {
     attempts?: SortOrder
-  }
-
-  export type EnumOutboxStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.OutboxStatus | EnumOutboxStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.OutboxStatus[] | ListEnumOutboxStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.OutboxStatus[] | ListEnumOutboxStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumOutboxStatusWithAggregatesFilter<$PrismaModel> | $Enums.OutboxStatus
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumOutboxStatusFilter<$PrismaModel>
-    _max?: NestedEnumOutboxStatusFilter<$PrismaModel>
   }
 
   export type JobCurriculumPdfOutboxCountOrderByAggregateInput = {
@@ -20623,6 +23892,16 @@ export namespace Prisma {
   export type JobCurriculumPdfOutboxNullableScalarRelationFilter = {
     is?: JobCurriculumPdfOutboxWhereInput | null
     isNot?: JobCurriculumPdfOutboxWhereInput | null
+  }
+
+  export type JobCoverLetterNullableScalarRelationFilter = {
+    is?: JobCoverLetterWhereInput | null
+    isNot?: JobCoverLetterWhereInput | null
+  }
+
+  export type JobCoverLetterOutboxNullableScalarRelationFilter = {
+    is?: JobCoverLetterOutboxWhereInput | null
+    isNot?: JobCoverLetterOutboxWhereInput | null
   }
 
   export type JobStatusHistoryListRelationFilter = {
@@ -20967,6 +24246,54 @@ export namespace Prisma {
     deleteMany?: JobOfferScalarWhereInput | JobOfferScalarWhereInput[]
   }
 
+  export type JobOfferCreateNestedOneWithoutCoverLetterInput = {
+    create?: XOR<JobOfferCreateWithoutCoverLetterInput, JobOfferUncheckedCreateWithoutCoverLetterInput>
+    connectOrCreate?: JobOfferCreateOrConnectWithoutCoverLetterInput
+    connect?: JobOfferWhereUniqueInput
+  }
+
+  export type EnumJobCoverLetterPdfStatusFieldUpdateOperationsInput = {
+    set?: $Enums.JobCoverLetterPdfStatus
+  }
+
+  export type JobOfferUpdateOneRequiredWithoutCoverLetterNestedInput = {
+    create?: XOR<JobOfferCreateWithoutCoverLetterInput, JobOfferUncheckedCreateWithoutCoverLetterInput>
+    connectOrCreate?: JobOfferCreateOrConnectWithoutCoverLetterInput
+    upsert?: JobOfferUpsertWithoutCoverLetterInput
+    connect?: JobOfferWhereUniqueInput
+    update?: XOR<XOR<JobOfferUpdateToOneWithWhereWithoutCoverLetterInput, JobOfferUpdateWithoutCoverLetterInput>, JobOfferUncheckedUpdateWithoutCoverLetterInput>
+  }
+
+  export type JobOfferCreateNestedOneWithoutCoverLetterOutboxInput = {
+    create?: XOR<JobOfferCreateWithoutCoverLetterOutboxInput, JobOfferUncheckedCreateWithoutCoverLetterOutboxInput>
+    connectOrCreate?: JobOfferCreateOrConnectWithoutCoverLetterOutboxInput
+    connect?: JobOfferWhereUniqueInput
+  }
+
+  export type EnumOutboxStatusFieldUpdateOperationsInput = {
+    set?: $Enums.OutboxStatus
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type JobOfferUpdateOneRequiredWithoutCoverLetterOutboxNestedInput = {
+    create?: XOR<JobOfferCreateWithoutCoverLetterOutboxInput, JobOfferUncheckedCreateWithoutCoverLetterOutboxInput>
+    connectOrCreate?: JobOfferCreateOrConnectWithoutCoverLetterOutboxInput
+    upsert?: JobOfferUpsertWithoutCoverLetterOutboxInput
+    connect?: JobOfferWhereUniqueInput
+    update?: XOR<XOR<JobOfferUpdateToOneWithWhereWithoutCoverLetterOutboxInput, JobOfferUpdateWithoutCoverLetterOutboxInput>, JobOfferUncheckedUpdateWithoutCoverLetterOutboxInput>
+  }
+
   export type JobOfferCreateNestedOneWithoutCurriculumInput = {
     create?: XOR<JobOfferCreateWithoutCurriculumInput, JobOfferUncheckedCreateWithoutCurriculumInput>
     connectOrCreate?: JobOfferCreateOrConnectWithoutCurriculumInput
@@ -21117,18 +24444,6 @@ export namespace Prisma {
     connect?: JobCurriculumWhereUniqueInput
   }
 
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
-  }
-
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
   export type JobCurriculumUpdateOneRequiredWithoutWorkNestedInput = {
     create?: XOR<JobCurriculumCreateWithoutWorkInput, JobCurriculumUncheckedCreateWithoutWorkInput>
     connectOrCreate?: JobCurriculumCreateOrConnectWithoutWorkInput
@@ -21169,10 +24484,6 @@ export namespace Prisma {
     create?: XOR<JobOfferCreateWithoutCurriculumOutboxInput, JobOfferUncheckedCreateWithoutCurriculumOutboxInput>
     connectOrCreate?: JobOfferCreateOrConnectWithoutCurriculumOutboxInput
     connect?: JobOfferWhereUniqueInput
-  }
-
-  export type EnumOutboxStatusFieldUpdateOperationsInput = {
-    set?: $Enums.OutboxStatus
   }
 
   export type JobOfferUpdateOneRequiredWithoutCurriculumOutboxNestedInput = {
@@ -21281,6 +24592,18 @@ export namespace Prisma {
     connect?: JobCurriculumPdfOutboxWhereUniqueInput
   }
 
+  export type JobCoverLetterCreateNestedOneWithoutJobOfferInput = {
+    create?: XOR<JobCoverLetterCreateWithoutJobOfferInput, JobCoverLetterUncheckedCreateWithoutJobOfferInput>
+    connectOrCreate?: JobCoverLetterCreateOrConnectWithoutJobOfferInput
+    connect?: JobCoverLetterWhereUniqueInput
+  }
+
+  export type JobCoverLetterOutboxCreateNestedOneWithoutJobOfferInput = {
+    create?: XOR<JobCoverLetterOutboxCreateWithoutJobOfferInput, JobCoverLetterOutboxUncheckedCreateWithoutJobOfferInput>
+    connectOrCreate?: JobCoverLetterOutboxCreateOrConnectWithoutJobOfferInput
+    connect?: JobCoverLetterOutboxWhereUniqueInput
+  }
+
   export type JobStatusHistoryCreateNestedManyWithoutJobOfferInput = {
     create?: XOR<JobStatusHistoryCreateWithoutJobOfferInput, JobStatusHistoryUncheckedCreateWithoutJobOfferInput> | JobStatusHistoryCreateWithoutJobOfferInput[] | JobStatusHistoryUncheckedCreateWithoutJobOfferInput[]
     connectOrCreate?: JobStatusHistoryCreateOrConnectWithoutJobOfferInput | JobStatusHistoryCreateOrConnectWithoutJobOfferInput[]
@@ -21316,6 +24639,18 @@ export namespace Prisma {
     create?: XOR<JobCurriculumPdfOutboxCreateWithoutJobOfferInput, JobCurriculumPdfOutboxUncheckedCreateWithoutJobOfferInput>
     connectOrCreate?: JobCurriculumPdfOutboxCreateOrConnectWithoutJobOfferInput
     connect?: JobCurriculumPdfOutboxWhereUniqueInput
+  }
+
+  export type JobCoverLetterUncheckedCreateNestedOneWithoutJobOfferInput = {
+    create?: XOR<JobCoverLetterCreateWithoutJobOfferInput, JobCoverLetterUncheckedCreateWithoutJobOfferInput>
+    connectOrCreate?: JobCoverLetterCreateOrConnectWithoutJobOfferInput
+    connect?: JobCoverLetterWhereUniqueInput
+  }
+
+  export type JobCoverLetterOutboxUncheckedCreateNestedOneWithoutJobOfferInput = {
+    create?: XOR<JobCoverLetterOutboxCreateWithoutJobOfferInput, JobCoverLetterOutboxUncheckedCreateWithoutJobOfferInput>
+    connectOrCreate?: JobCoverLetterOutboxCreateOrConnectWithoutJobOfferInput
+    connect?: JobCoverLetterOutboxWhereUniqueInput
   }
 
   export type JobStatusHistoryUncheckedCreateNestedManyWithoutJobOfferInput = {
@@ -21415,6 +24750,26 @@ export namespace Prisma {
     update?: XOR<XOR<JobCurriculumPdfOutboxUpdateToOneWithWhereWithoutJobOfferInput, JobCurriculumPdfOutboxUpdateWithoutJobOfferInput>, JobCurriculumPdfOutboxUncheckedUpdateWithoutJobOfferInput>
   }
 
+  export type JobCoverLetterUpdateOneWithoutJobOfferNestedInput = {
+    create?: XOR<JobCoverLetterCreateWithoutJobOfferInput, JobCoverLetterUncheckedCreateWithoutJobOfferInput>
+    connectOrCreate?: JobCoverLetterCreateOrConnectWithoutJobOfferInput
+    upsert?: JobCoverLetterUpsertWithoutJobOfferInput
+    disconnect?: JobCoverLetterWhereInput | boolean
+    delete?: JobCoverLetterWhereInput | boolean
+    connect?: JobCoverLetterWhereUniqueInput
+    update?: XOR<XOR<JobCoverLetterUpdateToOneWithWhereWithoutJobOfferInput, JobCoverLetterUpdateWithoutJobOfferInput>, JobCoverLetterUncheckedUpdateWithoutJobOfferInput>
+  }
+
+  export type JobCoverLetterOutboxUpdateOneWithoutJobOfferNestedInput = {
+    create?: XOR<JobCoverLetterOutboxCreateWithoutJobOfferInput, JobCoverLetterOutboxUncheckedCreateWithoutJobOfferInput>
+    connectOrCreate?: JobCoverLetterOutboxCreateOrConnectWithoutJobOfferInput
+    upsert?: JobCoverLetterOutboxUpsertWithoutJobOfferInput
+    disconnect?: JobCoverLetterOutboxWhereInput | boolean
+    delete?: JobCoverLetterOutboxWhereInput | boolean
+    connect?: JobCoverLetterOutboxWhereUniqueInput
+    update?: XOR<XOR<JobCoverLetterOutboxUpdateToOneWithWhereWithoutJobOfferInput, JobCoverLetterOutboxUpdateWithoutJobOfferInput>, JobCoverLetterOutboxUncheckedUpdateWithoutJobOfferInput>
+  }
+
   export type JobStatusHistoryUpdateManyWithoutJobOfferNestedInput = {
     create?: XOR<JobStatusHistoryCreateWithoutJobOfferInput, JobStatusHistoryUncheckedCreateWithoutJobOfferInput> | JobStatusHistoryCreateWithoutJobOfferInput[] | JobStatusHistoryUncheckedCreateWithoutJobOfferInput[]
     connectOrCreate?: JobStatusHistoryCreateOrConnectWithoutJobOfferInput | JobStatusHistoryCreateOrConnectWithoutJobOfferInput[]
@@ -21477,6 +24832,26 @@ export namespace Prisma {
     delete?: JobCurriculumPdfOutboxWhereInput | boolean
     connect?: JobCurriculumPdfOutboxWhereUniqueInput
     update?: XOR<XOR<JobCurriculumPdfOutboxUpdateToOneWithWhereWithoutJobOfferInput, JobCurriculumPdfOutboxUpdateWithoutJobOfferInput>, JobCurriculumPdfOutboxUncheckedUpdateWithoutJobOfferInput>
+  }
+
+  export type JobCoverLetterUncheckedUpdateOneWithoutJobOfferNestedInput = {
+    create?: XOR<JobCoverLetterCreateWithoutJobOfferInput, JobCoverLetterUncheckedCreateWithoutJobOfferInput>
+    connectOrCreate?: JobCoverLetterCreateOrConnectWithoutJobOfferInput
+    upsert?: JobCoverLetterUpsertWithoutJobOfferInput
+    disconnect?: JobCoverLetterWhereInput | boolean
+    delete?: JobCoverLetterWhereInput | boolean
+    connect?: JobCoverLetterWhereUniqueInput
+    update?: XOR<XOR<JobCoverLetterUpdateToOneWithWhereWithoutJobOfferInput, JobCoverLetterUpdateWithoutJobOfferInput>, JobCoverLetterUncheckedUpdateWithoutJobOfferInput>
+  }
+
+  export type JobCoverLetterOutboxUncheckedUpdateOneWithoutJobOfferNestedInput = {
+    create?: XOR<JobCoverLetterOutboxCreateWithoutJobOfferInput, JobCoverLetterOutboxUncheckedCreateWithoutJobOfferInput>
+    connectOrCreate?: JobCoverLetterOutboxCreateOrConnectWithoutJobOfferInput
+    upsert?: JobCoverLetterOutboxUpsertWithoutJobOfferInput
+    disconnect?: JobCoverLetterOutboxWhereInput | boolean
+    delete?: JobCoverLetterOutboxWhereInput | boolean
+    connect?: JobCoverLetterOutboxWhereUniqueInput
+    update?: XOR<XOR<JobCoverLetterOutboxUpdateToOneWithWhereWithoutJobOfferInput, JobCoverLetterOutboxUpdateWithoutJobOfferInput>, JobCoverLetterOutboxUncheckedUpdateWithoutJobOfferInput>
   }
 
   export type JobStatusHistoryUncheckedUpdateManyWithoutJobOfferNestedInput = {
@@ -21647,26 +25022,43 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type NestedEnumJobCurriculumPdfStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.JobCurriculumPdfStatus | EnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.JobCurriculumPdfStatus[] | ListEnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.JobCurriculumPdfStatus[] | ListEnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumJobCurriculumPdfStatusFilter<$PrismaModel> | $Enums.JobCurriculumPdfStatus
+  export type NestedEnumJobCoverLetterPdfStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.JobCoverLetterPdfStatus | EnumJobCoverLetterPdfStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.JobCoverLetterPdfStatus[] | ListEnumJobCoverLetterPdfStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.JobCoverLetterPdfStatus[] | ListEnumJobCoverLetterPdfStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumJobCoverLetterPdfStatusFilter<$PrismaModel> | $Enums.JobCoverLetterPdfStatus
   }
 
-  export type NestedEnumJobCurriculumPdfStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.JobCurriculumPdfStatus | EnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.JobCurriculumPdfStatus[] | ListEnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.JobCurriculumPdfStatus[] | ListEnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumJobCurriculumPdfStatusWithAggregatesFilter<$PrismaModel> | $Enums.JobCurriculumPdfStatus
+  export type NestedEnumJobCoverLetterPdfStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.JobCoverLetterPdfStatus | EnumJobCoverLetterPdfStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.JobCoverLetterPdfStatus[] | ListEnumJobCoverLetterPdfStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.JobCoverLetterPdfStatus[] | ListEnumJobCoverLetterPdfStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumJobCoverLetterPdfStatusWithAggregatesFilter<$PrismaModel> | $Enums.JobCoverLetterPdfStatus
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumJobCurriculumPdfStatusFilter<$PrismaModel>
-    _max?: NestedEnumJobCurriculumPdfStatusFilter<$PrismaModel>
+    _min?: NestedEnumJobCoverLetterPdfStatusFilter<$PrismaModel>
+    _max?: NestedEnumJobCoverLetterPdfStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumOutboxStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.OutboxStatus | EnumOutboxStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.OutboxStatus[] | ListEnumOutboxStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OutboxStatus[] | ListEnumOutboxStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumOutboxStatusFilter<$PrismaModel> | $Enums.OutboxStatus
   }
 
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedEnumOutboxStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OutboxStatus | EnumOutboxStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.OutboxStatus[] | ListEnumOutboxStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OutboxStatus[] | ListEnumOutboxStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumOutboxStatusWithAggregatesFilter<$PrismaModel> | $Enums.OutboxStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOutboxStatusFilter<$PrismaModel>
+    _max?: NestedEnumOutboxStatusFilter<$PrismaModel>
   }
 
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -21704,21 +25096,21 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
-  export type NestedEnumOutboxStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.OutboxStatus | EnumOutboxStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.OutboxStatus[] | ListEnumOutboxStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.OutboxStatus[] | ListEnumOutboxStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumOutboxStatusFilter<$PrismaModel> | $Enums.OutboxStatus
+  export type NestedEnumJobCurriculumPdfStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.JobCurriculumPdfStatus | EnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.JobCurriculumPdfStatus[] | ListEnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.JobCurriculumPdfStatus[] | ListEnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumJobCurriculumPdfStatusFilter<$PrismaModel> | $Enums.JobCurriculumPdfStatus
   }
 
-  export type NestedEnumOutboxStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.OutboxStatus | EnumOutboxStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.OutboxStatus[] | ListEnumOutboxStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.OutboxStatus[] | ListEnumOutboxStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumOutboxStatusWithAggregatesFilter<$PrismaModel> | $Enums.OutboxStatus
+  export type NestedEnumJobCurriculumPdfStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.JobCurriculumPdfStatus | EnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.JobCurriculumPdfStatus[] | ListEnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.JobCurriculumPdfStatus[] | ListEnumJobCurriculumPdfStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumJobCurriculumPdfStatusWithAggregatesFilter<$PrismaModel> | $Enums.JobCurriculumPdfStatus
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumOutboxStatusFilter<$PrismaModel>
-    _max?: NestedEnumOutboxStatusFilter<$PrismaModel>
+    _min?: NestedEnumJobCurriculumPdfStatusFilter<$PrismaModel>
+    _max?: NestedEnumJobCurriculumPdfStatusFilter<$PrismaModel>
   }
 
   export type NestedEnumEvaluationStatusFilter<$PrismaModel = never> = {
@@ -21959,6 +25351,8 @@ export namespace Prisma {
     curriculum?: JobCurriculumCreateNestedOneWithoutJobOfferInput
     curriculumOutbox?: JobCurriculumOutboxCreateNestedOneWithoutJobOfferInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxCreateNestedOneWithoutJobOfferInput
+    coverLetter?: JobCoverLetterCreateNestedOneWithoutJobOfferInput
+    coverLetterOutbox?: JobCoverLetterOutboxCreateNestedOneWithoutJobOfferInput
     statusHistory?: JobStatusHistoryCreateNestedManyWithoutJobOfferInput
   }
 
@@ -21990,6 +25384,8 @@ export namespace Prisma {
     curriculum?: JobCurriculumUncheckedCreateNestedOneWithoutJobOfferInput
     curriculumOutbox?: JobCurriculumOutboxUncheckedCreateNestedOneWithoutJobOfferInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    coverLetter?: JobCoverLetterUncheckedCreateNestedOneWithoutJobOfferInput
+    coverLetterOutbox?: JobCoverLetterOutboxUncheckedCreateNestedOneWithoutJobOfferInput
     statusHistory?: JobStatusHistoryUncheckedCreateNestedManyWithoutJobOfferInput
   }
 
@@ -22048,6 +25444,302 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"JobOffer"> | Date | string
   }
 
+  export type JobOfferCreateWithoutCoverLetterInput = {
+    id?: string
+    externalId?: string | null
+    source: $Enums.JobSource
+    url: string
+    title: string
+    location?: string | null
+    remoteType?: $Enums.RemoteType
+    rawDescription: string
+    descriptionMarkdown?: string | null
+    datePosted?: Date | string | null
+    salaryMin?: number | null
+    salaryMax?: number | null
+    currency?: string | null
+    contractType?: string | null
+    roleCategory?: string | null
+    experienceLevel?: $Enums.ExperienceLevel
+    skills?: string | null
+    status?: $Enums.ApplicationStatus
+    evaluationProcessStatus?: $Enums.JobEvaluationProcessStatus
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    company: CompanyCreateNestedOneWithoutJobOffersInput
+    evaluation?: JobEvaluationCreateNestedOneWithoutJobOfferInput
+    evaluationOutbox?: JobEvaluationOutboxCreateNestedOneWithoutJobOfferInput
+    curriculum?: JobCurriculumCreateNestedOneWithoutJobOfferInput
+    curriculumOutbox?: JobCurriculumOutboxCreateNestedOneWithoutJobOfferInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxCreateNestedOneWithoutJobOfferInput
+    coverLetterOutbox?: JobCoverLetterOutboxCreateNestedOneWithoutJobOfferInput
+    statusHistory?: JobStatusHistoryCreateNestedManyWithoutJobOfferInput
+  }
+
+  export type JobOfferUncheckedCreateWithoutCoverLetterInput = {
+    id?: string
+    externalId?: string | null
+    source: $Enums.JobSource
+    url: string
+    title: string
+    location?: string | null
+    remoteType?: $Enums.RemoteType
+    rawDescription: string
+    descriptionMarkdown?: string | null
+    datePosted?: Date | string | null
+    companyId: string
+    salaryMin?: number | null
+    salaryMax?: number | null
+    currency?: string | null
+    contractType?: string | null
+    roleCategory?: string | null
+    experienceLevel?: $Enums.ExperienceLevel
+    skills?: string | null
+    status?: $Enums.ApplicationStatus
+    evaluationProcessStatus?: $Enums.JobEvaluationProcessStatus
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    evaluation?: JobEvaluationUncheckedCreateNestedOneWithoutJobOfferInput
+    evaluationOutbox?: JobEvaluationOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    curriculum?: JobCurriculumUncheckedCreateNestedOneWithoutJobOfferInput
+    curriculumOutbox?: JobCurriculumOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    coverLetterOutbox?: JobCoverLetterOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    statusHistory?: JobStatusHistoryUncheckedCreateNestedManyWithoutJobOfferInput
+  }
+
+  export type JobOfferCreateOrConnectWithoutCoverLetterInput = {
+    where: JobOfferWhereUniqueInput
+    create: XOR<JobOfferCreateWithoutCoverLetterInput, JobOfferUncheckedCreateWithoutCoverLetterInput>
+  }
+
+  export type JobOfferUpsertWithoutCoverLetterInput = {
+    update: XOR<JobOfferUpdateWithoutCoverLetterInput, JobOfferUncheckedUpdateWithoutCoverLetterInput>
+    create: XOR<JobOfferCreateWithoutCoverLetterInput, JobOfferUncheckedCreateWithoutCoverLetterInput>
+    where?: JobOfferWhereInput
+  }
+
+  export type JobOfferUpdateToOneWithWhereWithoutCoverLetterInput = {
+    where?: JobOfferWhereInput
+    data: XOR<JobOfferUpdateWithoutCoverLetterInput, JobOfferUncheckedUpdateWithoutCoverLetterInput>
+  }
+
+  export type JobOfferUpdateWithoutCoverLetterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: EnumJobSourceFieldUpdateOperationsInput | $Enums.JobSource
+    url?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    remoteType?: EnumRemoteTypeFieldUpdateOperationsInput | $Enums.RemoteType
+    rawDescription?: StringFieldUpdateOperationsInput | string
+    descriptionMarkdown?: NullableStringFieldUpdateOperationsInput | string | null
+    datePosted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
+    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
+    currency?: NullableStringFieldUpdateOperationsInput | string | null
+    contractType?: NullableStringFieldUpdateOperationsInput | string | null
+    roleCategory?: NullableStringFieldUpdateOperationsInput | string | null
+    experienceLevel?: EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
+    skills?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFieldUpdateOperationsInput | $Enums.JobEvaluationProcessStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    company?: CompanyUpdateOneRequiredWithoutJobOffersNestedInput
+    evaluation?: JobEvaluationUpdateOneWithoutJobOfferNestedInput
+    evaluationOutbox?: JobEvaluationOutboxUpdateOneWithoutJobOfferNestedInput
+    curriculum?: JobCurriculumUpdateOneWithoutJobOfferNestedInput
+    curriculumOutbox?: JobCurriculumOutboxUpdateOneWithoutJobOfferNestedInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUpdateOneWithoutJobOfferNestedInput
+    coverLetterOutbox?: JobCoverLetterOutboxUpdateOneWithoutJobOfferNestedInput
+    statusHistory?: JobStatusHistoryUpdateManyWithoutJobOfferNestedInput
+  }
+
+  export type JobOfferUncheckedUpdateWithoutCoverLetterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: EnumJobSourceFieldUpdateOperationsInput | $Enums.JobSource
+    url?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    remoteType?: EnumRemoteTypeFieldUpdateOperationsInput | $Enums.RemoteType
+    rawDescription?: StringFieldUpdateOperationsInput | string
+    descriptionMarkdown?: NullableStringFieldUpdateOperationsInput | string | null
+    datePosted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    companyId?: StringFieldUpdateOperationsInput | string
+    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
+    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
+    currency?: NullableStringFieldUpdateOperationsInput | string | null
+    contractType?: NullableStringFieldUpdateOperationsInput | string | null
+    roleCategory?: NullableStringFieldUpdateOperationsInput | string | null
+    experienceLevel?: EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
+    skills?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFieldUpdateOperationsInput | $Enums.JobEvaluationProcessStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    evaluation?: JobEvaluationUncheckedUpdateOneWithoutJobOfferNestedInput
+    evaluationOutbox?: JobEvaluationOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    curriculum?: JobCurriculumUncheckedUpdateOneWithoutJobOfferNestedInput
+    curriculumOutbox?: JobCurriculumOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    coverLetterOutbox?: JobCoverLetterOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    statusHistory?: JobStatusHistoryUncheckedUpdateManyWithoutJobOfferNestedInput
+  }
+
+  export type JobOfferCreateWithoutCoverLetterOutboxInput = {
+    id?: string
+    externalId?: string | null
+    source: $Enums.JobSource
+    url: string
+    title: string
+    location?: string | null
+    remoteType?: $Enums.RemoteType
+    rawDescription: string
+    descriptionMarkdown?: string | null
+    datePosted?: Date | string | null
+    salaryMin?: number | null
+    salaryMax?: number | null
+    currency?: string | null
+    contractType?: string | null
+    roleCategory?: string | null
+    experienceLevel?: $Enums.ExperienceLevel
+    skills?: string | null
+    status?: $Enums.ApplicationStatus
+    evaluationProcessStatus?: $Enums.JobEvaluationProcessStatus
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    company: CompanyCreateNestedOneWithoutJobOffersInput
+    evaluation?: JobEvaluationCreateNestedOneWithoutJobOfferInput
+    evaluationOutbox?: JobEvaluationOutboxCreateNestedOneWithoutJobOfferInput
+    curriculum?: JobCurriculumCreateNestedOneWithoutJobOfferInput
+    curriculumOutbox?: JobCurriculumOutboxCreateNestedOneWithoutJobOfferInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxCreateNestedOneWithoutJobOfferInput
+    coverLetter?: JobCoverLetterCreateNestedOneWithoutJobOfferInput
+    statusHistory?: JobStatusHistoryCreateNestedManyWithoutJobOfferInput
+  }
+
+  export type JobOfferUncheckedCreateWithoutCoverLetterOutboxInput = {
+    id?: string
+    externalId?: string | null
+    source: $Enums.JobSource
+    url: string
+    title: string
+    location?: string | null
+    remoteType?: $Enums.RemoteType
+    rawDescription: string
+    descriptionMarkdown?: string | null
+    datePosted?: Date | string | null
+    companyId: string
+    salaryMin?: number | null
+    salaryMax?: number | null
+    currency?: string | null
+    contractType?: string | null
+    roleCategory?: string | null
+    experienceLevel?: $Enums.ExperienceLevel
+    skills?: string | null
+    status?: $Enums.ApplicationStatus
+    evaluationProcessStatus?: $Enums.JobEvaluationProcessStatus
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    evaluation?: JobEvaluationUncheckedCreateNestedOneWithoutJobOfferInput
+    evaluationOutbox?: JobEvaluationOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    curriculum?: JobCurriculumUncheckedCreateNestedOneWithoutJobOfferInput
+    curriculumOutbox?: JobCurriculumOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    coverLetter?: JobCoverLetterUncheckedCreateNestedOneWithoutJobOfferInput
+    statusHistory?: JobStatusHistoryUncheckedCreateNestedManyWithoutJobOfferInput
+  }
+
+  export type JobOfferCreateOrConnectWithoutCoverLetterOutboxInput = {
+    where: JobOfferWhereUniqueInput
+    create: XOR<JobOfferCreateWithoutCoverLetterOutboxInput, JobOfferUncheckedCreateWithoutCoverLetterOutboxInput>
+  }
+
+  export type JobOfferUpsertWithoutCoverLetterOutboxInput = {
+    update: XOR<JobOfferUpdateWithoutCoverLetterOutboxInput, JobOfferUncheckedUpdateWithoutCoverLetterOutboxInput>
+    create: XOR<JobOfferCreateWithoutCoverLetterOutboxInput, JobOfferUncheckedCreateWithoutCoverLetterOutboxInput>
+    where?: JobOfferWhereInput
+  }
+
+  export type JobOfferUpdateToOneWithWhereWithoutCoverLetterOutboxInput = {
+    where?: JobOfferWhereInput
+    data: XOR<JobOfferUpdateWithoutCoverLetterOutboxInput, JobOfferUncheckedUpdateWithoutCoverLetterOutboxInput>
+  }
+
+  export type JobOfferUpdateWithoutCoverLetterOutboxInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: EnumJobSourceFieldUpdateOperationsInput | $Enums.JobSource
+    url?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    remoteType?: EnumRemoteTypeFieldUpdateOperationsInput | $Enums.RemoteType
+    rawDescription?: StringFieldUpdateOperationsInput | string
+    descriptionMarkdown?: NullableStringFieldUpdateOperationsInput | string | null
+    datePosted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
+    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
+    currency?: NullableStringFieldUpdateOperationsInput | string | null
+    contractType?: NullableStringFieldUpdateOperationsInput | string | null
+    roleCategory?: NullableStringFieldUpdateOperationsInput | string | null
+    experienceLevel?: EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
+    skills?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFieldUpdateOperationsInput | $Enums.JobEvaluationProcessStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    company?: CompanyUpdateOneRequiredWithoutJobOffersNestedInput
+    evaluation?: JobEvaluationUpdateOneWithoutJobOfferNestedInput
+    evaluationOutbox?: JobEvaluationOutboxUpdateOneWithoutJobOfferNestedInput
+    curriculum?: JobCurriculumUpdateOneWithoutJobOfferNestedInput
+    curriculumOutbox?: JobCurriculumOutboxUpdateOneWithoutJobOfferNestedInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUpdateOneWithoutJobOfferNestedInput
+    coverLetter?: JobCoverLetterUpdateOneWithoutJobOfferNestedInput
+    statusHistory?: JobStatusHistoryUpdateManyWithoutJobOfferNestedInput
+  }
+
+  export type JobOfferUncheckedUpdateWithoutCoverLetterOutboxInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: EnumJobSourceFieldUpdateOperationsInput | $Enums.JobSource
+    url?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    remoteType?: EnumRemoteTypeFieldUpdateOperationsInput | $Enums.RemoteType
+    rawDescription?: StringFieldUpdateOperationsInput | string
+    descriptionMarkdown?: NullableStringFieldUpdateOperationsInput | string | null
+    datePosted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    companyId?: StringFieldUpdateOperationsInput | string
+    salaryMin?: NullableFloatFieldUpdateOperationsInput | number | null
+    salaryMax?: NullableFloatFieldUpdateOperationsInput | number | null
+    currency?: NullableStringFieldUpdateOperationsInput | string | null
+    contractType?: NullableStringFieldUpdateOperationsInput | string | null
+    roleCategory?: NullableStringFieldUpdateOperationsInput | string | null
+    experienceLevel?: EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
+    skills?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    evaluationProcessStatus?: EnumJobEvaluationProcessStatusFieldUpdateOperationsInput | $Enums.JobEvaluationProcessStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    evaluation?: JobEvaluationUncheckedUpdateOneWithoutJobOfferNestedInput
+    evaluationOutbox?: JobEvaluationOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    curriculum?: JobCurriculumUncheckedUpdateOneWithoutJobOfferNestedInput
+    curriculumOutbox?: JobCurriculumOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    coverLetter?: JobCoverLetterUncheckedUpdateOneWithoutJobOfferNestedInput
+    statusHistory?: JobStatusHistoryUncheckedUpdateManyWithoutJobOfferNestedInput
+  }
+
   export type JobOfferCreateWithoutCurriculumInput = {
     id?: string
     externalId?: string | null
@@ -22076,6 +25768,8 @@ export namespace Prisma {
     evaluationOutbox?: JobEvaluationOutboxCreateNestedOneWithoutJobOfferInput
     curriculumOutbox?: JobCurriculumOutboxCreateNestedOneWithoutJobOfferInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxCreateNestedOneWithoutJobOfferInput
+    coverLetter?: JobCoverLetterCreateNestedOneWithoutJobOfferInput
+    coverLetterOutbox?: JobCoverLetterOutboxCreateNestedOneWithoutJobOfferInput
     statusHistory?: JobStatusHistoryCreateNestedManyWithoutJobOfferInput
   }
 
@@ -22107,6 +25801,8 @@ export namespace Prisma {
     evaluationOutbox?: JobEvaluationOutboxUncheckedCreateNestedOneWithoutJobOfferInput
     curriculumOutbox?: JobCurriculumOutboxUncheckedCreateNestedOneWithoutJobOfferInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    coverLetter?: JobCoverLetterUncheckedCreateNestedOneWithoutJobOfferInput
+    coverLetterOutbox?: JobCoverLetterOutboxUncheckedCreateNestedOneWithoutJobOfferInput
     statusHistory?: JobStatusHistoryUncheckedCreateNestedManyWithoutJobOfferInput
   }
 
@@ -22240,6 +25936,8 @@ export namespace Prisma {
     evaluationOutbox?: JobEvaluationOutboxUpdateOneWithoutJobOfferNestedInput
     curriculumOutbox?: JobCurriculumOutboxUpdateOneWithoutJobOfferNestedInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxUpdateOneWithoutJobOfferNestedInput
+    coverLetter?: JobCoverLetterUpdateOneWithoutJobOfferNestedInput
+    coverLetterOutbox?: JobCoverLetterOutboxUpdateOneWithoutJobOfferNestedInput
     statusHistory?: JobStatusHistoryUpdateManyWithoutJobOfferNestedInput
   }
 
@@ -22271,6 +25969,8 @@ export namespace Prisma {
     evaluationOutbox?: JobEvaluationOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
     curriculumOutbox?: JobCurriculumOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    coverLetter?: JobCoverLetterUncheckedUpdateOneWithoutJobOfferNestedInput
+    coverLetterOutbox?: JobCoverLetterOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
     statusHistory?: JobStatusHistoryUncheckedUpdateManyWithoutJobOfferNestedInput
   }
 
@@ -22594,6 +26294,8 @@ export namespace Prisma {
     evaluationOutbox?: JobEvaluationOutboxCreateNestedOneWithoutJobOfferInput
     curriculum?: JobCurriculumCreateNestedOneWithoutJobOfferInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxCreateNestedOneWithoutJobOfferInput
+    coverLetter?: JobCoverLetterCreateNestedOneWithoutJobOfferInput
+    coverLetterOutbox?: JobCoverLetterOutboxCreateNestedOneWithoutJobOfferInput
     statusHistory?: JobStatusHistoryCreateNestedManyWithoutJobOfferInput
   }
 
@@ -22625,6 +26327,8 @@ export namespace Prisma {
     evaluationOutbox?: JobEvaluationOutboxUncheckedCreateNestedOneWithoutJobOfferInput
     curriculum?: JobCurriculumUncheckedCreateNestedOneWithoutJobOfferInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    coverLetter?: JobCoverLetterUncheckedCreateNestedOneWithoutJobOfferInput
+    coverLetterOutbox?: JobCoverLetterOutboxUncheckedCreateNestedOneWithoutJobOfferInput
     statusHistory?: JobStatusHistoryUncheckedCreateNestedManyWithoutJobOfferInput
   }
 
@@ -22672,6 +26376,8 @@ export namespace Prisma {
     evaluationOutbox?: JobEvaluationOutboxUpdateOneWithoutJobOfferNestedInput
     curriculum?: JobCurriculumUpdateOneWithoutJobOfferNestedInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxUpdateOneWithoutJobOfferNestedInput
+    coverLetter?: JobCoverLetterUpdateOneWithoutJobOfferNestedInput
+    coverLetterOutbox?: JobCoverLetterOutboxUpdateOneWithoutJobOfferNestedInput
     statusHistory?: JobStatusHistoryUpdateManyWithoutJobOfferNestedInput
   }
 
@@ -22703,6 +26409,8 @@ export namespace Prisma {
     evaluationOutbox?: JobEvaluationOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
     curriculum?: JobCurriculumUncheckedUpdateOneWithoutJobOfferNestedInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    coverLetter?: JobCoverLetterUncheckedUpdateOneWithoutJobOfferNestedInput
+    coverLetterOutbox?: JobCoverLetterOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
     statusHistory?: JobStatusHistoryUncheckedUpdateManyWithoutJobOfferNestedInput
   }
 
@@ -22734,6 +26442,8 @@ export namespace Prisma {
     evaluationOutbox?: JobEvaluationOutboxCreateNestedOneWithoutJobOfferInput
     curriculum?: JobCurriculumCreateNestedOneWithoutJobOfferInput
     curriculumOutbox?: JobCurriculumOutboxCreateNestedOneWithoutJobOfferInput
+    coverLetter?: JobCoverLetterCreateNestedOneWithoutJobOfferInput
+    coverLetterOutbox?: JobCoverLetterOutboxCreateNestedOneWithoutJobOfferInput
     statusHistory?: JobStatusHistoryCreateNestedManyWithoutJobOfferInput
   }
 
@@ -22765,6 +26475,8 @@ export namespace Prisma {
     evaluationOutbox?: JobEvaluationOutboxUncheckedCreateNestedOneWithoutJobOfferInput
     curriculum?: JobCurriculumUncheckedCreateNestedOneWithoutJobOfferInput
     curriculumOutbox?: JobCurriculumOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    coverLetter?: JobCoverLetterUncheckedCreateNestedOneWithoutJobOfferInput
+    coverLetterOutbox?: JobCoverLetterOutboxUncheckedCreateNestedOneWithoutJobOfferInput
     statusHistory?: JobStatusHistoryUncheckedCreateNestedManyWithoutJobOfferInput
   }
 
@@ -22812,6 +26524,8 @@ export namespace Prisma {
     evaluationOutbox?: JobEvaluationOutboxUpdateOneWithoutJobOfferNestedInput
     curriculum?: JobCurriculumUpdateOneWithoutJobOfferNestedInput
     curriculumOutbox?: JobCurriculumOutboxUpdateOneWithoutJobOfferNestedInput
+    coverLetter?: JobCoverLetterUpdateOneWithoutJobOfferNestedInput
+    coverLetterOutbox?: JobCoverLetterOutboxUpdateOneWithoutJobOfferNestedInput
     statusHistory?: JobStatusHistoryUpdateManyWithoutJobOfferNestedInput
   }
 
@@ -22843,6 +26557,8 @@ export namespace Prisma {
     evaluationOutbox?: JobEvaluationOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
     curriculum?: JobCurriculumUncheckedUpdateOneWithoutJobOfferNestedInput
     curriculumOutbox?: JobCurriculumOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    coverLetter?: JobCoverLetterUncheckedUpdateOneWithoutJobOfferNestedInput
+    coverLetterOutbox?: JobCoverLetterOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
     statusHistory?: JobStatusHistoryUncheckedUpdateManyWithoutJobOfferNestedInput
   }
 
@@ -22874,6 +26590,8 @@ export namespace Prisma {
     curriculum?: JobCurriculumCreateNestedOneWithoutJobOfferInput
     curriculumOutbox?: JobCurriculumOutboxCreateNestedOneWithoutJobOfferInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxCreateNestedOneWithoutJobOfferInput
+    coverLetter?: JobCoverLetterCreateNestedOneWithoutJobOfferInput
+    coverLetterOutbox?: JobCoverLetterOutboxCreateNestedOneWithoutJobOfferInput
     statusHistory?: JobStatusHistoryCreateNestedManyWithoutJobOfferInput
   }
 
@@ -22905,6 +26623,8 @@ export namespace Prisma {
     curriculum?: JobCurriculumUncheckedCreateNestedOneWithoutJobOfferInput
     curriculumOutbox?: JobCurriculumOutboxUncheckedCreateNestedOneWithoutJobOfferInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    coverLetter?: JobCoverLetterUncheckedCreateNestedOneWithoutJobOfferInput
+    coverLetterOutbox?: JobCoverLetterOutboxUncheckedCreateNestedOneWithoutJobOfferInput
     statusHistory?: JobStatusHistoryUncheckedCreateNestedManyWithoutJobOfferInput
   }
 
@@ -22952,6 +26672,8 @@ export namespace Prisma {
     curriculum?: JobCurriculumUpdateOneWithoutJobOfferNestedInput
     curriculumOutbox?: JobCurriculumOutboxUpdateOneWithoutJobOfferNestedInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxUpdateOneWithoutJobOfferNestedInput
+    coverLetter?: JobCoverLetterUpdateOneWithoutJobOfferNestedInput
+    coverLetterOutbox?: JobCoverLetterOutboxUpdateOneWithoutJobOfferNestedInput
     statusHistory?: JobStatusHistoryUpdateManyWithoutJobOfferNestedInput
   }
 
@@ -22983,6 +26705,8 @@ export namespace Prisma {
     curriculum?: JobCurriculumUncheckedUpdateOneWithoutJobOfferNestedInput
     curriculumOutbox?: JobCurriculumOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    coverLetter?: JobCoverLetterUncheckedUpdateOneWithoutJobOfferNestedInput
+    coverLetterOutbox?: JobCoverLetterOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
     statusHistory?: JobStatusHistoryUncheckedUpdateManyWithoutJobOfferNestedInput
   }
 
@@ -23014,6 +26738,8 @@ export namespace Prisma {
     curriculum?: JobCurriculumCreateNestedOneWithoutJobOfferInput
     curriculumOutbox?: JobCurriculumOutboxCreateNestedOneWithoutJobOfferInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxCreateNestedOneWithoutJobOfferInput
+    coverLetter?: JobCoverLetterCreateNestedOneWithoutJobOfferInput
+    coverLetterOutbox?: JobCoverLetterOutboxCreateNestedOneWithoutJobOfferInput
     statusHistory?: JobStatusHistoryCreateNestedManyWithoutJobOfferInput
   }
 
@@ -23045,6 +26771,8 @@ export namespace Prisma {
     curriculum?: JobCurriculumUncheckedCreateNestedOneWithoutJobOfferInput
     curriculumOutbox?: JobCurriculumOutboxUncheckedCreateNestedOneWithoutJobOfferInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    coverLetter?: JobCoverLetterUncheckedCreateNestedOneWithoutJobOfferInput
+    coverLetterOutbox?: JobCoverLetterOutboxUncheckedCreateNestedOneWithoutJobOfferInput
     statusHistory?: JobStatusHistoryUncheckedCreateNestedManyWithoutJobOfferInput
   }
 
@@ -23092,6 +26820,8 @@ export namespace Prisma {
     curriculum?: JobCurriculumUpdateOneWithoutJobOfferNestedInput
     curriculumOutbox?: JobCurriculumOutboxUpdateOneWithoutJobOfferNestedInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxUpdateOneWithoutJobOfferNestedInput
+    coverLetter?: JobCoverLetterUpdateOneWithoutJobOfferNestedInput
+    coverLetterOutbox?: JobCoverLetterOutboxUpdateOneWithoutJobOfferNestedInput
     statusHistory?: JobStatusHistoryUpdateManyWithoutJobOfferNestedInput
   }
 
@@ -23123,6 +26853,8 @@ export namespace Prisma {
     curriculum?: JobCurriculumUncheckedUpdateOneWithoutJobOfferNestedInput
     curriculumOutbox?: JobCurriculumOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    coverLetter?: JobCoverLetterUncheckedUpdateOneWithoutJobOfferNestedInput
+    coverLetterOutbox?: JobCoverLetterOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
     statusHistory?: JobStatusHistoryUncheckedUpdateManyWithoutJobOfferNestedInput
   }
 
@@ -23302,6 +27034,80 @@ export namespace Prisma {
   export type JobCurriculumPdfOutboxCreateOrConnectWithoutJobOfferInput = {
     where: JobCurriculumPdfOutboxWhereUniqueInput
     create: XOR<JobCurriculumPdfOutboxCreateWithoutJobOfferInput, JobCurriculumPdfOutboxUncheckedCreateWithoutJobOfferInput>
+  }
+
+  export type JobCoverLetterCreateWithoutJobOfferInput = {
+    id?: string
+    customLabel?: string | null
+    recipientName?: string | null
+    recipientTitle?: string | null
+    recipientCompany: string
+    recipientAddress?: string | null
+    recipientRole: string
+    date: string
+    salutation: string
+    experienceParagraph1: string
+    experienceParagraph2: string
+    companyMotivation: string
+    callToAction?: string
+    signoff?: string
+    explanation?: string | null
+    storageKey?: string | null
+    pdfStatus?: $Enums.JobCoverLetterPdfStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type JobCoverLetterUncheckedCreateWithoutJobOfferInput = {
+    id?: string
+    customLabel?: string | null
+    recipientName?: string | null
+    recipientTitle?: string | null
+    recipientCompany: string
+    recipientAddress?: string | null
+    recipientRole: string
+    date: string
+    salutation: string
+    experienceParagraph1: string
+    experienceParagraph2: string
+    companyMotivation: string
+    callToAction?: string
+    signoff?: string
+    explanation?: string | null
+    storageKey?: string | null
+    pdfStatus?: $Enums.JobCoverLetterPdfStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type JobCoverLetterCreateOrConnectWithoutJobOfferInput = {
+    where: JobCoverLetterWhereUniqueInput
+    create: XOR<JobCoverLetterCreateWithoutJobOfferInput, JobCoverLetterUncheckedCreateWithoutJobOfferInput>
+  }
+
+  export type JobCoverLetterOutboxCreateWithoutJobOfferInput = {
+    id?: string
+    status?: $Enums.OutboxStatus
+    forceRegenerate?: boolean
+    attempts?: number
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type JobCoverLetterOutboxUncheckedCreateWithoutJobOfferInput = {
+    id?: string
+    status?: $Enums.OutboxStatus
+    forceRegenerate?: boolean
+    attempts?: number
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type JobCoverLetterOutboxCreateOrConnectWithoutJobOfferInput = {
+    where: JobCoverLetterOutboxWhereUniqueInput
+    create: XOR<JobCoverLetterOutboxCreateWithoutJobOfferInput, JobCoverLetterOutboxUncheckedCreateWithoutJobOfferInput>
   }
 
   export type JobStatusHistoryCreateWithoutJobOfferInput = {
@@ -23542,6 +27348,92 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type JobCoverLetterUpsertWithoutJobOfferInput = {
+    update: XOR<JobCoverLetterUpdateWithoutJobOfferInput, JobCoverLetterUncheckedUpdateWithoutJobOfferInput>
+    create: XOR<JobCoverLetterCreateWithoutJobOfferInput, JobCoverLetterUncheckedCreateWithoutJobOfferInput>
+    where?: JobCoverLetterWhereInput
+  }
+
+  export type JobCoverLetterUpdateToOneWithWhereWithoutJobOfferInput = {
+    where?: JobCoverLetterWhereInput
+    data: XOR<JobCoverLetterUpdateWithoutJobOfferInput, JobCoverLetterUncheckedUpdateWithoutJobOfferInput>
+  }
+
+  export type JobCoverLetterUpdateWithoutJobOfferInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientName?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientCompany?: StringFieldUpdateOperationsInput | string
+    recipientAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientRole?: StringFieldUpdateOperationsInput | string
+    date?: StringFieldUpdateOperationsInput | string
+    salutation?: StringFieldUpdateOperationsInput | string
+    experienceParagraph1?: StringFieldUpdateOperationsInput | string
+    experienceParagraph2?: StringFieldUpdateOperationsInput | string
+    companyMotivation?: StringFieldUpdateOperationsInput | string
+    callToAction?: StringFieldUpdateOperationsInput | string
+    signoff?: StringFieldUpdateOperationsInput | string
+    explanation?: NullableStringFieldUpdateOperationsInput | string | null
+    storageKey?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfStatus?: EnumJobCoverLetterPdfStatusFieldUpdateOperationsInput | $Enums.JobCoverLetterPdfStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type JobCoverLetterUncheckedUpdateWithoutJobOfferInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientName?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientCompany?: StringFieldUpdateOperationsInput | string
+    recipientAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientRole?: StringFieldUpdateOperationsInput | string
+    date?: StringFieldUpdateOperationsInput | string
+    salutation?: StringFieldUpdateOperationsInput | string
+    experienceParagraph1?: StringFieldUpdateOperationsInput | string
+    experienceParagraph2?: StringFieldUpdateOperationsInput | string
+    companyMotivation?: StringFieldUpdateOperationsInput | string
+    callToAction?: StringFieldUpdateOperationsInput | string
+    signoff?: StringFieldUpdateOperationsInput | string
+    explanation?: NullableStringFieldUpdateOperationsInput | string | null
+    storageKey?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfStatus?: EnumJobCoverLetterPdfStatusFieldUpdateOperationsInput | $Enums.JobCoverLetterPdfStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type JobCoverLetterOutboxUpsertWithoutJobOfferInput = {
+    update: XOR<JobCoverLetterOutboxUpdateWithoutJobOfferInput, JobCoverLetterOutboxUncheckedUpdateWithoutJobOfferInput>
+    create: XOR<JobCoverLetterOutboxCreateWithoutJobOfferInput, JobCoverLetterOutboxUncheckedCreateWithoutJobOfferInput>
+    where?: JobCoverLetterOutboxWhereInput
+  }
+
+  export type JobCoverLetterOutboxUpdateToOneWithWhereWithoutJobOfferInput = {
+    where?: JobCoverLetterOutboxWhereInput
+    data: XOR<JobCoverLetterOutboxUpdateWithoutJobOfferInput, JobCoverLetterOutboxUncheckedUpdateWithoutJobOfferInput>
+  }
+
+  export type JobCoverLetterOutboxUpdateWithoutJobOfferInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+    forceRegenerate?: BoolFieldUpdateOperationsInput | boolean
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type JobCoverLetterOutboxUncheckedUpdateWithoutJobOfferInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+    forceRegenerate?: BoolFieldUpdateOperationsInput | boolean
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type JobStatusHistoryUpsertWithWhereUniqueWithoutJobOfferInput = {
     where: JobStatusHistoryWhereUniqueInput
     update: XOR<JobStatusHistoryUpdateWithoutJobOfferInput, JobStatusHistoryUncheckedUpdateWithoutJobOfferInput>
@@ -23598,6 +27490,8 @@ export namespace Prisma {
     curriculum?: JobCurriculumCreateNestedOneWithoutJobOfferInput
     curriculumOutbox?: JobCurriculumOutboxCreateNestedOneWithoutJobOfferInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxCreateNestedOneWithoutJobOfferInput
+    coverLetter?: JobCoverLetterCreateNestedOneWithoutJobOfferInput
+    coverLetterOutbox?: JobCoverLetterOutboxCreateNestedOneWithoutJobOfferInput
   }
 
   export type JobOfferUncheckedCreateWithoutStatusHistoryInput = {
@@ -23629,6 +27523,8 @@ export namespace Prisma {
     curriculum?: JobCurriculumUncheckedCreateNestedOneWithoutJobOfferInput
     curriculumOutbox?: JobCurriculumOutboxUncheckedCreateNestedOneWithoutJobOfferInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedCreateNestedOneWithoutJobOfferInput
+    coverLetter?: JobCoverLetterUncheckedCreateNestedOneWithoutJobOfferInput
+    coverLetterOutbox?: JobCoverLetterOutboxUncheckedCreateNestedOneWithoutJobOfferInput
   }
 
   export type JobOfferCreateOrConnectWithoutStatusHistoryInput = {
@@ -23676,6 +27572,8 @@ export namespace Prisma {
     curriculum?: JobCurriculumUpdateOneWithoutJobOfferNestedInput
     curriculumOutbox?: JobCurriculumOutboxUpdateOneWithoutJobOfferNestedInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxUpdateOneWithoutJobOfferNestedInput
+    coverLetter?: JobCoverLetterUpdateOneWithoutJobOfferNestedInput
+    coverLetterOutbox?: JobCoverLetterOutboxUpdateOneWithoutJobOfferNestedInput
   }
 
   export type JobOfferUncheckedUpdateWithoutStatusHistoryInput = {
@@ -23707,6 +27605,8 @@ export namespace Prisma {
     curriculum?: JobCurriculumUncheckedUpdateOneWithoutJobOfferNestedInput
     curriculumOutbox?: JobCurriculumOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    coverLetter?: JobCoverLetterUncheckedUpdateOneWithoutJobOfferNestedInput
+    coverLetterOutbox?: JobCoverLetterOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
   }
 
   export type JobOfferCreateManyCompanyInput = {
@@ -23762,6 +27662,8 @@ export namespace Prisma {
     curriculum?: JobCurriculumUpdateOneWithoutJobOfferNestedInput
     curriculumOutbox?: JobCurriculumOutboxUpdateOneWithoutJobOfferNestedInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxUpdateOneWithoutJobOfferNestedInput
+    coverLetter?: JobCoverLetterUpdateOneWithoutJobOfferNestedInput
+    coverLetterOutbox?: JobCoverLetterOutboxUpdateOneWithoutJobOfferNestedInput
     statusHistory?: JobStatusHistoryUpdateManyWithoutJobOfferNestedInput
   }
 
@@ -23793,6 +27695,8 @@ export namespace Prisma {
     curriculum?: JobCurriculumUncheckedUpdateOneWithoutJobOfferNestedInput
     curriculumOutbox?: JobCurriculumOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
     curriculumPdfOutbox?: JobCurriculumPdfOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
+    coverLetter?: JobCoverLetterUncheckedUpdateOneWithoutJobOfferNestedInput
+    coverLetterOutbox?: JobCoverLetterOutboxUncheckedUpdateOneWithoutJobOfferNestedInput
     statusHistory?: JobStatusHistoryUncheckedUpdateManyWithoutJobOfferNestedInput
   }
 

@@ -198,8 +198,14 @@ export const selectedJobOfferQueryAtom = atomWithQuery<JobOfferDto | null>((get)
     refetchInterval: (query) => {
       const data = query.state.data;
       if (!data) return false;
-      const status = data.curriculum?.pdfStatus;
-      if (status === 'PENDING' || status === 'GENERATING') {
+      const cvStatus = data.curriculum?.pdfStatus;
+      const clStatus = data.coverLetter?.pdfStatus;
+      if (
+        cvStatus === 'PENDING' ||
+        cvStatus === 'GENERATING' ||
+        clStatus === 'PENDING' ||
+        clStatus === 'GENERATING'
+      ) {
         return 1500;
       }
       return false;
@@ -244,6 +250,39 @@ export const updateCurriculumTailoringMutationAtom = atomWithMutation<JobOfferDt
 
       if (error || !data) {
         throw new Error(`Errore aggiornamento curriculum: ${error ? JSON.stringify(error) : 'Risposta vuota'}`);
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['jobOffers'] });
+    },
+  };
+});
+
+export type UpdateCoverLetterDto = components['schemas']['UpdateCoverLetterDto'];
+
+export interface UpdateCoverLetterData {
+  readonly id: string;
+  readonly coverLetter: UpdateCoverLetterDto;
+}
+
+export const updateCoverLetterMutationAtom = atomWithMutation<JobOfferDto, UpdateCoverLetterData, Error>((get) => {
+  const queryClient = get(queryClientAtom);
+
+  return {
+    mutationKey: ['jobOffers', 'updateCoverLetter'],
+    queryClient,
+    mutationFn: async ({ id, coverLetter }) => {
+      const { data, error } = await openApiClient.PATCH('/api/job-offers/{id}/cover-letter', {
+        params: {
+          path: { id },
+        },
+        body: coverLetter,
+      });
+
+      if (error || !data) {
+        throw new Error(`Errore aggiornamento cover letter: ${error ? JSON.stringify(error) : 'Risposta vuota'}`);
       }
 
       return data;

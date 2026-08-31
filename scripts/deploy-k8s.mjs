@@ -48,10 +48,12 @@ if (preflightOnly) {
 const microservices = [
   { name: 'api', dockerfile: 'services/api/Dockerfile', image: 'localhost:5001/api:latest', deployment: 'backend-api' },
   { name: 'relay-curriculum', dockerfile: 'services/curriculum-relay/Dockerfile', image: 'localhost:5001/relay-curriculum:latest', deployment: 'relay-curriculum' },
+  { name: 'relay-cover-letter', dockerfile: 'services/cover-letter-relay/Dockerfile', image: 'localhost:5001/relay-cover-letter:latest', deployment: 'relay-cover-letter' },
   { name: 'relay-evaluation', dockerfile: 'services/evaluation-relay/Dockerfile', image: 'localhost:5001/relay-evaluation:latest', deployment: 'relay-evaluation' },
   { name: 'worker-ingestion', dockerfile: 'services/ingestion-worker/Dockerfile', image: 'localhost:5001/worker-ingestion:latest', deployment: 'worker-ingestion' },
   { name: 'worker-evaluator', dockerfile: 'services/evaluator-worker/Dockerfile', image: 'localhost:5001/worker-evaluator:latest', deployment: 'backend-evaluator' },
   { name: 'worker-curriculum', dockerfile: 'services/curriculum-worker/Dockerfile', image: 'localhost:5001/worker-curriculum:latest', deployment: 'backend-curriculum' },
+  { name: 'worker-cover-letter', dockerfile: 'services/cover-letter-worker/Dockerfile', image: 'localhost:5001/worker-cover-letter:latest', deployment: 'worker-cover-letter' },
   { name: 'worker-pdf', dockerfile: 'services/pdf-worker/Dockerfile', image: 'localhost:5001/worker-pdf:latest', deployment: 'backend-pdf' },
   { name: 'extractor-arbeitnow', dockerfile: 'services/extractors/arbeitnow/Dockerfile', image: 'localhost:5001/extractor-arbeitnow:latest', deployment: 'extractor-arbeitnow' },
   { name: 'extractor-remotive', dockerfile: 'services/extractors/remotive/Dockerfile', image: 'localhost:5001/extractor-remotive:latest', deployment: 'extractor-remotive' },
@@ -69,7 +71,8 @@ const selectedServices = targetList.length > 0
 // 1. Build Packages Condivisi (Contracts & Database) & OpenAPI Specs
 if (!skipBuild && !frontendOnly) {
   run('npm --prefix packages/contracts run build', 'Contracts: Compilazione TypeScript schema condivisi');
-  run('npm --prefix packages/database run prisma:generate && npm --prefix packages/database run build', 'Database: Prisma generate e build TypeScript');
+  run('npm --prefix packages/database run prisma:generate', 'Database: Prisma generate');
+  run('npm --prefix packages/database run build', 'Database: Build TypeScript');
   run('npm --prefix services/api run openapi:generate', 'API Gateway: Generazione OpenAPI Spec');
 }
 

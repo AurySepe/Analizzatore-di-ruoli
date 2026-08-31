@@ -14,15 +14,16 @@ You must **NEVER** modify source code files or create implementation solutions u
 
 ## Mandatory Execution Workflow
 
-### Step 1: Read Project Guidelines
-Before analyzing the specific task, you **MUST** consult the central Guidelines Index:
-- Inspect [`docs/guidelines-index.md`](file:///c:/Users/aurel/Desktop/Progetti/ricerca%20Lavoro/Analizzatore%20di%20ruoli/docs/guidelines-index.md) and read the specific domain guideline files related to the task (e.g. `services/api/docs/guidelines.md`, `packages/database/docs/guidelines.md`, `frontend/docs/guidelines.md`).
-- Ensure all planned patterns strictly adhere to these domain guidelines.
+### Step 1: Mandatory Cross-Cutting Guidelines Inspection & Reading
+Before analyzing the specific task or writing any plan, you **MUST** actively inspect and read all relevant guidelines:
+- Inspect the central index [`docs/guidelines-index.md`](file:///c:/Users/aurel/Desktop/Progetti/ricerca%20Lavoro/Analizzatore%20di%20ruoli/docs/guidelines-index.md).
+- **Read ALL domain-specific AND cross-cutting guideline files** relevant to the task's architecture (e.g. `docs/ai-workers.md` for any LLM task, `docs/outbox-pattern.md` for asynchronous jobs/queues, `services/api/docs/guidelines.md`, `packages/database/docs/guidelines.md`, `frontend/docs/guidelines.md`).
+- **Explicit Listing in Plan**: In the resulting implementation plan, you MUST explicitly list the exact guideline documents consulted under the `Context & Findings` section and explain how the proposed solution adheres to them.
 
-### Step 2: Context Gathering
+### Step 2: Context Gathering & Codebase Research
 Thoroughly research and inspect the codebase to understand the context of the requested change:
-- Locate relevant routes, controllers, schemas, or tests using `view_file`, `grep_search`, or `list_dir`.
-- Identify dependencies, existing data flows, and potential side effects.
+- Locate relevant routes, controllers, schemas, workers, or tests using `view_file`, `grep_search`, or `list_dir`.
+- Identify dependencies, existing data flows, message queues, and potential side effects.
 
 ### Step 3: Formulate Implementation Plan
 Construct a structured implementation plan that includes:

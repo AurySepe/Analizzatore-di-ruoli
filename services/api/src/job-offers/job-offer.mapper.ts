@@ -1,6 +1,8 @@
 import { CompanyDto } from './dto/company.dto';
 import { JobEvaluationDto } from '../evaluations/dto/job-evaluation.dto';
 import { JobCurriculumDto } from './dto/job-curriculum.dto';
+import { JobCoverLetterDto } from './dto/job-cover-letter.dto';
+
 import {
   JobOfferDto,
   RemoteTypeEnum,
@@ -78,6 +80,33 @@ export function mapJobOfferToDto(rawOffer: JobOfferWithRelations): JobOfferDto {
     });
   }
 
+  let coverLetterDto: JobCoverLetterDto | null = null;
+  if (rawOffer.coverLetter) {
+    coverLetterDto = new JobCoverLetterDto();
+    Object.assign(coverLetterDto, {
+      id: rawOffer.coverLetter.id,
+      jobOfferId: rawOffer.coverLetter.jobOfferId,
+      customLabel: rawOffer.coverLetter.customLabel,
+      recipientName: rawOffer.coverLetter.recipientName,
+      recipientTitle: rawOffer.coverLetter.recipientTitle,
+      recipientCompany: rawOffer.coverLetter.recipientCompany,
+      recipientAddress: rawOffer.coverLetter.recipientAddress,
+      recipientRole: rawOffer.coverLetter.recipientRole,
+      date: rawOffer.coverLetter.date,
+      salutation: rawOffer.coverLetter.salutation,
+      experienceParagraph1: rawOffer.coverLetter.experienceParagraph1,
+      experienceParagraph2: rawOffer.coverLetter.experienceParagraph2,
+      companyMotivation: rawOffer.coverLetter.companyMotivation,
+      callToAction: rawOffer.coverLetter.callToAction,
+      signoff: rawOffer.coverLetter.signoff,
+      explanation: rawOffer.coverLetter.explanation,
+      storageKey: rawOffer.coverLetter.storageKey,
+      pdfStatus: rawOffer.coverLetter.pdfStatus,
+      createdAt: rawOffer.coverLetter.createdAt,
+      updatedAt: rawOffer.coverLetter.updatedAt,
+    });
+  }
+
   const statusHistory = (rawOffer.statusHistory || []).map(
     (h) =>
       new JobStatusHistoryDto({
@@ -102,6 +131,7 @@ export function mapJobOfferToDto(rawOffer: JobOfferWithRelations): JobOfferDto {
     company: companyDto,
     evaluation: evaluationDto,
     curriculum: curriculumDto,
+    coverLetter: coverLetterDto,
     salaryMin: rawOffer.salaryMin ?? null,
     salaryMax: rawOffer.salaryMax ?? null,
     currency: rawOffer.currency ?? 'EUR',

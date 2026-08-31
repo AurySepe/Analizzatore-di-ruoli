@@ -1124,6 +1124,100 @@
         ]
       }
     },
+    "/api/job-offers/{id}/cover-letter": {
+      "get": {
+        "operationId": "JobOffersController_getCoverLetter",
+        "summary": "Recupera i dati e lo stato della cover letter per un annuncio",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobCoverLetterDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "job-offers"
+        ]
+      },
+      "patch": {
+        "operationId": "JobOffersController_updateCoverLetter",
+        "summary": "Aggiorna i dati della cover letter e attiva la rigenerazione del PDF",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCoverLetterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobOfferDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "job-offers"
+        ]
+      }
+    },
+    "/api/job-offers/{id}/cover-letter/pdf": {
+      "get": {
+        "operationId": "JobOffersController_getCoverLetterPdf",
+        "summary": "Recupera e trasmette lo stream del file PDF della cover letter compilata",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "File binario PDF trasmesso come stream inline"
+          }
+        },
+        "tags": [
+          "job-offers"
+        ]
+      }
+    },
     "/api/evaluations/status": {
       "get": {
         "operationId": "EvaluationsController_getStatus",
@@ -1451,6 +1545,178 @@
           }
         }
       },
+      "JobCoverLetterDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID univoco della cover letter"
+          },
+          "jobOfferId": {
+            "type": "string",
+            "description": "ID dell offerta di lavoro associata"
+          },
+          "customLabel": {
+            "type": "string",
+            "nullable": true,
+            "description": "Titolo professionale personalizzato per l intestazione"
+          },
+          "recipientName": {
+            "type": "string",
+            "nullable": true,
+            "description": "Nome della persona destinataria"
+          },
+          "recipientTitle": {
+            "type": "string",
+            "nullable": true,
+            "description": "Titolo del team o del hiring manager"
+          },
+          "recipientCompany": {
+            "type": "string",
+            "description": "Nome dell azienda destinataria"
+          },
+          "recipientAddress": {
+            "type": "string",
+            "nullable": true,
+            "description": "Location e modalita di lavoro dell azienda"
+          },
+          "recipientRole": {
+            "type": "string",
+            "description": "Ruolo della posizione lavorativa"
+          },
+          "date": {
+            "type": "string",
+            "description": "Data della lettera formattata in inglese"
+          },
+          "salutation": {
+            "type": "string",
+            "description": "Saluto iniziale"
+          },
+          "experienceParagraph1": {
+            "type": "string",
+            "description": "Primo paragrafo: Esempio concreto MioCFO e metriche di impatto"
+          },
+          "experienceParagraph2": {
+            "type": "string",
+            "description": "Secondo paragrafo: Metodologia AI-native in Antigravity IDE"
+          },
+          "companyMotivation": {
+            "type": "string",
+            "description": "Terzo paragrafo: Motivazione specifica per l azienda"
+          },
+          "callToAction": {
+            "type": "string",
+            "description": "Frase di chiusura e invito al colloquio"
+          },
+          "signoff": {
+            "type": "string",
+            "description": "Firma di chiusura"
+          },
+          "explanation": {
+            "type": "string",
+            "nullable": true,
+            "description": "Spiegazione strategica generata dall AI"
+          },
+          "storageKey": {
+            "type": "string",
+            "nullable": true,
+            "description": "Chiave di archiviazione del PDF su MinIO S3"
+          },
+          "pdfStatus": {
+            "enum": [
+              "PENDING",
+              "GENERATING",
+              "READY",
+              "FAILED"
+            ],
+            "type": "string",
+            "description": "Stato di compilazione del PDF"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Data di creazione"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Data di ultimo aggiornamento"
+          }
+        },
+        "required": [
+          "id",
+          "jobOfferId",
+          "recipientCompany",
+          "recipientRole",
+          "date",
+          "salutation",
+          "experienceParagraph1",
+          "experienceParagraph2",
+          "companyMotivation",
+          "callToAction",
+          "signoff",
+          "pdfStatus",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "UpdateCoverLetterDto": {
+        "type": "object",
+        "properties": {
+          "customLabel": {
+            "type": "string",
+            "description": "Titolo professionale personalizzato per l intestazione"
+          },
+          "recipientName": {
+            "type": "string",
+            "description": "Nome della persona destinataria"
+          },
+          "recipientTitle": {
+            "type": "string",
+            "description": "Titolo del team o del hiring manager"
+          },
+          "recipientCompany": {
+            "type": "string",
+            "description": "Nome dell azienda destinataria"
+          },
+          "recipientAddress": {
+            "type": "string",
+            "description": "Location e modalita di lavoro dell azienda"
+          },
+          "recipientRole": {
+            "type": "string",
+            "description": "Ruolo della posizione lavorativa"
+          },
+          "date": {
+            "type": "string",
+            "description": "Data della lettera formattata in inglese"
+          },
+          "salutation": {
+            "type": "string",
+            "description": "Saluto iniziale"
+          },
+          "experienceParagraph1": {
+            "type": "string",
+            "description": "Primo paragrafo: Esempio concreto MioCFO e metriche di impatto"
+          },
+          "experienceParagraph2": {
+            "type": "string",
+            "description": "Secondo paragrafo: Metodologia AI-native in Antigravity IDE"
+          },
+          "companyMotivation": {
+            "type": "string",
+            "description": "Terzo paragrafo: Motivazione specifica per l azienda"
+          },
+          "callToAction": {
+            "type": "string",
+            "description": "Frase di chiusura e invito al colloquio"
+          },
+          "signoff": {
+            "type": "string",
+            "description": "Firma di chiusura"
+          }
+        }
+      },
       "FunnelConversionRatesDto": {
         "type": "object",
         "properties": {
@@ -1737,6 +2003,14 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/JobCurriculumDto"
+              }
+            ]
+          },
+          "coverLetter": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/JobCoverLetterDto"
               }
             ]
           },
@@ -2046,6 +2320,14 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/JobCurriculumDto"
+              }
+            ]
+          },
+          "coverLetter": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/JobCoverLetterDto"
               }
             ]
           },

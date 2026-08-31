@@ -10,13 +10,15 @@ import { JobOfferFilterQueryDto } from './dto/job-offer-query.dto';
 import { UpdateJobOfferStatusDto } from './dto/update-job-offer-status.dto';
 import { UpdateCurriculumTailoringDto, WorkTailoringDto, ProjectTailoringDto } from './dto/update-curriculum-tailoring.dto';
 import { JobCurriculumDto } from './dto/job-curriculum.dto';
+import { JobCoverLetterDto } from './dto/job-cover-letter.dto';
+import { UpdateCoverLetterDto } from './dto/update-cover-letter.dto';
 import { JobOffersFunnelAnalyticsDto } from './dto/funnel-analytics.dto';
 import { PaginatedDto, ApiPaginatedResponse } from '../commons/pagination/paginated.dto';
 import { S3StorageService } from '../commons/storage/s3-storage.service';
 import { mapJobOfferToDto } from './job-offer.mapper';
 
 @ApiTags('job-offers')
-@ApiExtraModels(JobCurriculumDto, UpdateCurriculumTailoringDto, WorkTailoringDto, ProjectTailoringDto, JobOffersFunnelAnalyticsDto)
+@ApiExtraModels(JobCurriculumDto, UpdateCurriculumTailoringDto, WorkTailoringDto, ProjectTailoringDto, JobCoverLetterDto, UpdateCoverLetterDto, JobOffersFunnelAnalyticsDto)
 @Controller('job-offers')
 export class JobOffersController {
   constructor(
@@ -206,4 +208,83 @@ export class JobOffersController {
     }
     return mapJobOfferToDto(updated);
   }
+
+  @Get(':id/cover-letter')
+  @ApiOperation({ summary: 'Recupera i dati e lo stato della cover letter per un annuncio' })
+  @ApiResponse({ status: 200, type: JobCoverLetterDto })
+  async getCoverLetter(@Param('id') id: string): Promise<JobCoverLetterDto> {
+    const cl = await this.jobOffersService.getCoverLetter(id);
+    const dto = new JobCoverLetterDto();
+    Object.assign(dto, {
+      id: cl.id,
+      jobOfferId: cl.jobOfferId,
+      customLabel: cl.customLabel,
+      recipientName: cl.recipientName,
+      recipientTitle: cl.recipientTitle,
+      recipientCompany: cl.recipientCompany,
+      recipientAddress: cl.recipientAddress,
+      recipientRole: cl.recipientRole,
+      date: cl.date,
+      salutation: cl.salutation,
+      experienceParagraph1: cl.experienceParagraph1,
+      experienceParagraph2: cl.experienceParagraph2,
+      companyMotivation: cl.companyMotivation,
+      callToAction: cl.callToAction,
+      signoff: cl.signoff,
+      explanation: cl.explanation,
+      storageKey: cl.storageKey,
+      pdfStatus: cl.pdfStatus,
+      createdAt: cl.createdAt,
+      updatedAt: cl.updatedAt,
+    });
+    return dto;
+  }
+
+  @Patch(':id/cover-letter')
+  @ApiOperation({ summary: 'Aggiorna i dati della cover letter e attiva la rigenerazione del PDF' })
+  @ApiResponse({ status: 200, type: JobOfferDto })
+  async updateCoverLetter(
+    @Param('id') id: string,
+    @Body() dto: UpdateCoverLetterDto,
+  ): Promise<JobOfferDto> {
+    const updated = await this.jobOffersService.updateCoverLetter(id, dto);
+    if (!updated) {
+      throw new NotFoundException(`Annuncio con ID "${id}" non trovato`);
+    }
+    return mapJobOfferToDto(updated);
+  }
+
+  @Get(':id/cover-letter/pdf')
+  @ApiOperation({ summary: 'Recupera e trasmette lo stream del file PDF della cover letter compilata' })
+  @ApiProduces('application/pdf')
+  @ApiResponse({ status: 200, description: 'File binario PDF trasmesso come stream inline' })
+  async getCoverLetterPdf(
+    @Param('id') id: string,
+    @Res() res: Response,
+  ) {
+    const offer = await this.jobOffersService.findOne(id);
+    if (!offer) {
+      throw new NotFoundException(`Annuncio con ID "${id}" non trovato`);
+    }
+
+    if (!offer.coverLetter || !offer.coverLetter.storageKey) {
+      throw new NotFoundException(`Cover Letter PDF non ancora compilata per l'annuncio con ID "${id}".`);
+    }
+
+    const storageKey = offer.coverLetter.storageKey;
+    const downloadFileName = `Cover_Letter_Aurelio_Sepe_${offer.company.name.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+
+    try {
+      const s3Object = await this.s3StorageService.getStream(storageKey, 'cover-letters');
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `inline; filename="${downloadFileName}"`);
+      if (s3Object.contentLength) {
+        res.setHeader('Content-Length', s3Object.contentLength);
+      }
+      return s3Object.stream.pipe(res);
+    } catch {
+      throw new NotFoundException(`Cover Letter PDF non trovato in S3 (${storageKey}).`);
+    }
+  }
 }
+

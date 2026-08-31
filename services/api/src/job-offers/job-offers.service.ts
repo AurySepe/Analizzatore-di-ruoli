@@ -7,6 +7,8 @@ import { CreateJobOfferDto, JobOfferFreshnessEnum } from './dto/job-offer.dto';
 import { JobOfferFilterQueryDto } from './dto/job-offer-query.dto';
 import { paginate, PaginationOption } from '../commons/pagination/pagination';
 import type { UpdateCurriculumTailoringDto } from './dto/update-curriculum-tailoring.dto';
+import type { UpdateCoverLetterDto } from './dto/update-cover-letter.dto';
+
 import { JobOffersAnalyticsService } from './job-offers-analytics.service';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
@@ -26,6 +28,7 @@ export const defaultOfferInclude = {
       publications: { orderBy: { order: 'asc' as const } },
     },
   },
+  coverLetter: true,
   statusHistory: { orderBy: { createdAt: 'asc' as const } },
 };
 
@@ -290,9 +293,23 @@ export class JobOffersService {
         },
       });
 
-      // Se l'annuncio passa a SAVED, creiamo o aggiorniamo il record Outbox PENDING
+      // Se l'annuncio passa a SAVED, creiamo o aggiorniamo il record Outbox PENDING per Curriculum e Cover Letter
       if (status === ApplicationStatus.SAVED) {
         await tx.jobCurriculumOutbox.upsert({
+          where: { jobOfferId: id },
+          create: {
+            jobOfferId: id,
+            status: 'PENDING',
+            forceRegenerate: false,
+          },
+          update: {
+            status: 'PENDING',
+            attempts: 0,
+            lastError: null,
+          },
+        });
+
+        await tx.jobCoverLetterOutbox.upsert({
           where: { jobOfferId: id },
           create: {
             jobOfferId: id,
@@ -313,6 +330,66 @@ export class JobOffersService {
 
       return updated;
     });
+  }
+
+  async getCoverLetter(jobOfferId: string) {
+    const coverLetter = await this.prisma.jobCoverLetter.findUnique({
+      where: { jobOfferId },
+    });
+    if (!coverLetter) {
+      throw new NotFoundException(`Cover letter per l'annuncio con ID "${jobOfferId}" non trovata.`);
+    }
+    return coverLetter;
+  }
+
+  async updateCoverLetter(jobOfferId: string, dto: UpdateCoverLetterDto) {
+    const coverLetter = await this.prisma.jobCoverLetter.findUnique({
+      where: { jobOfferId },
+    });
+
+    if (!coverLetter) {
+      throw new NotFoundException(`Cover letter per l'annuncio con ID "${jobOfferId}" non trovata.`);
+    }
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.jobCoverLetter.update({
+        where: { jobOfferId },
+        data: {
+          customLabel: dto.customLabel !== undefined ? dto.customLabel : coverLetter.customLabel,
+          recipientName: dto.recipientName !== undefined ? dto.recipientName : coverLetter.recipientName,
+          recipientTitle: dto.recipientTitle !== undefined ? dto.recipientTitle : coverLetter.recipientTitle,
+          recipientCompany: dto.recipientCompany !== undefined ? dto.recipientCompany : coverLetter.recipientCompany,
+          recipientAddress: dto.recipientAddress !== undefined ? dto.recipientAddress : coverLetter.recipientAddress,
+          recipientRole: dto.recipientRole !== undefined ? dto.recipientRole : coverLetter.recipientRole,
+          date: dto.date !== undefined ? dto.date : coverLetter.date,
+          salutation: dto.salutation !== undefined ? dto.salutation : coverLetter.salutation,
+          experienceParagraph1: dto.experienceParagraph1 !== undefined ? dto.experienceParagraph1 : coverLetter.experienceParagraph1,
+          experienceParagraph2: dto.experienceParagraph2 !== undefined ? dto.experienceParagraph2 : coverLetter.experienceParagraph2,
+          companyMotivation: dto.companyMotivation !== undefined ? dto.companyMotivation : coverLetter.companyMotivation,
+          callToAction: dto.callToAction !== undefined ? dto.callToAction : coverLetter.callToAction,
+          signoff: dto.signoff !== undefined ? dto.signoff : coverLetter.signoff,
+          pdfStatus: 'PENDING',
+          updatedAt: new Date(),
+        },
+      });
+
+      await tx.jobCoverLetterOutbox.upsert({
+        where: { jobOfferId },
+        create: {
+          jobOfferId,
+          status: 'PENDING',
+          forceRegenerate: false,
+        },
+        update: {
+          status: 'PENDING',
+          forceRegenerate: false,
+          attempts: 0,
+          lastError: null,
+        },
+      });
+    });
+
+    return this.findOne(jobOfferId);
   }
 
   private async attachCompanyActiveCounts<T extends { company?: any }>(offers: T[]): Promise<T[]> {

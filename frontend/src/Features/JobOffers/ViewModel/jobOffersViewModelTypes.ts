@@ -93,6 +93,32 @@ export interface JobCurriculumViewModelDTO {
   readonly updatedAt: string;
 }
 
+export type JobCoverLetterPdfStatus = 'PENDING' | 'GENERATING' | 'READY' | 'FAILED';
+
+export interface JobCoverLetterViewModelDTO {
+  readonly id: string;
+  readonly jobOfferId: string;
+  readonly customLabel?: string | null;
+  readonly recipientName?: string | null;
+  readonly recipientTitle?: string | null;
+  readonly recipientCompany: string;
+  readonly recipientAddress?: string | null;
+  readonly recipientRole: string;
+  readonly date: string;
+  readonly salutation: string;
+  readonly experienceParagraph1: string;
+  readonly experienceParagraph2: string;
+  readonly companyMotivation: string;
+  readonly callToAction: string;
+  readonly signoff: string;
+  readonly explanation?: string | null;
+  readonly storageKey?: string | null;
+  readonly pdfUrl: string;
+  readonly pdfStatus: JobCoverLetterPdfStatus;
+  readonly createdAt: string;
+  readonly updatedAt: string;
+}
+
 export interface JobOfferDetailViewModelDTO {
   readonly id: string;
   readonly title: string;
@@ -117,6 +143,7 @@ export interface JobOfferDetailViewModelDTO {
   readonly skills: readonly string[];
   readonly evaluation: JobOfferEvaluationDetailViewModelDTO | null;
   readonly curriculum: JobCurriculumViewModelDTO | null;
+  readonly coverLetter: JobCoverLetterViewModelDTO | null;
   readonly company: {
     readonly id: string;
     readonly name: string;
