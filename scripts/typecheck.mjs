@@ -20,6 +20,8 @@ const targets = [
   { name: 'services/extractors/remotive', cwd: 'services/extractors/remotive', cmd: 'npx tsc --noEmit' },
   { name: 'services/extractors/jobicy', cwd: 'services/extractors/jobicy', cmd: 'npx tsc --noEmit' },
   { name: 'services/extractors/weworkremotely', cwd: 'services/extractors/weworkremotely', cmd: 'npx tsc --noEmit' },
+  { name: 'services/extractors/himalayas', cwd: 'services/extractors/himalayas', cmd: 'npx tsc --noEmit' },
+  { name: 'services/extractors/remoteok', cwd: 'services/extractors/remoteok', cmd: 'npx tsc --noEmit' },
   { name: 'frontend', cwd: 'frontend', cmd: 'npx tsc -b' },
 ];
 

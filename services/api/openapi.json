@@ -143,6 +143,8 @@
                 "REMOTIVE",
                 "JOBICY",
                 "WE_WORK_REMOTELY",
+                "HIMALAYAS",
+                "REMOTEOK",
                 "MANUAL"
               ],
               "type": "string"
@@ -330,6 +332,8 @@
                 "REMOTIVE",
                 "JOBICY",
                 "WE_WORK_REMOTELY",
+                "HIMALAYAS",
+                "REMOTEOK",
                 "MANUAL"
               ],
               "type": "string"
@@ -506,6 +510,8 @@
                 "REMOTIVE",
                 "JOBICY",
                 "WE_WORK_REMOTELY",
+                "HIMALAYAS",
+                "REMOTEOK",
                 "MANUAL"
               ],
               "type": "string"
@@ -693,6 +699,8 @@
                 "REMOTIVE",
                 "JOBICY",
                 "WE_WORK_REMOTELY",
+                "HIMALAYAS",
+                "REMOTEOK",
                 "MANUAL"
               ],
               "type": "string"
@@ -880,6 +888,8 @@
                 "REMOTIVE",
                 "JOBICY",
                 "WE_WORK_REMOTELY",
+                "HIMALAYAS",
+                "REMOTEOK",
                 "MANUAL"
               ],
               "type": "string"
@@ -1615,6 +1625,8 @@
               "REMOTIVE",
               "JOBICY",
               "WE_WORK_REMOTELY",
+              "HIMALAYAS",
+              "REMOTEOK",
               "MANUAL"
             ]
           },
@@ -1911,6 +1923,8 @@
               "REMOTIVE",
               "JOBICY",
               "WE_WORK_REMOTELY",
+              "HIMALAYAS",
+              "REMOTEOK",
               "MANUAL"
             ]
           },

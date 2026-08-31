@@ -329,6 +329,8 @@ exports.JobSource = exports.$Enums.JobSource = {
   REMOTIVE: 'REMOTIVE',
   JOBICY: 'JOBICY',
   WE_WORK_REMOTELY: 'WE_WORK_REMOTELY',
+  HIMALAYAS: 'HIMALAYAS',
+  REMOTEOK: 'REMOTEOK',
   MANUAL: 'MANUAL'
 };
 

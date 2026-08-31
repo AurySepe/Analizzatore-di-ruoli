@@ -21,6 +21,8 @@ resources:
   - worker-extractor-remotive.yaml
   - worker-extractor-jobicy.yaml
   - worker-extractor-weworkremotely.yaml
+  - worker-extractor-himalayas.yaml
+  - worker-extractor-remoteok.yaml
   - worker-ingestion.yaml
   - frontend.yaml
   - ingress.yaml

@@ -81,14 +81,15 @@ export const jobOffersQueryAtom = atomWithQuery<PaginatedJobOffersResponse>((get
     queryKey: ['jobOffers', section, section === 'active' ? 'all' : page, section === 'active' ? 'all' : limit, filters],
     queryClient,
     queryFn: async () => {
+      const isNewSection = section === 'new';
       const { data, error } = await openApiClient.GET(path, {
         params: {
           query: {
             ...(section === 'active' ? {} : { page, limit }),
-            ...(normalizedTitle ? { search: normalizedTitle } : {}),
-            ...(filters.source ? { source: filters.source as JobOfferDto['source'] } : {}),
-            ...(filters.priority ? { priority: filters.priority } : {}),
-            ...(filters.freshness ? { freshness: filters.freshness } : {}),
+            ...(isNewSection && normalizedTitle ? { search: normalizedTitle } : {}),
+            ...(isNewSection && filters.source ? { source: filters.source as JobOfferDto['source'] } : {}),
+            ...(isNewSection && filters.priority ? { priority: filters.priority } : {}),
+            ...(isNewSection && filters.freshness ? { freshness: filters.freshness } : {}),
           },
         },
       });

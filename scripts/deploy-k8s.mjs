@@ -57,10 +57,13 @@ const microservices = [
   { name: 'extractor-remotive', dockerfile: 'services/extractors/remotive/Dockerfile', image: 'localhost:5001/extractor-remotive:latest', deployment: 'extractor-remotive' },
   { name: 'extractor-jobicy', dockerfile: 'services/extractors/jobicy/Dockerfile', image: 'localhost:5001/extractor-jobicy:latest', deployment: 'extractor-jobicy' },
   { name: 'extractor-weworkremotely', dockerfile: 'services/extractors/weworkremotely/Dockerfile', image: 'localhost:5001/extractor-weworkremotely:latest', deployment: 'extractor-weworkremotely' },
+  { name: 'extractor-himalayas', dockerfile: 'services/extractors/himalayas/Dockerfile', image: 'localhost:5001/extractor-himalayas:latest', deployment: 'extractor-himalayas' },
+  { name: 'extractor-remoteok', dockerfile: 'services/extractors/remoteok/Dockerfile', image: 'localhost:5001/extractor-remoteok:latest', deployment: 'extractor-remoteok' },
 ];
 
-const selectedServices = serviceArg
-  ? microservices.filter((s) => s.name === serviceArg || s.deployment === serviceArg)
+const targetList = serviceArg ? serviceArg.split(',').map((x) => x.trim()) : [];
+const selectedServices = targetList.length > 0
+  ? microservices.filter((s) => targetList.includes(s.name) || targetList.includes(s.deployment))
   : microservices;
 
 // 1. Build Packages Condivisi (Contracts & Database) & OpenAPI Specs

@@ -187,10 +187,11 @@ export class JobOffersService {
       const d30 = new Date(nowMs - 30 * 24 * 60 * 60 * 1000);
       const d90 = new Date(nowMs - 90 * 24 * 60 * 60 * 1000);
 
-      let freshnessCondition: Prisma.JobOfferWhereInput;
+      let freshnessCondition: Prisma.JobOfferWhereInput | undefined;
 
       switch (query.freshness) {
         case JobOfferFreshnessEnum.HOT:
+          // Solo annunci pubblicati negli ultimi 7 giorni
           freshnessCondition = {
             OR: [
               { datePosted: { gte: d7 } },
@@ -199,35 +200,35 @@ export class JobOffersService {
           };
           break;
         case JobOfferFreshnessEnum.RECENT:
+          // Tutti gli annunci pubblicati negli ultimi 30 giorni (include HOT)
           freshnessCondition = {
             OR: [
-              { datePosted: { gte: d30, lt: d7 } },
-              { datePosted: null, createdAt: { gte: d30, lt: d7 } },
+              { datePosted: { gte: d30 } },
+              { datePosted: null, createdAt: { gte: d30 } },
             ],
           };
           break;
         case JobOfferFreshnessEnum.AGING:
+          // Tutti gli annunci pubblicati negli ultimi 90 giorni (include HOT e RECENT)
           freshnessCondition = {
             OR: [
-              { datePosted: { gte: d90, lt: d30 } },
-              { datePosted: null, createdAt: { gte: d90, lt: d30 } },
+              { datePosted: { gte: d90 } },
+              { datePosted: null, createdAt: { gte: d90 } },
             ],
           };
           break;
         case JobOfferFreshnessEnum.OLD:
-          freshnessCondition = {
-            OR: [
-              { datePosted: { lt: d90 } },
-              { datePosted: null, createdAt: { lt: d90 } },
-            ],
-          };
+          // Tutti gli annunci (inclusi quelli oltre 90 giorni) -> nessun vincolo restrittivo
+          freshnessCondition = undefined;
           break;
       }
 
-      whereClause.AND = [
-        ...(Array.isArray(whereClause.AND) ? whereClause.AND : whereClause.AND ? [whereClause.AND] : []),
-        freshnessCondition,
-      ];
+      if (freshnessCondition) {
+        whereClause.AND = [
+          ...(Array.isArray(whereClause.AND) ? whereClause.AND : whereClause.AND ? [whereClause.AND] : []),
+          freshnessCondition,
+        ];
+      }
     }
 
     if (query.search && query.search.trim().length > 0) {

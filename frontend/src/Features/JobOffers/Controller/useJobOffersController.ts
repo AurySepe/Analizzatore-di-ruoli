@@ -78,8 +78,9 @@ export const useJobOffersController = (section: JobOffersSection): JobOffersCont
   useEffect(() => {
     setSection(section);
     setSelectedJobOfferId(null);
+    setFilters(emptyJobOffersFilters);
     setCurrentPage(1);
-  }, [section, setCurrentPage, setSection, setSelectedJobOfferId]);
+  }, [section, setCurrentPage, setFilters, setSection, setSelectedJobOfferId]);
 
   const handleTitleFilterChange = useCallback(
     (value: string) => {

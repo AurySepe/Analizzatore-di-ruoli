@@ -1,4 +1,4 @@
-export type JobSourceType = 'ARBEITNOW' | 'REMOTIVE' | 'JOBICY' | 'WEWORKREMOTELY' | 'MANUAL';
+export type JobSourceType = 'ARBEITNOW' | 'REMOTIVE' | 'JOBICY' | 'WEWORKREMOTELY' | 'HIMALAYAS' | 'REMOTEOK' | 'MANUAL';
 
 export interface ScrapedJobOfferEvent {
   externalId: string;

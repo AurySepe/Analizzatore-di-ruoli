@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { BullModule } from '@nestjs/bullmq';
+import { ScheduleModule } from '@nestjs/schedule';
 import { PrismaModule } from './commons/prisma/prisma.module';
 import { EvaluatorModule } from './evaluator/evaluator.module';
 import { EVALUATION_QUEUE_NAME } from '@analizzatore/contracts';
@@ -8,6 +9,7 @@ import { EVALUATION_QUEUE_NAME } from '@analizzatore/contracts';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
     BullModule.forRoot({
       connection: {
         host: process.env.REDIS_HOST || 'localhost',

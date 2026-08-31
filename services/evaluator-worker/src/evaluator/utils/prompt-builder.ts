@@ -26,12 +26,15 @@ ${searchCriteria}
 ---
 
 ### ISTRUZIONI:
-1. Valuta l'aderenza del ruolo rispetto ai desiderata dell'utente (0-100).
-2. Valuta la competenza tecnica del candidato rispetto ai requisiti del ruolo (0-100).
-3. Calcola l'overallScore bilanciato (0-100).
-4. Determina la priority ('HIGH', 'MEDIUM', 'LOW', 'DISQUALIFIED').
-5. Riassumi brevemente il ruolo in 2-4 frasi nel campo 'summary'.
-6. Elenca punti di forza ('pros') e criticità ('cons') come array di stringhe.
-7. Fornisci un'analisi dettagliata in markdown ('detailedReasoning').
+1. **Verifica Deal-Breakers (DISQUALIFIED)**:
+   - Se l'annuncio richiede **relocation obbligatoria fuori dall'Europa** (es. USA, Canada, Asia, Australia, ecc.), oppure richiede fuso orario/orari/residenza non compatibili con l'Europa (es. "US Only", "Must reside in North America", "APAC only"), imposta immediatamente \`priority: 'DISQUALIFIED'\`, con \`overallScore: 0\` e \`desireMatchScore: 0\`.
+   - Se l'annuncio viola altri deal-breaker (es. stipendio non indicato, agenzia di consulenza/body rental, ruoli Senior/Lead/Founding, lavoro non retribuito), imposta \`priority: 'DISQUALIFIED'\`.
+2. Valuta l'aderenza del ruolo rispetto ai desiderata dell'utente (0-100 nel campo 'desireMatchScore').
+3. Valuta la competenza tecnica del candidato rispetto ai requisiti del ruolo (0-100 nel campo 'competenceScore').
+4. Calcola l'overallScore bilanciato (0-100).
+5. Determina la priority ('HIGH', 'MEDIUM', 'LOW', 'DISQUALIFIED').
+6. Riassumi brevemente il ruolo in 2-4 frasi nel campo 'summary'.
+7. Elenca punti di forza ('pros') e criticità ('cons') come array di stringhe (evidenzia se vi sono vincoli geografici o di fuso orario).
+8. Fornisci un'analisi dettagliata in markdown ('detailedReasoning').
 `;
 }

@@ -6,6 +6,7 @@ import {
   INGESTION_QUEUE_NAME,
   JOB_OFFER_SCRAPED_EVENT,
   ScrapedJobOfferEvent,
+  addSafeQueueJob,
 } from '@analizzatore/contracts';
 
 @Injectable()
@@ -51,9 +52,8 @@ export class WeWorkRemotelyOutboxRelayService {
           tags: job.tags ? JSON.parse(job.tags) : [],
         };
 
-        const safeJobId = `wwr-${Buffer.from(job.externalId).toString('base64url')}`;
-        await this.ingestionQueue.add(JOB_OFFER_SCRAPED_EVENT, payload, {
-          jobId: safeJobId,
+        await addSafeQueueJob(this.ingestionQueue, JOB_OFFER_SCRAPED_EVENT, payload, {
+          jobId: `wwr-${job.externalId}`,
           attempts: 3,
           backoff: { type: 'exponential', delay: 1000 },
           removeOnComplete: true,

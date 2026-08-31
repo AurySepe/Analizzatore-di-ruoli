@@ -85,6 +85,9 @@ export class CurriculumOutboxRelayService implements OnModuleInit, OnModuleDestr
           },
           {
             jobId: `cv-tailor-${record.jobOfferId}-${record.updatedAt.getTime()}`,
+            attempts: 5,
+            backoff: { type: 'exponential', delay: 5000 },
+            removeOnComplete: true,
           },
         );
 
@@ -135,6 +138,9 @@ export class CurriculumOutboxRelayService implements OnModuleInit, OnModuleDestr
           },
           {
             jobId: `cv-pdf-${record.jobOfferId}-${record.updatedAt.getTime()}`,
+            attempts: 5,
+            backoff: { type: 'exponential', delay: 5000 },
+            removeOnComplete: true,
           },
         );
 

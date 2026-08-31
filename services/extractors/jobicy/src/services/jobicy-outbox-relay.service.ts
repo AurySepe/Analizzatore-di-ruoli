@@ -6,6 +6,7 @@ import {
   INGESTION_QUEUE_NAME,
   JOB_OFFER_SCRAPED_EVENT,
   ScrapedJobOfferEvent,
+  addSafeQueueJob,
 } from '@analizzatore/contracts';
 
 @Injectable()
@@ -51,7 +52,7 @@ export class JobicyOutboxRelayService {
           tags: job.tags ? JSON.parse(job.tags) : [],
         };
 
-        await this.ingestionQueue.add(JOB_OFFER_SCRAPED_EVENT, payload, {
+        await addSafeQueueJob(this.ingestionQueue, JOB_OFFER_SCRAPED_EVENT, payload, {
           jobId: `jobicy-${job.externalId}`,
           attempts: 3,
           backoff: { type: 'exponential', delay: 1000 },

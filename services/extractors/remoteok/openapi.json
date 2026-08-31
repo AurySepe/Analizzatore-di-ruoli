@@ -1,0 +1,130 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Remote OK Public API",
+    "version": "1.0.0",
+    "description": "Schema OpenAPI per il feed JSON pubblico di Remote OK (https://remoteok.com/api)"
+  },
+  "servers": [
+    {
+      "url": "https://remoteok.com"
+    }
+  ],
+  "paths": {
+    "/api": {
+      "get": {
+        "summary": "Ottiene la lista di offerte di lavoro remote o filtrate per tag",
+        "parameters": [
+          {
+            "name": "tag",
+            "in": "query",
+            "required": false,
+            "description": "Tag tematico (es. dev, engineer, python, backend, react, ai)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "location",
+            "in": "query",
+            "required": false,
+            "description": "Restrizione geografica (es. Worldwide, US, Europe)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "required": false,
+            "description": "Criterio di ordinamento (es. newest, salary_high)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array contenente come primo elemento il disclaimer legale e a seguire le offerte di lavoro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RemoteokFeedItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RemoteokFeedItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID univoco dell'annuncio"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "epoch": {
+            "type": "integer",
+            "description": "Unix timestamp della data di pubblicazione"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "company": {
+            "type": "string"
+          },
+          "company_logo": {
+            "type": "string"
+          },
+          "position": {
+            "type": "string",
+            "description": "Titolo del ruolo"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": {
+            "type": "string",
+            "description": "Descrizione formattata in HTML"
+          },
+          "location": {
+            "type": "string"
+          },
+          "apply_url": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "salary_min": {
+            "type": "number"
+          },
+          "salary_max": {
+            "type": "number"
+          },
+          "legal": {
+            "type": "string",
+            "description": "Testo del disclaimer legale presente nel primo elemento"
+          },
+          "last_updated": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+}

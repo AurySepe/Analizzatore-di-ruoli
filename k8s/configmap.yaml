@@ -12,6 +12,8 @@ data:
   REMOTIVE_DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/extractor_remotive?schema=public"
   JOBICY_DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/extractor_jobicy?schema=public"
   WEWORKREMOTELY_DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/extractor_weworkremotely?schema=public"
+  HIMALAYAS_DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/extractor_himalayas?schema=public"
+  REMOTEOK_DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/extractor_remoteok?schema=public"
   REDIS_HOST: "redis"
   REDIS_PORT: "6379"
   S3_ENDPOINT: "http://minio:9000"

@@ -2,6 +2,22 @@ import { Logger } from '@nestjs/common';
 import { GoogleGenAI, Type } from '@google/genai';
 import { LlmEvaluationResult, EvaluatorModelType } from './ai-provider.interface';
 
+export function isGoogleQuotaError(err: any): boolean {
+  if (!err) return false;
+  const msg = (err.message || '').toUpperCase();
+  const status = err.status || err.statusCode;
+  return (
+    status === 429 ||
+    status === 'RESOURCE_EXHAUSTED' ||
+    msg.includes('RESOURCE_EXHAUSTED') ||
+    msg.includes('QUOTA') ||
+    msg.includes('RATE_LIMIT') ||
+    msg.includes('DAILY LIMIT') ||
+    msg.includes('TOO MANY REQUESTS') ||
+    msg.includes('429')
+  );
+}
+
 export abstract class BaseGoogleGenAiProvider {
   protected abstract readonly logger: Logger;
   public abstract readonly name: string;

@@ -94,6 +94,8 @@ export const sourceLabels: Record<JobOfferSource, string> = {
   REMOTIVE: 'Remotive',
   JOBICY: 'Jobicy',
   WE_WORK_REMOTELY: 'We Work Remotely',
+  HIMALAYAS: 'Himalayas',
+  REMOTEOK: 'Remote OK',
   MANUAL: 'Inserito Manualmente',
 };
 
@@ -102,6 +104,8 @@ export const sourceOptions: readonly { readonly value: JobOfferSource; readonly 
   { value: 'REMOTIVE', label: sourceLabels.REMOTIVE },
   { value: 'JOBICY', label: sourceLabels.JOBICY },
   { value: 'WE_WORK_REMOTELY', label: sourceLabels.WE_WORK_REMOTELY },
+  { value: 'HIMALAYAS', label: sourceLabels.HIMALAYAS },
+  { value: 'REMOTEOK', label: sourceLabels.REMOTEOK },
   { value: 'MANUAL', label: sourceLabels.MANUAL },
 ];
 

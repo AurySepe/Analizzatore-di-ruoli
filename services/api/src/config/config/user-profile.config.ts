@@ -48,10 +48,13 @@ Leveraging my background in cross-functional development and my experience colla
 --- KEY CONSTRAINTS & DEAL-BREAKERS FOR AI SCORING ---
 - Target Roles: Product Engineer, Mid-level / Junior Fullstack Engineer, Product-focused Engineer in lean product teams.
 - Ideal Company Environment: Product companies (B2B/B2C SaaS, Tech Products) of any size (from fast-growing startups to larger tech companies) that foster strong product ownership, high autonomy, and operate with a lean, fast-moving startup mindset.
-- Geography / Work Setup: Open to Relocation across Europe, Remote, or Hybrid in Europe.
+- Location & Work Setup: Open to Relocation ONLY across Europe (EU, EEA, UK, Switzerland), Remote, or Hybrid in Europe (must be compatible with European timezones/residents).
 - Strict Exclusions (DEAL-BREAKERS / DISQUALIFIERS - IMMEDIATE DISQUALIFICATION):
+  * Relocation outside Europe: Any role requiring physical relocation outside Europe (USA, Canada, APAC, Australia, etc.) is STRICTLY DISQUALIFIED.
+  * Non-European Location / Incompatible Timezones: Roles requiring residency/visas outside Europe (e.g. US Only, North America only) or working hours outside European timezone business hours are STRICTLY DISQUALIFIED.
   * IT Consulting companies, outsourcing agencies, software houses, body rental, staff augmentation, or agency consulting services (IMMEDIATE DISQUALIFICATION: I ONLY want Product Companies building their own product).
   * Senior, Staff, Lead, Principal, or Executive roles (I am a 25-year-old developer seeking Junior / Mid-level positions, NOT Senior level roles).
+  * Missing or undisclosed salary in the job post (must explicitly state salary/range).
   * Unpaid roles, pure equity-only compensation (no base salary).
   * Rigid corporate environments with siloed ticket-executing roles lacking product ownership and autonomy.
   * Non-technical / non-engineering roles (Sales, HR, Marketing, Admin).

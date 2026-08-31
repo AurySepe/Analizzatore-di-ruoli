@@ -68,7 +68,12 @@ export class EvaluationOutboxRelayService implements OnModuleInit, OnModuleDestr
           this.evaluationQueue,
           EVALUATE_JOB_EVENT,
           { jobOfferId: record.jobOfferId },
-          { jobId: `eval-${record.jobOfferId}` },
+          {
+            jobId: `eval-${record.jobOfferId}-${record.updatedAt.getTime()}`,
+            attempts: 5,
+            backoff: { type: 'exponential', delay: 5000 },
+            removeOnComplete: true,
+          },
         );
 
         await this.prisma.jobEvaluationOutbox.update({

@@ -101,6 +101,9 @@ const parseSource = (value: string): JobOfferSource | null => {
     case 'REMOTIVE':
     case 'JOBICY':
     case 'WE_WORK_REMOTELY':
+    case 'HIMALAYAS':
+    case 'REMOTEOK':
+    case 'MANUAL':
       return value;
     default:
       return null;

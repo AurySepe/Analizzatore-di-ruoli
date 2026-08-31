@@ -366,7 +366,7 @@ export interface components {
         CreateJobOfferDto: {
             externalId?: string | null;
             /** @enum {string} */
-            source: "ARBEITNOW" | "REMOTIVE" | "JOBICY" | "WE_WORK_REMOTELY" | "MANUAL";
+            source: "ARBEITNOW" | "REMOTIVE" | "JOBICY" | "WE_WORK_REMOTELY" | "HIMALAYAS" | "REMOTEOK" | "MANUAL";
             url: string;
             title: string;
             location?: string | null;
@@ -454,7 +454,7 @@ export interface components {
             id: string;
             externalId?: string | null;
             /** @enum {string} */
-            source: "ARBEITNOW" | "REMOTIVE" | "JOBICY" | "WE_WORK_REMOTELY" | "MANUAL";
+            source: "ARBEITNOW" | "REMOTIVE" | "JOBICY" | "WE_WORK_REMOTELY" | "HIMALAYAS" | "REMOTEOK" | "MANUAL";
             url: string;
             title: string;
             location?: string | null;
@@ -650,7 +650,7 @@ export interface operations {
                 /** @description Cerca per testo nel titolo o nel nome azienda */
                 search?: string;
                 /** @description Filtra per fonte dell annuncio (ARBEITNOW, REMOTIVE) */
-                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY" | "WE_WORK_REMOTELY" | "MANUAL";
+                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY" | "WE_WORK_REMOTELY" | "HIMALAYAS" | "REMOTEOK" | "MANUAL";
                 /** @description Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B) */
                 evaluatorModel?: string;
                 /** @description Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED) */
@@ -720,7 +720,7 @@ export interface operations {
                 /** @description Cerca per testo nel titolo o nel nome azienda */
                 search?: string;
                 /** @description Filtra per fonte dell annuncio (ARBEITNOW, REMOTIVE) */
-                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY" | "WE_WORK_REMOTELY" | "MANUAL";
+                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY" | "WE_WORK_REMOTELY" | "HIMALAYAS" | "REMOTEOK" | "MANUAL";
                 /** @description Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B) */
                 evaluatorModel?: string;
                 /** @description Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED) */
@@ -764,7 +764,7 @@ export interface operations {
                 /** @description Cerca per testo nel titolo o nel nome azienda */
                 search?: string;
                 /** @description Filtra per fonte dell annuncio (ARBEITNOW, REMOTIVE) */
-                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY" | "WE_WORK_REMOTELY" | "MANUAL";
+                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY" | "WE_WORK_REMOTELY" | "HIMALAYAS" | "REMOTEOK" | "MANUAL";
                 /** @description Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B) */
                 evaluatorModel?: string;
                 /** @description Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED) */
@@ -811,7 +811,7 @@ export interface operations {
                 /** @description Cerca per testo nel titolo o nel nome azienda */
                 search?: string;
                 /** @description Filtra per fonte dell annuncio (ARBEITNOW, REMOTIVE) */
-                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY" | "WE_WORK_REMOTELY" | "MANUAL";
+                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY" | "WE_WORK_REMOTELY" | "HIMALAYAS" | "REMOTEOK" | "MANUAL";
                 /** @description Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B) */
                 evaluatorModel?: string;
                 /** @description Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED) */
@@ -858,7 +858,7 @@ export interface operations {
                 /** @description Cerca per testo nel titolo o nel nome azienda */
                 search?: string;
                 /** @description Filtra per fonte dell annuncio (ARBEITNOW, REMOTIVE) */
-                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY" | "WE_WORK_REMOTELY" | "MANUAL";
+                source?: "ARBEITNOW" | "REMOTIVE" | "JOBICY" | "WE_WORK_REMOTELY" | "HIMALAYAS" | "REMOTEOK" | "MANUAL";
                 /** @description Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B) */
                 evaluatorModel?: string;
                 /** @description Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED) */
