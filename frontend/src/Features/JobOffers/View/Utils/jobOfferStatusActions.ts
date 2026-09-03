@@ -23,13 +23,6 @@ export const getJobOfferStatusActions = (
       ];
     case 'APPLIED':
       return [
-        { status: 'SCREENING', label: 'Screening', tone: 'primary' },
-        { status: 'INTERVIEWING', label: 'Colloquio', tone: 'primary' },
-        { status: 'REJECTED', label: 'Mi hanno rifiutato', tone: 'danger' },
-        { status: 'ARCHIVED', label: 'Scarta annuncio', tone: 'warning' },
-      ];
-    case 'SCREENING':
-      return [
         { status: 'INTERVIEWING', label: 'Colloquio', tone: 'primary' },
         { status: 'REJECTED', label: 'Mi hanno rifiutato', tone: 'danger' },
         { status: 'ARCHIVED', label: 'Scarta annuncio', tone: 'warning' },
@@ -42,13 +35,8 @@ export const getJobOfferStatusActions = (
       ];
     case 'OFFER':
       return [
-        { status: 'ACCEPTED', label: 'Accettata', tone: 'success' },
-        { status: 'REJECTED', label: 'Mi hanno rifiutato', tone: 'danger' },
-        { status: 'ARCHIVED', label: 'Scarta annuncio', tone: 'warning' },
-      ];
-    case 'ACCEPTED':
-      return [
         { status: 'ARCHIVED', label: 'Chiudi processo', tone: 'neutral' },
+        { status: 'REJECTED', label: 'Mi hanno rifiutato', tone: 'danger' },
       ];
     case 'REJECTED':
     case 'ARCHIVED':

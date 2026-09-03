@@ -35,13 +35,17 @@ Tutte le code di processing AI (`evaluation-jobs`, `curriculum-jobs`, `cover-let
      delay: 5000, // 5s, 10s, 20s, 40s...
    }
    ```
-3. **Dead Letter Queue (DLQ) & Stato Finale a Database**:
-   - Durante i tentativi intermedi (1..4), il record a database **non deve essere marcato come FAILED** e non deve essere compilato un PDF vuoto/fittizio.
-   - La transizione allo stato `FAILED` su PostgreSQL deve avvenire **esclusivamente** quando i tentativi sono completamente esauriti:
+3. **Dead Letter Queue (DLQ) & Salvaguardia dello Stato di Business**:
+   - **Errori Infrastrutturali / Rate Limit (429/503/Timeout)**: Non sono errori del payload o del task. **Non devono MAI causare la transizione a `FAILED` su PostgreSQL**. Lo stato a database deve rimanere o essere ripristinato a `PENDING`.
+   - **Errori di Business / Fatal (Dati corrotti, ID inesistente)**: Solo per errori deterministici non legati al provider AI e all'esaurimento completo dei tentativi BullMQ (`attemptsMade + 1 >= totalAttempts`), il record su database viene marcato come `FAILED`.
      ```typescript
-     const isFinalAttempt = (job.attemptsMade + 1) >= (job.opts.attempts || 1);
+     const isQuota = isGoogleQuotaError(err);
+     if (isQuota) {
+       await this.prisma.jobOffer.update({ data: { evaluationProcessStatus: 'PENDING' } });
+       throw err; // BullMQ esegue retry con backoff
+     }
      if (isFinalAttempt) {
-       await this.prisma.jobOffer.update({ ... });
+       await this.prisma.jobOffer.update({ data: { evaluationProcessStatus: 'FAILED' } });
      }
      ```
 

@@ -1,12 +1,12 @@
-import { Processor, WorkerHost } from '@nestjs/bullmq';
-import { Logger } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
-import { Job } from 'bullmq';
+import { InjectQueue, Processor, WorkerHost } from '@nestjs/bullmq';
+import { Logger, OnApplicationBootstrap } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
+import { DelayedError, Job, Queue } from 'bullmq';
 import { PrismaService } from '../../commons/prisma/prisma.service';
 import { GeminiProviderService } from '../providers/gemini-provider.service';
 import { Gemini35ProviderService } from '../providers/gemini35-provider.service';
 import { AiEvaluatorProvider, LlmEvaluationResult } from '../providers/ai-provider.interface';
-import { isGoogleQuotaError } from '../providers/base-google-genai.provider';
+import { isGoogleQuotaError, extractGoogleQuotaInfo } from '../providers/base-google-genai.provider';
 import {
   EVALUATION_QUEUE_NAME,
   EVALUATE_JOB_EVENT,
@@ -16,14 +16,12 @@ import {
 import { EvaluationPriority, EvaluationStatus, EvaluatorModel, JobEvaluationProcessStatus } from '@analizzatore/database';
 import { buildEvaluationPrompt } from '../utils/prompt-builder';
 
+const REDIS_KEY_QUOTA_PAUSED_UNTIL = 'evaluator:quota_paused_until';
+
 @Processor(EVALUATION_QUEUE_NAME, {
-  concurrency: 6,
-  limiter: {
-    max: 28,
-    duration: 60000,
-  },
+  concurrency: 2,
 })
-export class JobEvaluationProcessor extends WorkerHost {
+export class JobEvaluationProcessor extends WorkerHost implements OnApplicationBootstrap {
   private readonly logger = new Logger(JobEvaluationProcessor.name);
   private currentProviderIndex = 0;
 
@@ -31,8 +29,91 @@ export class JobEvaluationProcessor extends WorkerHost {
     private readonly prisma: PrismaService,
     private readonly gemini31Provider: GeminiProviderService,
     private readonly gemini35Provider: Gemini35ProviderService,
+    @InjectQueue(EVALUATION_QUEUE_NAME)
+    private readonly evaluationQueue: Queue<EvaluateJobOfferTaskEvent>,
   ) {
     super();
+  }
+
+  /**
+   * Calcola la data e l'ora del prossimo reset delle quote Google Gemini (ore 09:00:00 Europe/Rome).
+   */
+  private getNextDailyQuotaResetTime(): Date {
+    const now = new Date();
+    const romeTimeNow = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Rome' }));
+    const today9Rome = new Date(romeTimeNow);
+    today9Rome.setHours(9, 0, 0, 0);
+
+    if (romeTimeNow.getTime() >= today9Rome.getTime()) {
+      today9Rome.setDate(today9Rome.getDate() + 1);
+    }
+
+    const diffMs = today9Rome.getTime() - romeTimeNow.getTime();
+    return new Date(now.getTime() + diffMs);
+  }
+
+  async onApplicationBootstrap() {
+    try {
+      const isPaused = await this.evaluationQueue.isPaused();
+      const client = await this.evaluationQueue.client;
+      const pausedUntilStr = await client.get(REDIS_KEY_QUOTA_PAUSED_UNTIL);
+
+      if (pausedUntilStr) {
+        const pausedUntil = new Date(pausedUntilStr);
+        const now = new Date();
+
+        if (now.getTime() >= pausedUntil.getTime()) {
+          this.logger.log(
+            `🌅 [EvaluatorWorker] Bootstrap: l'orario di reset quote (${pausedUntil.toLocaleString('it-IT', { timeZone: 'Europe/Rome' })}) è già trascorso! Auto-recovery immediato della coda "${EVALUATION_QUEUE_NAME}".`,
+          );
+          await this.evaluationQueue.resume();
+          await client.del(REDIS_KEY_QUOTA_PAUSED_UNTIL);
+        } else {
+          const remainingMinutes = Math.round((pausedUntil.getTime() - now.getTime()) / 60000);
+          const hours = Math.floor(remainingMinutes / 60);
+          const minutes = remainingMinutes % 60;
+          this.logger.warn(
+            `⏳ [EvaluatorWorker] Bootstrap: la coda "${EVALUATION_QUEUE_NAME}" è in pausa per quota esaurita fino alle ${pausedUntil.toLocaleString('it-IT', { timeZone: 'Europe/Rome' })} (riattivazione prevista tra ${hours}h ${minutes}m).`,
+          );
+          if (!isPaused) {
+            await this.evaluationQueue.pause();
+          }
+        }
+      } else if (isPaused) {
+        this.logger.log(
+          `ℹ️ [EvaluatorWorker] Coda "${EVALUATION_QUEUE_NAME}" rilevata in stato PAUSED su Redis all'avvio. Auto-resume in corso...`,
+        );
+        await this.evaluationQueue.resume();
+      } else {
+        this.logger.log(`🚀 [EvaluatorWorker] Coda "${EVALUATION_QUEUE_NAME}" attiva e pronta all'elaborazione.`);
+      }
+    } catch (err: any) {
+      this.logger.error(`❌ [EvaluatorWorker] Errore verifica stato coda all'avvio:`, err.message);
+    }
+  }
+
+  /**
+   * Riattiva automaticamente la coda di valutazione ogni giorno alle 09:00 CEST (Europe/Rome),
+   * in corrispondenza del reset della quota giornaliera (RPD) delle API Google Gemini.
+   */
+  @Cron('0 0 9 * * *', { timeZone: 'Europe/Rome' })
+  async handleDailyQuotaReset() {
+    try {
+      const client = await this.evaluationQueue.client;
+      await client.del(REDIS_KEY_QUOTA_PAUSED_UNTIL);
+
+      const isPaused = await this.evaluationQueue.isPaused();
+      if (isPaused) {
+        this.logger.log(
+          `🌅 [EvaluatorWorker] Reset quota giornaliera Google Gemini alle 09:00 CEST: riattivazione coda "${EVALUATION_QUEUE_NAME}"!`,
+        );
+        await this.evaluationQueue.resume();
+      } else {
+        this.logger.log(`⏰ [EvaluatorWorker] Trigger 09:00 CEST: la coda "${EVALUATION_QUEUE_NAME}" è già attiva.`);
+      }
+    } catch (err: any) {
+      this.logger.error(`❌ [EvaluatorWorker] Errore durante il resume della coda alle 09:00:`, err.message);
+    }
   }
 
   private isProfileComplete(): boolean {
@@ -60,7 +141,7 @@ export class JobEvaluationProcessor extends WorkerHost {
     const startIndex = this.currentProviderIndex % allProviders.length;
     this.currentProviderIndex = (this.currentProviderIndex + 1) % allProviders.length;
 
-    // Riordina l'array partendo dal provider primario prescelto per questo ciclo
+    // Riordina l'array partendo dal provider primario prescelto per questo ciclo (Round-Robin 50/50)
     return [
       ...allProviders.slice(startIndex),
       ...allProviders.slice(0, startIndex),
@@ -81,7 +162,7 @@ export class JobEvaluationProcessor extends WorkerHost {
         this.logger.log(`✨ Valutazione con provider: ${provider.name} per "${jobTitle}" (${companyName})`);
         return await provider.evaluate(prompt);
       } catch (err: any) {
-        if (isGoogleQuotaError(err)) {
+        if (extractGoogleQuotaInfo(err).isQuota) {
           this.logger.warn(`⚠️ [EvaluatorWorker] Quota esaurita su ${provider.name} (${err.message}).`);
           lastQuotaError = err;
           // Se ci sono altri provider disponibili, prova il successivo all'istante
@@ -100,28 +181,7 @@ export class JobEvaluationProcessor extends WorkerHost {
     throw lastQuotaError || new Error('Tutti i provider AI Gemini hanno esaurito le quote.');
   }
 
-  /**
-   * Auto-Resume periodico: riattiva il consumo della coda ogni 10 minuti o al reset giornaliero UTC.
-   */
-  @Cron(CronExpression.EVERY_10_MINUTES)
-  async handleAutoResumeInterval(): Promise<void> {
-    await this.resumeWorkerIfPaused('Intervallo periodico (10m)');
-  }
-
-  @Cron('0 0 * * *')
-  async handleDailyQuotaReset(): Promise<void> {
-    await this.resumeWorkerIfPaused('Reset giornaliero quote Google Cloud (00:00 UTC)');
-  }
-
-  private async resumeWorkerIfPaused(reason: string): Promise<void> {
-    if (this.worker && this.worker.isPaused()) {
-      this.logger.log(`▶️ [EvaluatorWorker] Auto-Resume attivato (${reason}): riattivazione della coda ${EVALUATION_QUEUE_NAME}...`);
-      await this.worker.resume();
-      this.logger.log(`✅ [EvaluatorWorker] Coda ${EVALUATION_QUEUE_NAME} riattivata con successo.`);
-    }
-  }
-
-  async process(job: Job<EvaluateJobOfferTaskEvent, any, string>): Promise<any> {
+  async process(job: Job<EvaluateJobOfferTaskEvent, any, string>, token?: string): Promise<any> {
     if (job.name !== EVALUATE_JOB_EVENT) {
       this.logger.debug(`Ignorato evento non riconosciuto: ${job.name}`);
       return;
@@ -158,24 +218,23 @@ export class JobEvaluationProcessor extends WorkerHost {
         data: { evaluationProcessStatus: JobEvaluationProcessStatus.EVALUATING },
       });
 
+      // 2. Costruzione del prompt e chiamata AI con failover
+      const companyName = jobOffer.company?.name || 'Azienda non specificata';
+      const description = jobOffer.descriptionMarkdown || jobOffer.rawDescription || 'Descrizione non disponibile';
       const prompt = buildEvaluationPrompt(
         jobOffer.title,
-        jobOffer.descriptionMarkdown || jobOffer.rawDescription,
-        jobOffer.company.name,
+        description,
+        companyName,
         userProfileConfig.resumeText,
         userProfileConfig.searchCriteriaText,
       );
 
-      const result: LlmEvaluationResult = await this.evaluateWithFailover(
-        prompt,
-        jobOffer.title,
-        jobOffer.company.name,
-      );
+      const result = await this.evaluateWithFailover(prompt, jobOffer.title, companyName);
 
-      const prosJson = result.pros && result.pros.length > 0 ? JSON.stringify(result.pros) : null;
-      const consJson = result.cons && result.cons.length > 0 ? JSON.stringify(result.cons) : null;
+      // 3. Salvataggio su database
+      const prosJson = Array.isArray(result.pros) ? JSON.stringify(result.pros) : '[]';
+      const consJson = Array.isArray(result.cons) ? JSON.stringify(result.cons) : '[]';
 
-      // 2. Persistenza della valutazione e stato COMPLETED nel Database Centrale
       const [evaluation] = await this.prisma.$transaction([
         this.prisma.jobEvaluation.upsert({
           where: { jobOfferId: jobOffer.id },
@@ -218,23 +277,12 @@ export class JobEvaluationProcessor extends WorkerHost {
       this.logger.log(`✅ [EvaluatorWorker] Valutazione completata per "${jobOffer.title}": Score ${evaluation.overallScore}/100 - Priority: ${evaluation.priority}`);
       return { status: 'SUCCESS', evaluationId: evaluation.id, overallScore: evaluation.overallScore };
     } catch (err: any) {
-      const isQuota = isGoogleQuotaError(err);
+      const quotaInfo = extractGoogleQuotaInfo(err);
       const currentAttempt = job.attemptsMade + 1;
       const maxAttempts = job.opts.attempts || 1;
+      const isFinalAttempt = currentAttempt >= maxAttempts;
 
-      if (isQuota) {
-        // === GESTIONE ERRORE INFRASTRUTTURALE (QUOTA / RATE LIMIT) ===
-        this.logger.warn(
-          `⏸️ [EvaluatorWorker] Quote AI esaurite su tutti i modelli. Sospensione immediata del consumo della coda ${EVALUATION_QUEUE_NAME}...`,
-        );
-
-        // Mette in pausa il worker: nessun nuovo job verrà prelevato da Redis
-        if (this.worker && !this.worker.isPaused()) {
-          await this.worker.pause(true);
-          this.logger.warn(`🛑 [EvaluatorWorker] Worker ${EVALUATION_QUEUE_NAME} messo in PAUSA. Si risveglierà automaticamente al prossimo ciclo/reset.`);
-        }
-
-        // Ripristina lo stato del job a PENDING (non è un errore del job!)
+      if (quotaInfo.isQuota) {
         try {
           await this.prisma.jobOffer.update({
             where: { id: jobOfferId },
@@ -242,18 +290,60 @@ export class JobEvaluationProcessor extends WorkerHost {
           });
         } catch (_) {}
 
-        throw err;
+        if (quotaInfo.isDailyLimit) {
+          const nextReset = this.getNextDailyQuotaResetTime();
+          try {
+            const client = await this.evaluationQueue.client;
+            await (client as any).set(REDIS_KEY_QUOTA_PAUSED_UNTIL, nextReset.toISOString(), 'EX', 86400);
+          } catch (redisErr: any) {
+            this.logger.error(`❌ [EvaluatorWorker] Errore salvataggio quota_paused_until in Redis:`, redisErr.message);
+          }
+
+          const remainingMinutes = Math.round((nextReset.getTime() - Date.now()) / 60000);
+          const hours = Math.floor(remainingMinutes / 60);
+          const minutes = remainingMinutes % 60;
+
+          this.logger.warn(
+            `⚠️ [EvaluatorWorker] Esaurita quota GIORNALIERA (RPD) su tutti i provider per job [ID: ${jobOfferId}]. ` +
+            `Coda "${EVALUATION_QUEUE_NAME}" messa in pausa su Redis fino alle ${nextReset.toLocaleString('it-IT', { timeZone: 'Europe/Rome' })} (${hours}h ${minutes}m). ` +
+            `Job riposizionato in testa senza consumare tentativi.`,
+          );
+
+          await this.evaluationQueue.pause();
+          await job.moveToDelayed(Date.now(), token);
+          throw new DelayedError();
+        } else {
+          const waitSec = Math.round(quotaInfo.retryDelayMs / 1000);
+          this.logger.warn(
+            `⏳ [EvaluatorWorker] Rate limit temporaneo al minuto (15 RPM) su tutti i provider per job [ID: ${jobOfferId}]. ` +
+            `Pausa breve della coda di ${waitSec}s prima di riprendere automaticamente...`,
+          );
+
+          await this.evaluationQueue.pause();
+          await job.moveToDelayed(Date.now() + quotaInfo.retryDelayMs, token);
+
+          setTimeout(async () => {
+            try {
+              if (await this.evaluationQueue.isPaused()) {
+                this.logger.log(`⚡ [EvaluatorWorker] Fine pausa rate limit (${waitSec}s): riattivazione coda "${EVALUATION_QUEUE_NAME}".`);
+                await this.evaluationQueue.resume();
+              }
+            } catch (resumeErr: any) {
+              this.logger.error(`❌ [EvaluatorWorker] Errore resume post-rate limit:`, resumeErr.message);
+            }
+          }, quotaInfo.retryDelayMs);
+
+          throw new DelayedError();
+        }
       }
 
-      // === GESTIONE ERRORI DI BUSINESS / PAYLOAD CORROTTO ===
       this.logger.error(
-        `❌ [EvaluatorWorker] Errore di esecuzione per job [ID: ${jobOfferId}] (Tentativo ${currentAttempt}/${maxAttempts}): ${err.message}`,
-        err.stack,
+        `❌ [EvaluatorWorker] Errore non-quota per job [ID: ${jobOfferId}] (Tentativo ${currentAttempt}/${maxAttempts}): ${err.message}`,
       );
 
-      // Dead Letter Queue Pattern: Aggiorna a FAILED SOLO se tutti i tentativi BullMQ sono esauriti
-      if (currentAttempt >= maxAttempts) {
-        this.logger.warn(`💀 [EvaluatorWorker] Esauriti tutti i ${maxAttempts} tentativi per job [ID: ${jobOfferId}]. Marcato come FAILED (Dead Letter).`);
+      // Dead Letter Queue Pattern: Aggiorna a FAILED SOLO per errori fatali di business a tentativi esauriti
+      if (isFinalAttempt) {
+        this.logger.warn(`💀 [EvaluatorWorker] Esauriti tutti i ${maxAttempts} tentativi per errore fatale su job [ID: ${jobOfferId}]. Marcato come FAILED.`);
         try {
           await this.prisma.jobOffer.update({
             where: { id: jobOfferId },
@@ -261,6 +351,7 @@ export class JobEvaluationProcessor extends WorkerHost {
           });
         } catch (_) {}
       }
+
       throw err;
     }
   }

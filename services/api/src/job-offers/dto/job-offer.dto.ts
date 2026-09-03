@@ -30,10 +30,8 @@ export enum ApplicationStatusEnum {
   NEW = 'NEW',
   SAVED = 'SAVED',
   APPLIED = 'APPLIED',
-  SCREENING = 'SCREENING',
   INTERVIEWING = 'INTERVIEWING',
   OFFER = 'OFFER',
-  ACCEPTED = 'ACCEPTED',
   REJECTED = 'REJECTED',
   ARCHIVED = 'ARCHIVED',
 }
@@ -141,13 +139,13 @@ export class JobOfferDto {
   @ApiProperty({ type: () => CompanyDto })
   company: CompanyDto;
 
-  @ApiProperty({ nullable: true, required: false })
+  @ApiProperty({ type: Number, nullable: true, required: false })
   @IsNumber()
   @ValidateIf((_, val) => val !== null)
   @IsOptional()
   salaryMin: number | null;
 
-  @ApiProperty({ nullable: true, required: false })
+  @ApiProperty({ type: Number, nullable: true, required: false })
   @IsNumber()
   @ValidateIf((_, val) => val !== null)
   @IsOptional()

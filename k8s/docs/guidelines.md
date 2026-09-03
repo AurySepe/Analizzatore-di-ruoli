@@ -22,3 +22,14 @@
 ## 4. Shift-Left Quality & Pre-Flight Checks
 - **Typecheck Istantaneo Host**: Prima di lanciare build Docker o commit, eseguire `npm run typecheck` per convalidare staticamente in parallelo tutti i 14 moduli del monorepo in ~6 secondi.
 - **Pre-Flight integrato nel Deploy**: Lo script `deploy-k8s.mjs` esegue automaticamente la Fase 0 (verifica connettività registry `localhost:5001` e validazione sintassi schema Prisma con `npm run prisma:validate`). Per eseguire solo i check senza compilare né deployare: `npm run preflight`.
+
+## 5. Esecuzione Task Asincroni, Gestione Log & Anti-Polling
+- **Divieto Assoluto di Active Polling sui Log**: Quando un comando o script di deploy/build (ad es. `deploy-k8s.mjs`, compilazioni Docker, esecuzione test o rollout K8s) viene eseguito come background task o comando asincrono, l'agente o lo sviluppatore **NON deve mai eseguire cicli continui di lettura (`polling`) sui file di log o sullo stato del task**.
+- **Consumo Eccessivo di Token & Context Window**: Il polling continuo (es. invocare ripetutamente `view_file` o `manage_task(status)` ogni pochi secondi) satura rapidamente il context window e brucia token preziosi senza produrre valore, rischiando di troncare prematuramente la sessione di lavoro.
+- **Attesa Reattiva (Reactive Wakeup)**: L'ambiente di sviluppo e l'assistente agentico sono nativamente integrati con un sistema di messaggistica asincrono ad eventi. Una volta lanciato il task in background:
+  1. Fornire un breve messaggio di riepilogo iniziale all'utente (confermando il comando avviato).
+  2. Concludere il turno operativo senza invocare altri tool.
+  3. Il runtime si risveglia automaticamente via `SYSTEM_MESSAGE` con il risultato e l'exit code al completamento naturale del processo.
+- **Ispezione dei Log Solo On-Demand o Post-Mortem**: I file di log devono essere letti con `view_file` **esclusivamente**:
+  - Se il task fallisce con codice d'errore (exit code ≠ 0) per diagnosticare la causa specifica.
+  - Su esplicita richiesta manuale dell'utente (ad es. *"fammi vedere i log del deploy"*), mostrando l'estratto finale significativo in un singolo passaggio anziché in loop.

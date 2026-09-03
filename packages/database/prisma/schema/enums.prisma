@@ -19,10 +19,8 @@ enum ApplicationStatus {
   NEW
   SAVED
   APPLIED
-  SCREENING
   INTERVIEWING
   OFFER
-  ACCEPTED
   REJECTED
   ARCHIVED
 }

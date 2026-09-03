@@ -2,11 +2,19 @@ import { Logger } from '@nestjs/common';
 import { GoogleGenAI, Type } from '@google/genai';
 import { LlmEvaluationResult, EvaluatorModelType } from './ai-provider.interface';
 
-export function isGoogleQuotaError(err: any): boolean {
-  if (!err) return false;
-  const msg = (err.message || '').toUpperCase();
+export interface GoogleQuotaInfo {
+  isQuota: boolean;
+  isDailyLimit: boolean;
+  retryDelayMs: number;
+}
+
+export function extractGoogleQuotaInfo(err: any): GoogleQuotaInfo {
+  if (!err) return { isQuota: false, isDailyLimit: false, retryDelayMs: 0 };
+  const rawMsg = err.message || '';
+  const msg = rawMsg.toUpperCase();
   const status = err.status || err.statusCode;
-  return (
+
+  const isQuota =
     status === 429 ||
     status === 'RESOURCE_EXHAUSTED' ||
     msg.includes('RESOURCE_EXHAUSTED') ||
@@ -14,8 +22,42 @@ export function isGoogleQuotaError(err: any): boolean {
     msg.includes('RATE_LIMIT') ||
     msg.includes('DAILY LIMIT') ||
     msg.includes('TOO MANY REQUESTS') ||
-    msg.includes('429')
-  );
+    msg.includes('429');
+
+  if (!isQuota) {
+    return { isQuota: false, isDailyLimit: false, retryDelayMs: 0 };
+  }
+
+  // Estrazione dell'eventuale retryDelay in secondi (es. "retry in 18.04s" o "retryDelay": "18s")
+  let retrySeconds = 25;
+  const retryInMatch = rawMsg.match(/retry in ([0-9]+(?:\.[0-9]+)?)s/i);
+  const retryDelayMatch = rawMsg.match(/"retryDelay"\s*:\s*"([0-9]+)s"/i);
+
+  if (retryInMatch && retryInMatch[1]) {
+    retrySeconds = Math.ceil(parseFloat(retryInMatch[1])) + 2;
+  } else if (retryDelayMatch && retryDelayMatch[1]) {
+    retrySeconds = parseInt(retryDelayMatch[1], 10) + 2;
+  }
+
+  // Verifica se è limite giornaliero (RPD) o rate limit al minuto (RPM)
+  const isMinuteLimit =
+    msg.includes('PERMINUTE') ||
+    msg.includes('PER_MINUTE') ||
+    msg.includes('LIMIT: 15') ||
+    Boolean(retryInMatch) ||
+    Boolean(retryDelayMatch);
+
+  const isDaily = !isMinuteLimit || msg.includes('DAILY') || msg.includes('PERDAY');
+
+  return {
+    isQuota: true,
+    isDailyLimit: isDaily && !isMinuteLimit,
+    retryDelayMs: Math.max(5000, retrySeconds * 1000),
+  };
+}
+
+export function isGoogleQuotaError(err: any): boolean {
+  return extractGoogleQuotaInfo(err).isQuota;
 }
 
 export abstract class BaseGoogleGenAiProvider {

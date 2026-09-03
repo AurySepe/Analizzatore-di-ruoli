@@ -19,7 +19,7 @@ Ogni volta che uno sviluppatore o un agente AI deve lavorare su uno specifico do
 | **Curriculum & PDF Rendering** | [`services/curriculum-worker/docs/guidelines.md`](file:///c:/Users/aurel/Desktop/Progetti/ricerca%20Lavoro/Analizzatore%20di%20ruoli/services/curriculum-worker/docs/guidelines.md) | Prima di lavorare sui prompt LLM per il tailoring, template HTML/Handlebars, compilazione Chromium headless o upload su MinIO S3. |
 | **Valutazione AI (Gemini Worker)** | [`services/evaluator-worker/docs/guidelines.md`](file:///c:/Users/aurel/Desktop/Progetti/ricerca%20Lavoro/Analizzatore%20di%20ruoli/services/evaluator-worker/docs/guidelines.md) | Prima di modificare il prompt di valutazione di Gemini, il calcolo dei punteggi o i criteri di scoring delle offerte. |
 | **Estrattori & Ingestion Worker** | [`services/extractors/docs/guidelines.md`](file:///c:/Users/aurel/Desktop/Progetti/ricerca%20Lavoro/Analizzatore%20di%20ruoli/services/extractors/docs/guidelines.md) | Prima di creare un nuovo scraper/estrattore, configurare Outbox dedicati o modificare la deduplicazione nell'Ingestion Worker. |
-| **Kubernetes, BuildKit & Deploy** | [`k8s/docs/guidelines.md`](file:///c:/Users/aurel/Desktop/Progetti/ricerca%20Lavoro/Analizzatore%20di%20ruoli/k8s/docs/guidelines.md) | Prima di modificare manifest K8s, `Dockerfile`, script `deploy-k8s.mjs`, ingress, o configurazioni del cluster k3d locale. |
+| **Kubernetes, BuildKit & Deploy** | [`k8s/docs/guidelines.md`](file:///c:/Users/aurel/Desktop/Progetti/ricerca%20Lavoro/Analizzatore%20di%20ruoli/k8s/docs/guidelines.md) | Prima di eseguire deploy, lanciare build Docker o script asincroni, gestire log e monitorare task (regola Anti-Polling & Reactive Wakeup). |
 
 ---
 

@@ -9,8 +9,8 @@
     "prisma:generate": "prisma generate"
   },
   "dependencies": {
-    "@analizzatore/contracts": "file:../../packages/contracts",
-    "@analizzatore/database": "file:../../packages/database",
+    "@analizzatore/contracts": "workspace:*",
+    "@analizzatore/database": "workspace:*",
     "@nestjs/bullmq": "^10.2.3",
     "@nestjs/common": "^10.4.15",
     "@nestjs/config": "^3.3.0",

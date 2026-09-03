@@ -5,6 +5,8 @@ import process from 'process';
 const args = process.argv.slice(2);
 const serviceArg = args.find((a) => a.startsWith('--service=') || a.startsWith('-s='))?.split('=')[1];
 const frontendOnly = args.includes('--frontend-only') || args.includes('-f') || serviceArg === 'frontend';
+// Se 'frontend' è nella lista dei servizi, include anche il build del frontend
+const includeFrontend = frontendOnly || !serviceArg || serviceArg.split(',').map((x) => x.trim()).includes('frontend');
 const skipBuild = args.includes('--skip-build');
 const skipRestart = args.includes('--skip-restart');
 const preflightOnly = args.includes('--preflight-only') || args.includes('-p');
@@ -36,7 +38,7 @@ try {
 }
 
 // 2. Validazione sintassi schema Prisma
-run('npm --prefix packages/database run prisma:validate', 'Prisma: Validazione sintattica dello schema');
+run('pnpm --filter @analizzatore/database run prisma:validate', 'Prisma: Validazione sintattica dello schema');
 
 if (preflightOnly) {
   run('node scripts/typecheck.mjs', 'Typecheck: Validazione statica TypeScript del monorepo');
@@ -70,15 +72,15 @@ const selectedServices = targetList.length > 0
 
 // 1. Build Packages Condivisi (Contracts & Database) & OpenAPI Specs
 if (!skipBuild && !frontendOnly) {
-  run('npm --prefix packages/contracts run build', 'Contracts: Compilazione TypeScript schema condivisi');
-  run('npm --prefix packages/database run prisma:generate', 'Database: Prisma generate');
-  run('npm --prefix packages/database run build', 'Database: Build TypeScript');
-  run('npm --prefix services/api run openapi:generate', 'API Gateway: Generazione OpenAPI Spec');
+  run('pnpm --filter @analizzatore/contracts run build', 'Contracts: Compilazione TypeScript schema condivisi');
+  run('pnpm --filter @analizzatore/database run prisma:generate', 'Database: Prisma generate');
+  run('pnpm --filter @analizzatore/database run build', 'Database: Build TypeScript');
+  run('pnpm --filter @analizzatore/api run openapi:generate', 'API Gateway: Generazione OpenAPI Spec');
 }
 
-if (!skipBuild && (frontendOnly || !serviceArg)) {
-  run('npm --prefix frontend run openapi:generate', 'Frontend: Sincronizzazione TypeScript da OpenAPI');
-  run('npm --prefix frontend run build', 'Frontend: Compilazione bundle Vite');
+if (!skipBuild && (includeFrontend || !serviceArg)) {
+  run('pnpm --filter analizzatore-di-ruoli-frontend run openapi:generate', 'Frontend: Sincronizzazione TypeScript da OpenAPI');
+  run('pnpm --filter analizzatore-di-ruoli-frontend run build', 'Frontend: Compilazione bundle Vite');
 }
 
 import { spawn } from 'child_process';
@@ -109,27 +111,23 @@ if (!skipBuild) {
 
   if (!frontendOnly) {
     for (const svc of selectedServices) {
-      tasks.push(
-        (async () => {
-          await runAsync(`docker build -t ${svc.image} -f ${svc.dockerfile} .`, `Docker: Build ${svc.name}`);
-          await runAsync(`docker push ${svc.image}`, `Docker: Push ${svc.name} su registry k3d`);
-        })(),
-      );
+      tasks.push(async () => {
+        await runAsync(`docker build -t ${svc.image} -f ${svc.dockerfile} .`, `Docker: Build ${svc.name}`);
+        await runAsync(`docker push ${svc.image}`, `Docker: Push ${svc.name} su registry k3d`);
+      });
     }
   }
 
-  if (frontendOnly || !serviceArg) {
-    tasks.push(
-      (async () => {
-        await runAsync('docker build -t localhost:5001/frontend:latest ./frontend', 'Docker: Build Frontend');
-        await runAsync('docker push localhost:5001/frontend:latest', 'Docker: Push Frontend su registry k3d');
-      })(),
-    );
+  if (includeFrontend || !serviceArg) {
+    tasks.push(async () => {
+      await runAsync('docker build -t localhost:5001/frontend:latest ./frontend', 'Docker: Build Frontend');
+      await runAsync('docker push localhost:5001/frontend:latest', 'Docker: Push Frontend su registry k3d');
+    });
   }
 
-  console.log(`\n\x1b[35m⚡ Avvio build e push in parallelo di ${tasks.length} container...\x1b[0m`);
+  console.log(`\n\x1b[35m⚡ Avvio build e push concorrente di ${tasks.length} container in parallelo...\x1b[0m`);
   try {
-    await Promise.all(tasks);
+    await Promise.all(tasks.map((task) => task()));
     console.log(`\n\x1b[32m✔ Tutti i container sono stati compilati e inviati al registry con successo!\x1b[0m`);
   } catch (err) {
     console.error(`\x1b[31m✖ Fallimento nel processo di build parallelo dei container.\x1b[0m`);
@@ -157,7 +155,7 @@ if (!skipRestart) {
     run(`kubectl rollout restart deployment ${deploymentsToRestart}`, `Kubernetes: Restart dei deployments (${deploymentsToRestart})`);
   }
 
-  if (frontendOnly || !serviceArg) {
+  if (includeFrontend || !serviceArg) {
     run('kubectl rollout restart deployment frontend', 'Kubernetes: Restart frontend');
   }
 
@@ -165,7 +163,7 @@ if (!skipRestart) {
   if (!frontendOnly) {
     run('kubectl rollout status deployment/backend-api --timeout=90s', 'Kubernetes: Attesa disponibilità backend-api');
   }
-  if (frontendOnly || !serviceArg) {
+  if (includeFrontend || !serviceArg) {
     run('kubectl rollout status deployment/frontend --timeout=90s', 'Kubernetes: Attesa disponibilità frontend');
   }
 }

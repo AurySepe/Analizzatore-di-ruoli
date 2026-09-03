@@ -16,7 +16,7 @@ export class WorkTailoringDto {
   @IsString()
   summary: string;
 
-  @ApiProperty({ description: 'Se false, esclude l esperienza dal CV', required: false })
+  @ApiProperty({ type: Boolean, description: 'Se false, esclude l esperienza dal CV', required: false })
   @IsBoolean()
   @IsOptional()
   include?: boolean;

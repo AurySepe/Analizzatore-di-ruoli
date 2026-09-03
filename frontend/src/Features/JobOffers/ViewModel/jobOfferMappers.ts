@@ -69,10 +69,8 @@ export const statusLabels: Record<JobOfferStatus, string> = {
   NEW: 'Nuovo',
   SAVED: 'Da candidare',
   APPLIED: 'Candidatura inviata',
-  SCREENING: 'Screening',
   INTERVIEWING: 'Colloqui',
   OFFER: 'Offerta ricevuta',
-  ACCEPTED: 'Accettata',
   REJECTED: 'Mi hanno rifiutato',
   ARCHIVED: 'Scartato da me',
 };

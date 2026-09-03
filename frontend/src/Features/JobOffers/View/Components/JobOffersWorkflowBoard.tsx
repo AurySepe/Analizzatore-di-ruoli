@@ -12,10 +12,8 @@ interface WorkflowColumn {
 const activeColumns: readonly WorkflowColumn[] = [
   { status: 'SAVED', title: 'Da candidare', description: 'Annunci a cui sei interessato e per cui preparare/inviare candidatura.' },
   { status: 'APPLIED', title: 'Candidati', description: 'Candidature inviate.' },
-  { status: 'SCREENING', title: 'Screening', description: 'Primi contatti o screening iniziale.' },
   { status: 'INTERVIEWING', title: 'Colloqui', description: 'Colloqui tecnici o di team in corso.' },
   { status: 'OFFER', title: 'Offerta', description: 'Offerte ricevute da valutare.' },
-  { status: 'ACCEPTED', title: 'Accettate', description: 'Processi conclusi positivamente.' },
 ];
 
 const closedColumns: readonly WorkflowColumn[] = [

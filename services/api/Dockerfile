@@ -1,42 +1,39 @@
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 
 WORKDIR /app
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# 1. Copia solo manifest per cache npm install
+# 1. Copia manifest e pnpm workspace config
+COPY pnpm-workspace.yaml package.json ./
 COPY packages/contracts/package*.json ./packages/contracts/
 COPY packages/database/package*.json ./packages/database/
 COPY services/api/package*.json ./services/api/
 
-# 2. Installazione dipendenze con cache mount BuildKit
-RUN --mount=type=cache,target=/root/.npm \
-    cd packages/contracts && npm install
-
-RUN --mount=type=cache,target=/root/.npm \
-    cd packages/database && npm install
-
-WORKDIR /app/services/api
-RUN --mount=type=cache,target=/root/.npm \
-    npm install --legacy-peer-deps
-
-RUN npm link /app/packages/contracts /app/packages/database
+# 2. Installazione dipendenze con cache mount BuildKit di pnpm (include devDependencies per prisma CLI)
+RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store \
+    pnpm install --prod=false --filter @analizzatore/api...
 
 # 3. Copia codice sorgente e compilazione
-WORKDIR /app
 COPY packages/contracts ./packages/contracts
-RUN cd packages/contracts && npm run build
+RUN pnpm --filter @analizzatore/contracts run build
 
 COPY packages/database ./packages/database
 RUN --mount=type=cache,target=/root/.cache/prisma \
-    cd packages/database && npm run prisma:generate && npm run build
+    pnpm --filter @analizzatore/database run prisma:generate && \
+    pnpm --filter @analizzatore/database run build
 
 WORKDIR /app/services/api
 COPY services/api ./
-RUN npm run build
+RUN pnpm run build
 
-FROM node:20-alpine AS runner
+FROM node:22-alpine AS runner
 
 WORKDIR /app
+RUN corepack enable && corepack prepare pnpm@latest --activate
+ENV PATH="/app/packages/database/node_modules/.bin:/app/node_modules/.bin:${PATH}"
+ENV NODE_PATH="/app/node_modules:/app/node_modules/.pnpm/node_modules"
 
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/packages/contracts/dist /app/packages/contracts/dist
 COPY --from=builder /app/packages/contracts/package.json /app/packages/contracts/package.json
 COPY --from=builder /app/packages/database/dist /app/packages/database/dist

@@ -13,7 +13,7 @@ export const AppNavigation: React.FC = () => (
         <NavigationLink to="/job-offers/closed">Chiusi</NavigationLink>
         <NavigationLink to="/job-offers/disqualified">Scarti AI</NavigationLink>
         <NavigationLink to="/processing-status">Elaborazione</NavigationLink>
-        <NavigationLink to="/analytics/funnel">Funnel</NavigationLink>
+        <NavigationLink to="/analytics/funnel">Flusso Candidature</NavigationLink>
       </div>
     </div>
   </nav>

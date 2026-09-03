@@ -28,7 +28,8 @@ ${searchCriteria}
 ### ISTRUZIONI:
 1. **Verifica Deal-Breakers (DISQUALIFIED)**:
    - Se l'annuncio richiede **relocation obbligatoria fuori dall'Europa** (es. USA, Canada, Asia, Australia, ecc.), oppure richiede fuso orario/orari/residenza non compatibili con l'Europa (es. "US Only", "Must reside in North America", "APAC only"), imposta immediatamente \`priority: 'DISQUALIFIED'\`, con \`overallScore: 0\` e \`desireMatchScore: 0\`.
-   - Se l'annuncio viola altri deal-breaker (es. stipendio non indicato, agenzia di consulenza/body rental, ruoli Senior/Lead/Founding, lavoro non retribuito), imposta \`priority: 'DISQUALIFIED'\`.
+   - Se l'annuncio viola altri deal-breaker (es. agenzia di consulenza/body rental/staff augmentation, ruoli Senior/Lead/Principal/Founding, lavoro non retribuito o pure equity), imposta \`priority: 'DISQUALIFIED'\`.
+   - **NOTA SULLO STIPENDIO**: La presenza dello stipendio è una preferenza positiva ma **NON è un deal-breaker**; NON squalificare l'annuncio se la retribuzione non è esplicitamente indicata nel testo.
 2. Valuta l'aderenza del ruolo rispetto ai desiderata dell'utente (0-100 nel campo 'desireMatchScore').
 3. Valuta la competenza tecnica del candidato rispetto ai requisiti del ruolo (0-100 nel campo 'competenceScore').
 4. Calcola l'overallScore bilanciato (0-100).

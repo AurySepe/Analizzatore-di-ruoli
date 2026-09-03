@@ -10,7 +10,7 @@
     "openapi:generate": "openapi-typescript ./openapi.json -o ./src/generated/himalayas-api.d.ts"
   },
   "dependencies": {
-    "@analizzatore/contracts": "file:../../../packages/contracts",
+    "@analizzatore/contracts": "workspace:*",
     "@nestjs/bullmq": "^10.2.3",
     "@nestjs/common": "^10.4.15",
     "@nestjs/config": "^3.3.0",

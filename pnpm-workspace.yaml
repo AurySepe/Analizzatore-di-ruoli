@@ -1,0 +1,20 @@
+packages:
+  - 'packages/*'
+  - 'services/*'
+  - 'services/extractors/*'
+  - 'frontend'
+
+allowBuilds:
+  '@google/genai': true
+  '@nestjs/core': true
+  '@prisma/engines': true
+  msgpackr-extract: true
+  prisma: true
+  protobufjs: true
+  puppeteer: true
+
+peerDependencyRules:
+  allowedVersions:
+    typescript: '>=5'
+    react: '^19'
+    react-dom: '^19'

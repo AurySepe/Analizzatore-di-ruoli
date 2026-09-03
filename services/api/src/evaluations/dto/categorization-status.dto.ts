@@ -105,11 +105,11 @@ export class CategorizationStatusDto {
   @IsInt()
   evaluatingCount: number;
 
-  @ApiProperty({ description: 'Indica se il processo di categorizzazione è attualmente attivo' })
+  @ApiProperty({ type: Boolean, description: 'Indica se il processo di categorizzazione è attualmente attivo' })
   @IsBoolean()
   isCategorizing: boolean;
 
-  @ApiProperty({ description: 'Indica se il profilo utente è completo di CV e criteri' })
+  @ApiProperty({ type: Boolean, description: 'Indica se il profilo utente è completo di CV e criteri' })
   @IsBoolean()
   isProfileComplete: boolean;
 

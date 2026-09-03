@@ -396,10 +396,8 @@ exports.ApplicationStatus = exports.$Enums.ApplicationStatus = {
   NEW: 'NEW',
   SAVED: 'SAVED',
   APPLIED: 'APPLIED',
-  SCREENING: 'SCREENING',
   INTERVIEWING: 'INTERVIEWING',
   OFFER: 'OFFER',
-  ACCEPTED: 'ACCEPTED',
   REJECTED: 'REJECTED',
   ARCHIVED: 'ARCHIVED'
 };

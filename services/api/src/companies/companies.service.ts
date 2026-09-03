@@ -28,7 +28,6 @@ export class CompaniesService {
       ApplicationStatus.NEW,
       ApplicationStatus.SAVED,
       ApplicationStatus.APPLIED,
-      ApplicationStatus.SCREENING,
       ApplicationStatus.INTERVIEWING,
       ApplicationStatus.OFFER,
     ];
@@ -57,10 +56,8 @@ export class CompaniesService {
           } else if (
             jo.status === ApplicationStatus.SAVED ||
             jo.status === ApplicationStatus.APPLIED ||
-            jo.status === ApplicationStatus.SCREENING ||
             jo.status === ApplicationStatus.INTERVIEWING ||
-            jo.status === ApplicationStatus.OFFER ||
-            jo.status === ApplicationStatus.ACCEPTED
+            jo.status === ApplicationStatus.OFFER
           ) {
             savedOrAppliedCount++;
           }
@@ -101,6 +98,7 @@ export class CompaniesService {
       include: {
         company: true,
         evaluation: true,
+        coverLetter: true,
         curriculum: {
           include: {
             work: { orderBy: { order: 'asc' } },
@@ -127,7 +125,6 @@ export class CompaniesService {
       ApplicationStatus.NEW,
       ApplicationStatus.SAVED,
       ApplicationStatus.APPLIED,
-      ApplicationStatus.SCREENING,
       ApplicationStatus.INTERVIEWING,
       ApplicationStatus.OFFER,
     ];
@@ -147,10 +144,8 @@ export class CompaniesService {
         } else if (
           jo.status === ApplicationStatus.SAVED ||
           jo.status === ApplicationStatus.APPLIED ||
-          jo.status === ApplicationStatus.SCREENING ||
           jo.status === ApplicationStatus.INTERVIEWING ||
-          jo.status === ApplicationStatus.OFFER ||
-          jo.status === ApplicationStatus.ACCEPTED
+          jo.status === ApplicationStatus.OFFER
         ) {
           savedOrAppliedCount++;
         }

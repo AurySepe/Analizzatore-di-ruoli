@@ -415,7 +415,6 @@ export class JobOffersService {
       ApplicationStatus.NEW,
       ApplicationStatus.SAVED,
       ApplicationStatus.APPLIED,
-      ApplicationStatus.SCREENING,
       ApplicationStatus.INTERVIEWING,
       ApplicationStatus.OFFER,
     ];
@@ -435,10 +434,8 @@ export class JobOffersService {
       } else if (
         o.status === ApplicationStatus.SAVED ||
         o.status === ApplicationStatus.APPLIED ||
-        o.status === ApplicationStatus.SCREENING ||
         o.status === ApplicationStatus.INTERVIEWING ||
-        o.status === ApplicationStatus.OFFER ||
-        o.status === ApplicationStatus.ACCEPTED
+        o.status === ApplicationStatus.OFFER
       ) {
         savedOrAppliedMap.set(o.companyId, (savedOrAppliedMap.get(o.companyId) ?? 0) + 1);
       }
@@ -464,7 +461,6 @@ export class JobOffersService {
     const activeStatuses = [
       ApplicationStatus.SAVED,
       ApplicationStatus.APPLIED,
-      ApplicationStatus.SCREENING,
       ApplicationStatus.INTERVIEWING,
       ApplicationStatus.OFFER,
     ];
@@ -557,7 +553,7 @@ export class JobOffersService {
   async getActiveJobOffers(companyId?: string) {
     const whereClause: any = {
       status: {
-        in: ['SAVED', 'APPLIED', 'SCREENING', 'INTERVIEWING', 'OFFER', 'ACCEPTED'],
+        in: ['SAVED', 'APPLIED', 'INTERVIEWING', 'OFFER'],
       },
     };
 

@@ -169,23 +169,12 @@
                 "NEW",
                 "SAVED",
                 "APPLIED",
-                "SCREENING",
                 "INTERVIEWING",
                 "OFFER",
-                "ACCEPTED",
                 "REJECTED",
                 "ARCHIVED"
               ],
               "type": "string"
-            }
-          },
-          {
-            "name": "includePending",
-            "required": false,
-            "in": "query",
-            "description": "Includi anche gli annunci non ancora valutati dall AI (default: false)",
-            "schema": {
-              "type": "boolean"
             }
           }
         ],
@@ -358,23 +347,12 @@
                 "NEW",
                 "SAVED",
                 "APPLIED",
-                "SCREENING",
                 "INTERVIEWING",
                 "OFFER",
-                "ACCEPTED",
                 "REJECTED",
                 "ARCHIVED"
               ],
               "type": "string"
-            }
-          },
-          {
-            "name": "includePending",
-            "required": false,
-            "in": "query",
-            "description": "Includi anche gli annunci non ancora valutati dall AI (default: false)",
-            "schema": {
-              "type": "boolean"
             }
           }
         ],
@@ -536,23 +514,12 @@
                 "NEW",
                 "SAVED",
                 "APPLIED",
-                "SCREENING",
                 "INTERVIEWING",
                 "OFFER",
-                "ACCEPTED",
                 "REJECTED",
                 "ARCHIVED"
               ],
               "type": "string"
-            }
-          },
-          {
-            "name": "includePending",
-            "required": false,
-            "in": "query",
-            "description": "Includi anche gli annunci non ancora valutati dall AI (default: false)",
-            "schema": {
-              "type": "boolean"
             }
           }
         ],
@@ -725,23 +692,12 @@
                 "NEW",
                 "SAVED",
                 "APPLIED",
-                "SCREENING",
                 "INTERVIEWING",
                 "OFFER",
-                "ACCEPTED",
                 "REJECTED",
                 "ARCHIVED"
               ],
               "type": "string"
-            }
-          },
-          {
-            "name": "includePending",
-            "required": false,
-            "in": "query",
-            "description": "Includi anche gli annunci non ancora valutati dall AI (default: false)",
-            "schema": {
-              "type": "boolean"
             }
           }
         ],
@@ -914,23 +870,12 @@
                 "NEW",
                 "SAVED",
                 "APPLIED",
-                "SCREENING",
                 "INTERVIEWING",
                 "OFFER",
-                "ACCEPTED",
                 "REJECTED",
                 "ARCHIVED"
               ],
               "type": "string"
-            }
-          },
-          {
-            "name": "includePending",
-            "required": false,
-            "in": "query",
-            "description": "Includi anche gli annunci non ancora valutati dall AI (default: false)",
-            "schema": {
-              "type": "boolean"
             }
           }
         ],
@@ -1728,20 +1673,92 @@
             "type": "number",
             "description": "Percentuale di conversione da colloquio ad offerta"
           },
-          "offerToAcceptance": {
-            "type": "number",
-            "description": "Percentuale di conversione da offerta ad accettazione"
-          },
           "overallSuccessRate": {
             "type": "number",
-            "description": "Percentuale di successo complessiva"
+            "description": "Percentuale di successo complessiva (offerte su candidature)"
           }
         },
         "required": [
           "applicationToInterview",
           "interviewToOffer",
-          "offerToAcceptance",
           "overallSuccessRate"
+        ]
+      },
+      "SankeyNodeDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID univoco del nodo (es. src_ARBEITNOW, prio_HIGH, st_SAVED)"
+          },
+          "name": {
+            "type": "string",
+            "description": "Etichetta leggibile del nodo"
+          },
+          "category": {
+            "type": "string",
+            "description": "Categoria o colonna del nodo",
+            "enum": [
+              "source",
+              "priority",
+              "selection",
+              "application",
+              "outcome"
+            ]
+          },
+          "count": {
+            "type": "number",
+            "description": "Volume totale degli annunci transitati o presenti nel nodo"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "category",
+          "count"
+        ]
+      },
+      "SankeyLinkDto": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string",
+            "description": "ID del nodo sorgente"
+          },
+          "target": {
+            "type": "string",
+            "description": "ID del nodo destinazione"
+          },
+          "value": {
+            "type": "number",
+            "description": "Volume del flusso di annunci"
+          }
+        },
+        "required": [
+          "source",
+          "target",
+          "value"
+        ]
+      },
+      "SankeyDataDto": {
+        "type": "object",
+        "properties": {
+          "nodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SankeyNodeDto"
+            }
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SankeyLinkDto"
+            }
+          }
+        },
+        "required": [
+          "nodes",
+          "links"
         ]
       },
       "JobOffersFunnelAnalyticsDto": {
@@ -1770,13 +1787,22 @@
           },
           "conversionRates": {
             "$ref": "#/components/schemas/FunnelConversionRatesDto"
+          },
+          "sankey": {
+            "description": "Dati per il diagramma di flusso continuo Sankey",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SankeyDataDto"
+              }
+            ]
           }
         },
         "required": [
           "statusCounts",
           "stageTransitions",
           "rejectionDropOffs",
-          "conversionRates"
+          "conversionRates",
+          "sankey"
         ]
       },
       "JobStatusHistoryDto": {
@@ -1791,10 +1817,8 @@
               "NEW",
               "SAVED",
               "APPLIED",
-              "SCREENING",
               "INTERVIEWING",
               "OFFER",
-              "ACCEPTED",
               "REJECTED",
               "ARCHIVED"
             ],
@@ -1805,10 +1829,8 @@
               "NEW",
               "SAVED",
               "APPLIED",
-              "SCREENING",
               "INTERVIEWING",
               "OFFER",
-              "ACCEPTED",
               "REJECTED",
               "ARCHIVED"
             ],
@@ -1853,8 +1875,8 @@
             "nullable": true
           },
           "employeeCount": {
-            "type": "integer",
-            "nullable": true
+            "nullable": true,
+            "type": "integer"
           },
           "eligibleOffersCount": {
             "type": "integer",
@@ -1929,12 +1951,12 @@
             "nullable": true
           },
           "salaryMin": {
-            "type": "number",
-            "nullable": true
+            "nullable": true,
+            "type": "number"
           },
           "salaryMax": {
-            "type": "number",
-            "nullable": true
+            "nullable": true,
+            "type": "number"
           },
           "currency": {
             "type": "string",
@@ -1973,10 +1995,8 @@
               "NEW",
               "SAVED",
               "APPLIED",
-              "SCREENING",
               "INTERVIEWING",
               "OFFER",
-              "ACCEPTED",
               "REJECTED",
               "ARCHIVED"
             ],
@@ -2066,8 +2086,8 @@
             "nullable": true
           },
           "employeeCount": {
-            "type": "integer",
-            "nullable": true
+            "nullable": true,
+            "type": "integer"
           },
           "eligibleOffersCount": {
             "type": "integer",
@@ -2238,12 +2258,12 @@
             "$ref": "#/components/schemas/CompanyDto"
           },
           "salaryMin": {
-            "type": "number",
-            "nullable": true
+            "nullable": true,
+            "type": "number"
           },
           "salaryMax": {
-            "type": "number",
-            "nullable": true
+            "nullable": true,
+            "type": "number"
           },
           "currency": {
             "type": "string",
@@ -2282,10 +2302,8 @@
               "NEW",
               "SAVED",
               "APPLIED",
-              "SCREENING",
               "INTERVIEWING",
               "OFFER",
-              "ACCEPTED",
               "REJECTED",
               "ARCHIVED"
             ],
@@ -2403,10 +2421,8 @@
               "NEW",
               "SAVED",
               "APPLIED",
-              "SCREENING",
               "INTERVIEWING",
               "OFFER",
-              "ACCEPTED",
               "REJECTED",
               "ARCHIVED"
             ],
@@ -2619,8 +2635,8 @@
             "nullable": true
           },
           "employeeCount": {
-            "type": "integer",
-            "nullable": true
+            "nullable": true,
+            "type": "integer"
           },
           "eligibleOffersCount": {
             "type": "integer",

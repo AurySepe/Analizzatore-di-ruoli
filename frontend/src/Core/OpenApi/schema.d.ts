@@ -435,10 +435,33 @@ export interface components {
             applicationToInterview: number;
             /** @description Percentuale di conversione da colloquio ad offerta */
             interviewToOffer: number;
-            /** @description Percentuale di conversione da offerta ad accettazione */
-            offerToAcceptance: number;
-            /** @description Percentuale di successo complessiva */
+            /** @description Percentuale di successo complessiva (offerte su candidature) */
             overallSuccessRate: number;
+        };
+        SankeyNodeDto: {
+            /** @description ID univoco del nodo (es. src_ARBEITNOW, prio_HIGH, st_SAVED) */
+            id: string;
+            /** @description Etichetta leggibile del nodo */
+            name: string;
+            /**
+             * @description Categoria o colonna del nodo
+             * @enum {string}
+             */
+            category: "source" | "priority" | "selection" | "application" | "outcome";
+            /** @description Volume totale degli annunci transitati o presenti nel nodo */
+            count: number;
+        };
+        SankeyLinkDto: {
+            /** @description ID del nodo sorgente */
+            source: string;
+            /** @description ID del nodo destinazione */
+            target: string;
+            /** @description Volume del flusso di annunci */
+            value: number;
+        };
+        SankeyDataDto: {
+            nodes: components["schemas"]["SankeyNodeDto"][];
+            links: components["schemas"]["SankeyLinkDto"][];
         };
         JobOffersFunnelAnalyticsDto: {
             /** @description Conteggio delle offerte per stato attuale */
@@ -454,13 +477,15 @@ export interface components {
                 [key: string]: number;
             };
             conversionRates: components["schemas"]["FunnelConversionRatesDto"];
+            /** @description Dati per il diagramma di flusso continuo Sankey */
+            sankey: components["schemas"]["SankeyDataDto"];
         };
         JobStatusHistoryDto: {
             id: string;
             /** @enum {string|null} */
-            fromStatus: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED" | null;
+            fromStatus: "NEW" | "SAVED" | "APPLIED" | "INTERVIEWING" | "OFFER" | "REJECTED" | "ARCHIVED" | null;
             /** @enum {string} */
-            toStatus: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
+            toStatus: "NEW" | "SAVED" | "APPLIED" | "INTERVIEWING" | "OFFER" | "REJECTED" | "ARCHIVED";
             /** Format: date-time */
             createdAt: string;
         };
@@ -509,7 +534,7 @@ export interface components {
              * @default NEW
              * @enum {string}
              */
-            status: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
+            status: "NEW" | "SAVED" | "APPLIED" | "INTERVIEWING" | "OFFER" | "REJECTED" | "ARCHIVED";
             /**
              * @default PENDING
              * @enum {string}
@@ -599,7 +624,7 @@ export interface components {
              * @default NEW
              * @enum {string}
              */
-            status: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
+            status: "NEW" | "SAVED" | "APPLIED" | "INTERVIEWING" | "OFFER" | "REJECTED" | "ARCHIVED";
             /**
              * @default PENDING
              * @enum {string}
@@ -631,7 +656,7 @@ export interface components {
              * @description Nuovo stato dell annuncio
              * @enum {string}
              */
-            status: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
+            status: "NEW" | "SAVED" | "APPLIED" | "INTERVIEWING" | "OFFER" | "REJECTED" | "ARCHIVED";
         };
         ActiveProcessingJobDto: {
             /** @description ID univoco dell annuncio */
@@ -770,9 +795,7 @@ export interface operations {
                 /** @description Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B) */
                 evaluatorModel?: string;
                 /** @description Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED) */
-                status?: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
-                /** @description Includi anche gli annunci non ancora valutati dall AI (default: false) */
-                includePending?: boolean;
+                status?: "NEW" | "SAVED" | "APPLIED" | "INTERVIEWING" | "OFFER" | "REJECTED" | "ARCHIVED";
             };
             header?: never;
             path?: never;
@@ -840,9 +863,7 @@ export interface operations {
                 /** @description Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B) */
                 evaluatorModel?: string;
                 /** @description Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED) */
-                status?: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
-                /** @description Includi anche gli annunci non ancora valutati dall AI (default: false) */
-                includePending?: boolean;
+                status?: "NEW" | "SAVED" | "APPLIED" | "INTERVIEWING" | "OFFER" | "REJECTED" | "ARCHIVED";
             };
             header?: never;
             path?: never;
@@ -884,9 +905,7 @@ export interface operations {
                 /** @description Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B) */
                 evaluatorModel?: string;
                 /** @description Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED) */
-                status?: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
-                /** @description Includi anche gli annunci non ancora valutati dall AI (default: false) */
-                includePending?: boolean;
+                status?: "NEW" | "SAVED" | "APPLIED" | "INTERVIEWING" | "OFFER" | "REJECTED" | "ARCHIVED";
             };
             header?: never;
             path?: never;
@@ -931,9 +950,7 @@ export interface operations {
                 /** @description Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B) */
                 evaluatorModel?: string;
                 /** @description Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED) */
-                status?: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
-                /** @description Includi anche gli annunci non ancora valutati dall AI (default: false) */
-                includePending?: boolean;
+                status?: "NEW" | "SAVED" | "APPLIED" | "INTERVIEWING" | "OFFER" | "REJECTED" | "ARCHIVED";
             };
             header?: never;
             path?: never;
@@ -978,9 +995,7 @@ export interface operations {
                 /** @description Filtra per modello AI utilizzato per l analisi (es. GEMINI_3_1_FLASH_LITE, GEMMA_4_12B) */
                 evaluatorModel?: string;
                 /** @description Filtra per stato dell annuncio (es. NEW, SAVED, APPLIED, INTERVIEWING, REJECTED, ARCHIVED) */
-                status?: "NEW" | "SAVED" | "APPLIED" | "SCREENING" | "INTERVIEWING" | "OFFER" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
-                /** @description Includi anche gli annunci non ancora valutati dall AI (default: false) */
-                includePending?: boolean;
+                status?: "NEW" | "SAVED" | "APPLIED" | "INTERVIEWING" | "OFFER" | "REJECTED" | "ARCHIVED";
             };
             header?: never;
             path?: never;

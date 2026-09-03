@@ -75,7 +75,6 @@ export const JobOfferDetailCoverLetter: React.FC<JobOfferDetailCoverLetterProps>
     const isSavedOrApplied =
       offer.statusValue === 'SAVED' ||
       offer.statusValue === 'APPLIED' ||
-      offer.statusValue === 'SCREENING' ||
       offer.statusValue === 'INTERVIEWING' ||
       offer.statusValue === 'OFFER';
 

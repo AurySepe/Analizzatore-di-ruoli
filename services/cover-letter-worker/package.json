@@ -8,8 +8,8 @@
     "start:dev": "nest start --watch"
   },
   "dependencies": {
-    "@analizzatore/contracts": "file:../../packages/contracts",
-    "@analizzatore/database": "file:../../packages/database",
+    "@analizzatore/contracts": "workspace:*",
+    "@analizzatore/database": "workspace:*",
     "@aws-sdk/client-s3": "^3.1119.0",
     "@aws-sdk/s3-request-presigner": "^3.1119.0",
     "@google/genai": "^2.13.0",
