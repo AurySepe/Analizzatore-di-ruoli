@@ -127,7 +127,7 @@ export const JobOffersSankeyChart: React.FC<{
   const dragStartRef = useRef({ x: 0, y: 0 });
   const [isDraggingState, setIsDraggingState] = useState(false);
 
-  const margin = { top: 24, right: 130, bottom: 25, left: 18 };
+  const margin = { top: 24, right: 145, bottom: 25, left: 18 };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
@@ -437,8 +437,6 @@ export const JobOffersSankeyChart: React.FC<{
                   ? hovered.sourceId === node.id || hovered.targetId === node.id
                   : true;
 
-              // I nodi nella metà destra (col 3, 4, 5) hanno le etichette a sinistra della barra
-              const isRightSide = getNodeDepth(node.id) >= 3;
               const actualNodeCount = node.count;
 
               return (
@@ -473,10 +471,10 @@ export const JobOffersSankeyChart: React.FC<{
 
                   {/* Etichetta di Testo e Conteggio Reale */}
                   <text
-                    x={isRightSide ? (node.x0 || 0) - 8 : (node.x1 || 0) + 8}
+                    x={(node.x1 || 0) + 8}
                     y={((node.y0 || 0) + (node.y1 || 0)) / 2}
                     dy="0.35em"
-                    textAnchor={isRightSide ? 'end' : 'start'}
+                    textAnchor="start"
                     className="select-none pointer-events-none text-xs font-medium fill-slate-700"
                   >
                     <tspan className="font-semibold fill-slate-950">{node.name}</tspan>{' '}

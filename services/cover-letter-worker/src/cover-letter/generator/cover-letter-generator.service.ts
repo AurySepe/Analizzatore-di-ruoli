@@ -8,10 +8,11 @@ export const CoverLetterAiGenerationSchema = z.object({
   recipientName: z.string().optional().default('').describe('Nome specifico del recruiter se noto nella job description, altrimenti stringa vuota'),
   recipientTitle: z.string().describe('Titolo del team o del hiring manager, es: koppla Hiring Team, Engineering Hiring Team'),
   salutation: z.string().describe('Saluto iniziale formale in inglese, es: Dear koppla Hiring Team,'),
-  experienceParagraph1: z.string().describe('Primo paragrafo incentrato sull esperienza concreta di MioCFO, upload asincrono e review screen con accuratezza 95%. Mantieni la struttura al 90% identica accordando solo le parole chiave tecnologiche con lo stack richiesto.'),
+  selectedStory: z.enum(['STORY_1_UPLOAD_REVIEW', 'STORY_2_ASYNC_PIPELINE_LLM', 'COMBINED_STORY']).describe('Identificativo della storia scelta per il paragrafo 1 in base all annuncio'),
+  experienceParagraph1: z.string().describe('Primo paragrafo incentrato sull esperienza concreta di MioCFO. Seleziona la variante più appropriata tra Storia 1 (upload/review screen), Storia 2 (pipeline asincrona backend/LLM/LangGraph) o Combinata. Mantieni la struttura al 90% identica alla variante scelta accordando solo le parole chiave tecnologiche con lo stack richiesto.'),
   experienceParagraph2: z.string().describe('Secondo paragrafo sul workflow AI-native con Antigravity IDE, delega agli agenti e code review dell architettura.'),
-  companyMotivation: z.string().describe('Terzo paragrafo con motivazione specifica e genuina perche unirsi a questa specifica azienda, citando il loro prodotto e missione.'),
-  explanation: z.string().describe('Sintesi dell adattamento E valutazione critica, oggettiva e non compiacente sulla reale pertinenza della storia di MioCFO e del workflow AI per questo specifico ruolo, spiegando dettagliatamente il PERCHÉ (punti di contatto forti e potenziali gap o discrepanze).'),
+  companyMotivation: z.string().describe('Terzo paragrafo con motivazione specifica e genuina perche unirsi a questa specifica azienda, collegando gli spunti autentici del candidato (focus tecnico, scala/affidabilità, confronto tecnico, feedback immediato) al prodotto e contesto aziendale reale.'),
+  explanation: z.string().describe('Sintesi dell adattamento che spiega esplicitamente: 1) quale storia è stata scelta per il paragrafo 1 e perché; 2) quali spunti motivazionali sono stati valorizzati; 3) valutazione critica, oggettiva e non compiacente sulla reale pertinenza per questo specifico ruolo con punti di forza e gap.'),
 });
 
 export type CoverLetterAiGeneration = z.infer<typeof CoverLetterAiGenerationSchema>;
@@ -86,18 +87,30 @@ DIRETTIVE CHIAVE DI GENERAZIONE:
 1. **TYPE SAFETY & FORMATO**:
    - Rispetta rigidamente lo schema JSON richiesto generandone tutti i campi.
 
-2. **INVARIANZA DELLA NARRAZIONE (NON RISCRIVERE DA ZERO)**:
-   - I paragrafi 1 e 2 devono preservare al 90% la loro struttura testuale originale.
-   - **Paragrafo 1 (MioCFO Story)**: La storia reale (upload fatture sincrono bloccante -> ascolto feedback utenti -> backend task queue asincrona con UI live progress -> review screen per errori AI -> 95% accuratezza su 1.000+ fatture) deve rimanere IDENTICA nella sequenza logica.
-   - Fai solo **accordature chirurgiche di parole chiave** (es. allineare le tecnologie citate all'inizio: TypeScript, React, Next.js, Vue, NestJS, Node.js, Python, PostgreSQL, REST/GraphQL, distributed systems, o il focus specifico "Product Engineer" / "Frontend Engineer" / "Full-Stack Engineer" richiesto dall'annuncio).
-   - **Paragrafo 2 (AI-Native Workflow in Antigravity IDE)**: Mantieni intatta la spiegazione del flusso di lavoro (delega ad agenti AI guidati da custom instructions, velocità 10x, review diretta nel codice per garantire architettura e business goals).
+2. **SELEZIONE DINAMICA DEL PARAGRAFO 1 (MioCFO Story)**:
+   Nei dati di base sono disponibili tre varianti per la storia di MioCFO:
+   - **Storia 1 (experienceParagraph1)**: Focus su UX/prodotto, iterazione basata sui feedback utente, passaggio da upload sincrono ad asincrono, UI live progress e review screen (accuratezza 95% su 1.000+ fatture). Ideale per ruoli Product Engineer, Full-Stack con forte orientamento all'interazione utente e frontend, o dove l'attenzione alla UX sia centrale.
+   - **Storia 2 (experienceParagraph1AlternativeStory)**: Focus su affidabilità backend, pipeline asincrona a microservizi con task queue BullMQ, architettura agentica con LangGraph (stati distinti, classificazione page-by-page, worker paralleli) e riconciliazione deterministica contabile. Ideale per ruoli Backend Engineer, AI/LLM Engineer, Distributed Systems o ruoli fortemente incentrati su robustezza e architettura dati.
+   - **Versione Combinata (experienceParagraph1CombinedStory)**: Unisce l'intera visione end-to-end (dalla redesign UX con UI live progress e review screen fino alla reingegnerizzazione asincrona con BullMQ, LangGraph e dataset di regressione). Ideale per ruoli Senior Full-Stack, Lead Engineer, Founding Engineer o posizioni in cui l'ampiezza a 360° (prodotto + architettura complessa) rappresenti il valore aggiunto decisivo.
 
-3. **PARAGRAFO 3 (MOTIVAZIONE AZIENDALE MIRATA, DIRETTA E UMANA)**:
-   - Spiega con tono autentico, semplice e senza frasi fatte perché Aurelio vuole lavorare specificamente in ${companyName}.
-   - Cita il loro prodotto reale, gli utenti a cui si rivolgono o le sfide tecniche concrete citate nell'annuncio.
-   - Collega la sua passione di founder/product builder (costruire prodotti utili parlando con gli utenti e usando workflow AI) al contributo che darà in ${companyName}.
+   **Criterio operativo**:
+   - Analizza la job description e seleziona la variante più idonea impostando il campo "selectedStory": 'STORY_1_UPLOAD_REVIEW' | 'STORY_2_ASYNC_PIPELINE_LLM' | 'COMBINED_STORY'.
+   - **Invarianza della narrazione al 90%**: La variante scelta deve preservare al 90% la sua struttura originale. Non riscriverla da zero né alterarne la sequenza causale; applica unicamente un'**accordatura chirurgica di parole chiave** (es. allineare tecnologie o denominazione del ruolo come specificato nell'annuncio).
 
-4. **STILE DI SCRITTURA NATURALE & ANTI-AI GUARDRAILS (RIGIDO)**:
+3. **PARAGRAFO 2 (AI-Native Workflow in Antigravity IDE)**:
+   - Mantieni intatta la spiegazione del flusso di lavoro originale (delega ad agenti AI guidati da custom instructions in Antigravity IDE, velocità 10x, review diretta nel codice per garantire architettura e business goals). Fai solo minime accordature di contesto se pertinenti.
+
+4. **PARAGRAFO 3 (MOTIVAZIONE AZIENDALE MIRATA, AUTENTICA E UMANA)**:
+   - Non usare template preconfezionati o vuote lusinghe.
+   - Utilizza e valorizza gli spunti autentici forniti in "guidelinesForMotivation", selezionando quelli che risuonano maggiormente con la realtà di ${companyName}:
+     * Focus tecnico (desiderio di concentrarsi sulla scrittura di codice robusto e architettura invece della burocrazia/vendite tipiche delle startup early-stage).
+     * Scala e affidabilità (voglia di confrontarsi con volumi reali, stabilità e sistemi maturi).
+     * Crescita e confronto (lavorare a fianco di ingegneri senior con code review rigorose).
+     * Ownership dell'intero ciclo di vita (curare il software dal rilascio alla manutenzione reale sul campo).
+     * Cultura moderna/flessibile e/o vicinanza al cliente e feedback immediato.
+   - Collega questi spunti al prodotto reale di ${companyName}, alla loro missione o alle sfide tecniche concrete menzionate nell'annuncio.
+
+5. **STILE DI SCRITTURA NATURALE & ANTI-AI GUARDRAILS (RIGIDO)**:
    - **Tono Semplice, Umano e Diretto**: Usa frasi chiare, brevi e naturali come quelle dei paragrafi base. Evita qualsiasi tono pomposo, enfatico o accademico.
    - **Blacklist Vocabolario AI**: NON usare MAI parole come *synergy, landscape, delve, revolutionary, beacon, tapestry, cutting-edge, multifaceted, navigate, testament, spearhead, leverage, thrilled, eager, passionate, bespoke, align*.
    - **Punteggiatura Naturale**:
@@ -105,14 +118,14 @@ DIRETTIVE CHIAVE DI GENERAZIONE:
      - VIETATO usare markdown bolding (**parole in grassetto**) dentro i paragrafi della lettera.
      - VIETATO usare due punti (":") per fare micro-elenchi in mezzo ai paragrafi.
      - VIETATO virgolettare parole per fare i "furbi" o metaforici.
-   - Voce in prima persona, onesta e focalizzata sul costruire ottimi prodotti software. Non inventare mai fatti o competenze non presenti nei dati base.
+   - Voce in prima persona, onesta e focalizzata sul costruire ottimo software. Non inventare fatti o competenze assenti nei dati base.
 
-5. **SPIEGAZIONE STRATEGICA & VALUTAZIONE CRITICA ARGOMENTATA (CAMPO "explanation")**:
+6. **SPIEGAZIONE STRATEGICA & VALUTAZIONE CRITICA ARGOMENTATA (CAMPO "explanation")**:
    - Nel campo "explanation" devi fornire:
-     1. Una sintesi delle parole chiave e scelte di adattamento effettuate per questo ruolo.
-     2. Una **valutazione critica, rigorosamente oggettiva e non accondiscendente** sull'effettiva pertinenza e adattabilità della storia reale di MioCFO e della metodologia AI per questo specifico annuncio.
-     3. **Spiega dettagliatamente il PERCHÉ di questo giudizio**: argomenta con onestà quali aspetti si sposano perfettamente con i requisiti del ruolo e quali invece risultano meno attinenti o distanti rispetto a ciò che l'azienda cerca (es. se cercano uno specialista C++/embedded a basso livello vs web product engineering). Non dare per scontato che la storia sia adatta a prescindere: sii imparziale e costruttivo.
-   - **Nota Bene**: Questa valutazione critica è puramente informativa per il candidato e **NON DEVE INFLUIRE sulla generazione dei paragrafi 1 e 2**, che vanno SEMPRE inclusi e generati nella lettera con le parole chiave accordate.
+     1. Esplicitare quale variante di storia è stata selezionata per il Paragrafo 1 (Storia 1, Storia 2 o Combinata) e argomentare con precisione la scelta in rapporto ai requisiti del ruolo.
+     2. Indicare quali spunti motivazionali autentici sono stati valorizzati nel Paragrafo 3 e perché risultano congruenti con l'azienda.
+     3. Una **valutazione critica, rigorosamente oggettiva e non accondiscendente** sull'effettiva pertinenza e adattabilità complessiva del profilo per questo specifico annuncio, evidenziando sia i punti di forza reali sia eventuali gap o distanze tecnologiche/organizzative.
+   - **Nota Bene**: Questa valutazione critica è ad uso informativo interno e **NON DEVE INFLUIRE sulla qualità e completezza dei paragrafi generati**, che devono sempre essere professionali e pronti all'uso.
 `;
 
     const userPrompt = `

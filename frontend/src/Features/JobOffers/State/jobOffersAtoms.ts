@@ -200,6 +200,8 @@ export const selectedJobOfferQueryAtom = atomWithQuery<JobOfferDto | null>((get)
       if (!data) return false;
       const cvStatus = data.curriculum?.pdfStatus;
       const clStatus = data.coverLetter?.pdfStatus;
+
+      // 1. Polling rapido (1.5s) se la compilazione PDF (Chromium/Puppeteer) è in corso
       if (
         cvStatus === 'PENDING' ||
         cvStatus === 'GENERATING' ||
@@ -208,6 +210,18 @@ export const selectedJobOfferQueryAtom = atomWithQuery<JobOfferDto | null>((get)
       ) {
         return 1500;
       }
+
+      // 2. Polling se l'annuncio è in stato SAVED e la generazione iniziale via worker AI
+      // del Curriculum o della Cover Letter non ha ancora persistito l'entità nel DB (data.curriculum o data.coverLetter è null/undefined).
+      // Limitato alle modifiche recenti (< 5 minuti) per prevenire loop infiniti su record storici privi di CV.
+      const isSaved = data.status === 'SAVED';
+      const isRecentlyUpdated =
+        Boolean(data.updatedAt) && Date.now() - new Date(data.updatedAt).getTime() < 5 * 60 * 1000;
+
+      if (isSaved && (!data.curriculum || !data.coverLetter) && isRecentlyUpdated) {
+        return 1500;
+      }
+
       return false;
     },
     queryFn: async () => {
